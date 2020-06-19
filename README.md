@@ -4,6 +4,7 @@
 
 ## Instalación
 Solo debemos usar pip para instalar:
+
 ```pip install -i https://test.pypi.org/simple/ casimulation```
 
 ## Funciones incluidas
