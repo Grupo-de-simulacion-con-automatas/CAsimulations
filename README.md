@@ -6,8 +6,6 @@
 Solo debemos usar pip para instalar:
 ```pip install -i https://test.pypi.org/simple/ casimulation```
 
-![nombre de la imagen][a1.PNG]
-
 ## Funciones incluidas
 ```>>> from CAsimulation import camodels```
 ### spline3(A)
