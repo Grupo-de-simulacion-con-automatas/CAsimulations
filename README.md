@@ -550,8 +550,7 @@ tf:    int        #Cantidad de iteraciones
 A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
 ##### Devoluciones:
-```.plt   #Gráfica del mapa de calor que describe como evoluciono la población recuperada en el sistema A hasta un tiempo tf para el modelo SIR
-```
+```.plt   #Gráfica del mapa de calor que describe como evoluciono la población recuperada en el sistema A hasta un tiempo tf para el modelo SIR```
 ### northwest(n, m, I0)
 Localiza la población infectada en la zona noroeste del rectángulo
 ##### Parámetros:
