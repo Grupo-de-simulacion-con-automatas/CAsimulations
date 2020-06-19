@@ -28,3 +28,68 @@ array([[ 0.2       ,  2.87142857,  0.        , -0.37142857],
        [ 3.        , -1.5       , -2.14285714,  1.64285714],
        [ 1.        , -0.85714286,  2.78571429, -0.92857143]])
 ```
+## Autómatas celulares 2-dimensionales
+Para el caso de AC en dos dimensiones, encontramos una gran variedad de vecindarios, sin embargo, para los intereses de investigación analizamos la vecindad de Moore, que consideran los vecinos diagonales y ortogonales.
+
+![texto alternativo](https://docs.google.com/drawings/d/e/2PACX-1vQ68qQEzqQf9RH3dNxVmIXYT9e0MvKKLEvPHR2gfv5o4xxBwLpG9dSQvCr0HrFAILbpx-3Rqu6F-J-0/pub?w=947&h=343)
+
+### array_generator(A, i, j)
+Genera la vecindad de Moore para la célula en la fila i columna j
+##### Parámetros: 	
+```
+A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
+I: int        #Fila i de A
+J: int        #Fila j de A
+```
+##### Devoluciones:	
+```
+np.array    #Vecindad de Moore de la célula en la fila i columna j
+```
+Inicialmente debemos identificar dos estados básicos en la simulación basada en modelos de propagación. El primero de ellos será el estado de susceptibilidad, los agentes (píxeles o componentes de la matriz) que tengan este estado, podrán adquirir la enfermedad y por otro lado tendremos los individuos que cuenten con el estado de infección, los cuales podrían infectar a los individuos susceptibles.
+
+Identificaremos los estados *susceptible* e *infectado* con los valores numéricos 0 (cero) y 1 (uno) respectivamente.
+
+### vector_S(A)
+Genera la lista de posiciones de individuos susceptibles, los cuales identificamos con 0 (cero)
+##### Parámetros:
+```
+A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+##### Devoluciones:
+```
+list    #Lista de posiciones de individuos susceptibles
+```
+### vector_I(A)
+Genera la lista de posiciones de individuos infectados, identificados con 1 (uno)	
+##### Parámetros:	
+```
+A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+##### Devoluciones:	
+```
+list    #Vector de posiciones de individuos infectados
+```
+#### Ejemplo:
+```
+>>> import random
+>>> random_matrix = [[random.randint(-1,3) for e in range(6)] for e in range(8)]
+>>> random_matrix
+[[3, 1, 0, 1, 1, 2],
+ [0, 1, -1, -1, 2, 1],
+ [-1, 1, 1, 0, 2, 0],
+ [0, -1, 2, -1, 1, -1],
+ [0, 2, 1, -1, -1, 2],
+ [-1, -1, 3, 1, 0, 2],
+ [3, 3, 2, 2, -1, 3],
+ [1, 2, -1, -1, 3, 3]]
+>>> cm.array_generator(random_matrix, 3,4)
+array([[ 0.,  2.,  0.],
+       [-1.,  1., -1.],
+       [-1., -1.,  2.]])
+>>> import numpy as np
+>>> random_matrix=np.array(random_matrix)
+>>> cm.vector_S(random_matrix)
+[[0, 2], [1, 0], [2, 3], [2, 5], [3, 0], [4, 0], [5, 4]]
+>>> cm.vector_I(random_matrix)
+[[0, 1], [0, 3], [0, 4], [1, 1], [1, 5], [2, 1], [2, 2], [3, 4], [4, 2], [5, 3], [7, 0]]
+```
