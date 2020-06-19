@@ -336,7 +336,7 @@ Modelo SIS
 Alpha: float    #Tasa de recuperación
 Beta:  float    #Tasa de infección
 Tf:    int      #Cantidad de iteraciones
-A: 		 np.array #Arreglo donde se aplicará el modelo epidemiológico
+A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
 ```
 ##### Devoluciones:	
 ```
@@ -369,7 +369,7 @@ Grafica la cantidad de individuos susceptibles normalizada hasta un tiempo tf
 Alpha: float    #Tasa de recuperación
 Beta:  float    #Tasa de infección
 Tf:    int      #Cantidad de iteraciones
-A: 		 np.array #Arreglo donde se aplicará el modelo epidemiológico
+A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
 ```
 ##### Devoluciones: 
 ```
@@ -382,7 +382,7 @@ Grafica la cantidad de individuos infectados normalizada hasta un tiempo tf
 Alpha: float    #Tasa de recuperación
 Beta:  float    #Tasa de infección
 Tf:    int      #Cantidad de iteraciones
-A: 		 np.array #Arreglo donde se aplicará el modelo epidemiológico
+A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
 ```
 ##### Devoluciones: 
 ```
