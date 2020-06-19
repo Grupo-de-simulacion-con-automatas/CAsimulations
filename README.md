@@ -297,7 +297,7 @@ Aplica la regla base de interacción local
 ##### Parámetros:	
 ```
 Alpha: float    #Tasa de recuperación
-Beta:  float	  #Tasa de infección
+Beta:  float    #Tasa de infección
 V:     np.array	#Vecindad 
 ```
 ##### Devoluciones:	
@@ -309,7 +309,7 @@ Aplica la regla base de interacción global
 ##### Parámetros:	
 ```
 Alpha: float    #Tasa de recuperación
-Beta:  float	  #Tasa de infección
+Beta:  float    #Tasa de infección
 U:     np.array	#Arreglo donde se aplicará el modelo epidemiológico
 ```
 ##### Devoluciones: 	
@@ -320,9 +320,9 @@ np.array     #Evolución del sistema al aplicar la regla base de interacción gl
 Aplica la regla base de interacción global al sistema tf veces
 ##### Parámetros:	
 ```
-Alpha: float	  #Tasa de recuperación
-Beta:  float	  #Tasa de infección
-Tf:    int		  #Cantidad de iteraciones
+Alpha: float    #Tasa de recuperación
+Beta:  float    #Tasa de infección
+Tf:    int      #Cantidad de iteraciones
 A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
 ```
 ##### Devoluciones:	
@@ -333,9 +333,9 @@ list	        #Lista cuyos elementos son la evolución del sistema A desde el tie
 Modelo SIS
 ##### Parámetros:	
 ```
-Alpha: float	  #Tasa de recuperación
-Beta:  float	  #Tasa de infección
-Tf:    int		  #Cantidad de iteraciones
+Alpha: float    #Tasa de recuperación
+Beta:  float    #Tasa de infección
+Tf:    int      #Cantidad de iteraciones
 A: 		 np.array #Arreglo donde se aplicará el modelo epidemiológico
 ```
 ##### Devoluciones:	
@@ -355,8 +355,8 @@ b: int 	        #Cantidad de habitantes
 Define la condición inicial del sistema
 ##### Parámetros: 	
 ```
-I0: float		    #Porcentaje de individuos infectados en el sistema 
-A:  np.array	  #Arreglo sobre el modelo epidemiológico
+I0: float       #Porcentaje de individuos infectados en el sistema 
+A:  np.array    #Arreglo sobre el modelo epidemiológico
 ```
 ##### Devoluciones:
 ```
@@ -366,9 +366,9 @@ np.array	    #Condición inicial del sistema
 Grafica la cantidad de individuos susceptibles normalizada hasta un tiempo tf
 ##### Parámetros: 
 ```
-Alpha: float	  #Tasa de recuperación
-Beta:  float	  #Tasa de infección
-Tf:    int		  #Cantidad de iteraciones
+Alpha: float    #Tasa de recuperación
+Beta:  float    #Tasa de infección
+Tf:    int      #Cantidad de iteraciones
 A: 		 np.array #Arreglo donde se aplicará el modelo epidemiológico
 ```
 ##### Devoluciones: 
@@ -379,9 +379,9 @@ A: 		 np.array #Arreglo donde se aplicará el modelo epidemiológico
 Grafica la cantidad de individuos infectados normalizada hasta un tiempo tf
 ##### Parámetros: 
 ```
-Alpha: float	  #Tasa de recuperación
-Beta:  float	  #Tasa de infección
-Tf:    int		  #Cantidad de iteraciones
+Alpha: float    #Tasa de recuperación
+Beta:  float    #Tasa de infección
+Tf:    int      #Cantidad de iteraciones
 A: 		 np.array #Arreglo donde se aplicará el modelo epidemiológico
 ```
 ##### Devoluciones: 
