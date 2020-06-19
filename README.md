@@ -292,36 +292,36 @@ A: np.array  #Arreglo donde se aplicará el modelo epidemiológico
 ```
 float        #Promedio de individuos muertos en el sistema A con respecto a la cantidad de espacios no vacíos
 ```
-### base_rule(Alpha, beta, V)
+### base_rule(alpha, beta, V)
 Aplica la regla base de interacción local 
 ##### Parámetros:	
 ```
-Alpha: float    #Tasa de recuperación
-Beta:  float    #Tasa de infección
+alpha: float    #Tasa de recuperación
+beta:  float    #Tasa de infección
 V:     np.array	#Vecindad 
 ```
 ##### Devoluciones:	
 ```
 float	       #Si es 1, el individuo en la célula central de se infectó o se mantuvo enfermo. Si es 0, el individuo en la célula central paso a un estado de susceptibilidad o se mantuvo susceptible
 ```
-### evolution_sis(Alpha, beta, U)
+### evolution_sis(alpha, beta, U)
 Aplica la regla base de interacción global
 ##### Parámetros:	
 ```
-Alpha: float    #Tasa de recuperación
-Beta:  float    #Tasa de infección
+alpha: float    #Tasa de recuperación
+beta:  float    #Tasa de infección
 U:     np.array	#Arreglo donde se aplicará el modelo epidemiológico
 ```
 ##### Devoluciones: 	
 ```
 np.array     #Evolución del sistema al aplicar la regla base de interacción global
 ```
-### evolution_SIS(Alpha, beta, tf, A)
+### evolution_SIS(alpha, beta, tf, A)
 Aplica la regla base de interacción global al sistema tf veces
 ##### Parámetros:	
 ```
-Alpha: float    #Tasa de recuperación
-Beta:  float    #Tasa de infección
+alpha: float    #Tasa de recuperación
+beta:  float    #Tasa de infección
 Tf:    int      #Cantidad de iteraciones
 A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
 ```
@@ -329,12 +329,12 @@ A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
 ```
 list	        #Lista cuyos elementos son la evolución del sistema A desde el tiempo 0 hasta el tiempo tf
 ```
-### SIS_model(Alpha, beta, tf, A)
+### SIS_model(alpha, beta, tf, A)
 Modelo SIS
 ##### Parámetros:	
 ```
-Alpha: float    #Tasa de recuperación
-Beta:  float    #Tasa de infección
+alpha: float    #Tasa de recuperación
+beta:  float    #Tasa de infección
 Tf:    int      #Cantidad de iteraciones
 A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
 ```
@@ -362,12 +362,12 @@ A:  np.array    #Arreglo sobre el modelo epidemiológico
 ```
 np.array	    #Condición inicial del sistema
 ```
-### graph_sis_S(Alpha, beta, tf, A) 
+### graph_sis_S(alpha, beta, tf, A) 
 Grafica la cantidad de individuos susceptibles normalizada hasta un tiempo tf
 ##### Parámetros: 
 ```
-Alpha: float    #Tasa de recuperación
-Beta:  float    #Tasa de infección
+alpha: float    #Tasa de recuperación
+beta:  float    #Tasa de infección
 Tf:    int      #Cantidad de iteraciones
 A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
 ```
@@ -375,12 +375,12 @@ A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
 ```
 .plt	        #Gráfica que describe la evolución del estado S en el sistema A hasta un tiempo tf
 ```
-### graph_sis_I(Alpha, beta, tf, A) 
+### graph_sis_I(alpha, beta, tf, A) 
 Grafica la cantidad de individuos infectados normalizada hasta un tiempo tf
 ##### Parámetros: 
 ```
-Alpha: float    #Tasa de recuperación
-Beta:  float    #Tasa de infección
+alpha: float    #Tasa de recuperación
+beta:  float    #Tasa de infección
 Tf:    int      #Cantidad de iteraciones
 A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
 ```
@@ -388,12 +388,12 @@ A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
 ```
 .plt	        #Gráfica que describe la evolución del estado I en el sistema A hasta un tiempo tf
 ```
-### graph_sis(Alpha, beta, tf, A)
+### graph_sis(alpha, beta, tf, A)
 Grafica la cantidad de individuos susceptibles e infectados normalizadas hasta un tiempo tf
 ##### Parámetros:
 ```
-Alpha: float	  #Tasa de recuperación
-Beta:  float	  #Tasa de infección
+alpha: float	  #Tasa de recuperación
+beta:  float	  #Tasa de infección
 Tf:    int		  #Cantidad de iteraciones
 A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
 ```
