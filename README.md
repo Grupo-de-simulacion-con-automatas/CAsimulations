@@ -401,3 +401,325 @@ A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
 ```
 .plt	        #Gráfica que describe la evolución de los estados S e I en el sistema A hasta un tiempo tf
 ```
+### interaction_SI(alpha, beta, A)
+Aplica la regla de interacción del estado S 
+##### Parámetros:	
+```
+alpha: float	  #Tasa de recuperación
+beta:  float	  #Tasa de infección
+A:     np.array	#Sistema 
+```
+##### Devoluciones:	
+```
+np.array   #Arreglo que cuenta con los individuos que se infectaron, individuos que se mantuvieron susceptibles e individuos que ya se encontraban recuperados
+```
+### num_R(a, b)
+Porcentaje de recuperados
+##### Parámetros: 	
+```
+a: int	        #Cantidad de recuperados por cada b infectados
+b: int 	        #Cantidad de infectados
+```
+##### Devoluciones:	
+```list   #Retorna la lista con una cantidad a de recuperados con respecto a una población infectada de tamaño b```
+### interaction_IR(alpha, beta, A)
+Aplica la regla de interacción del estado I 
+##### Parámetros:	
+```
+alpha: float	  #Tasa de recuperación
+beta:  float	  #Tasa de infección
+A:     np.array	#Sistema 
+```
+##### Devoluciones:	
+```np.array   #Arreglo que cuenta con los individuos que se recuperaron de la enfermedad, individuos que se mantuvieron enfermos e individuos susceptibles```
+### evolution_sir(alpha, beta, U)
+Aplica la regla que define el comportamiento del modelo sir
+##### Parámetros:	
+```
+alpha: float	  #Tasa de recuperación
+beta:  float	  #Tasa de infección
+U:     np.array	#Arreglo donde se aplicará el modelo epidemiológico
+```
+##### Devoluciones:
+```np.array   #Evolución del sistema al aplicar la regla de comportamiento sir```
+### evolution_SIR(alpha, beta, tf, A)
+Aplica la regla base de comportamiento sir de manera global al sistema tf veces
+##### Parámetros:	
+```
+alpha: float	  #Tasa de recuperación
+beta:  float	  #Tasa de infección
+tf:    int		  #Cantidad de iteraciones
+A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
+```
+##### Devoluciones:	
+```list   #Lista cuyos elementos son la evolución del sistema A desde el tiempo 0 hasta el tiempo tf```
+### SIR_model(alpha, beta, tf, A)
+Modelo SIR
+##### Parámetros:	
+```
+alpha: float	  #Tasa de recuperación
+beta:  float	  #Tasa de infección
+tf:    int      #Cantidad de iteraciones
+A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
+```
+##### Devoluciones:	
+```list   #Contiene las coordenadas (x,n^x(S)) donde x es una iteración y n^x(S) es la cantidad de individuos susceptibles normalizada. las coordenadas (x,n^x(I)) donde x es una iteración y n^x(I) es la cantidad de individuos infectados normalizada y las coordenadas (x,n^x(R)) donde x es una iteración y n^x(R) es la cantidad de individuos recuperados normalizada```
+### graph_sir_S(alpha, beta, tf, A) 
+Grafica la cantidad de individuos susceptibles normalizada hasta un tiempo tf
+##### Parámetros:
+```
+alpha: float	  #Tasa de recuperación
+beta:  float    #Tasa de infección
+tf:    int		  #Cantidad de iteraciones
+A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
+```
+##### Devoluciones: 
+```.plt   #Gráfica que describe la evolución del estado S en el sistema A hasta un tiempo tf```
+### graph_sir_I(alpha, beta, tf, A) 
+Grafica la cantidad de individuos infectados normalizada hasta un tiempo tf
+##### Parámetros:
+```
+alpha: float    #Tasa de recuperación
+beta:  float	  #Tasa de infección
+tf:    int		  #Cantidad de iteraciones
+A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
+```
+##### Devoluciones:
+```.plt   #Gráfica que describe la evolución del estado I en el sistema A hasta un tiempo tf```
+### graph_sir_R(alpha, beta, tf, A) 
+Grafica la cantidad de individuos recuperados normalizada hasta un tiempo tf
+##### Parámetros:
+```
+alpha: float    #Tasa de recuperación
+beta:  float	  #Tasa de infección
+tf:    int      #Cantidad de iteraciones
+A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
+```
+##### Devoluciones:
+```.plt   #Gráfica que describe la evolución del estado R en el sistema A hasta un tiempo tf```
+### graph_sir(alpha, beta, tf, A)
+Grafica la cantidad de individuos susceptibles, infectados y recuperados normalizadas hasta un tiempo tf
+##### Parámetros:
+```
+alpha: float    #Tasa de recuperación
+beta:  float    #Tasa de infección
+tf:    int      #Cantidad de iteraciones
+A:     np.array #Arreglo donde se aplicará el modelo epidemiológico
+```
+##### Devoluciones:
+```.plt   #Gráfica que describe la evolución de los estados S, I y R en el sistema A hasta un tiempo tf```
+### color(A)
+Grafica el entorno espacial en una escala de colores rgb usando la paleta nipy_spectral de Python
+##### Parámetros:
+```
+A:      np.array #Arreglo donde se aplicará el modelo epidemiológico
+```
+##### Devoluciones:	
+```np.array   #Arreglo con entradas en escala rgb```
+### heatmap_sis(alpha, beta, tf, A)
+Grafica el comportamiento espacial de la enfermedad hasta un tiempo tf
+##### Parámetros: 	
+```
+alpha: float     #Tasa de recuperación
+beta:  float     #Tasa de infección
+tf:    int       #Cantidad de iteraciones
+A:     np.array  #Arreglo donde se aplicará el modelo epidemiológico
+```
+##### Devoluciones:
+```.plt   Grafica el mapa de calor que describe como evoluciono la enfermedad en el sistema A hasta un tiempo tf```
+### heatmap_sir_I(alpha, beta, tf, A)
+Grafica el comportamiento espacial de la población infectada hasta un tiempo tf para el modelo sir
+##### Parámetros:
+```
+alpha: float     #Tasa de recuperación
+beta:  float     #Tasa de infección
+tf:    int       #Cantidad de iteraciones
+A:     np.array  #Arreglo donde se aplicará el modelo epidemiológico
+```
+##### Devoluciones:
+```.plt   #Grafica el mapa de calor que describe como evoluciono la población infectada en el sistema A hasta un tiempo tf para el modelo sir```
+### heatmap_sir_R(alpha, beta, tf, A)
+Grafica el comportamiento espacial de la población recuperada hasta un tiempo tf para el modelo sir
+##### Parámetros:
+```
+alpha: float     #Tasa de recuperación
+beta:  float     #Tasa de infección
+tf:    int       #Cantidad de iteraciones
+A:     np.array  #Arreglo donde se aplicará el modelo epidemiológico
+```
+##### Devoluciones:
+```.plt	grafica el mapa de calor que describe como evoluciono la población recuperada en el sistema A hasta un tiempo tf para el modelo sir
+```
+### northwest(n, m, I0)
+Localiza la población infectada en la zona noroeste del rectángulo
+##### Parámetros:
+```
+n:  int          #Cantidad de filas 
+m:  int		       #Cantidad de columnas
+I0: float	       #Porcentaje inicial de individuos infectados
+```
+##### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada en la zona noroeste del sistema rectangular de dimensión n*m ```
+### north(n, m, I0)
+Localiza la población infectada en la zona norte del rectángulo 
+##### Parámetros:	
+```
+n:  int          #Cantidad de filas 
+m:  int	         #Cantidad de columnas
+I0: float	       #Porcentaje inicial de individuos infectados
+```
+##### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada en la zona norte del sistema rectangular de dimensión n*m```
+### northeast(n, m, I0)
+Localiza la población infectada en la zona noreste del rectángulo
+##### Parámetros:	
+```
+n:  int          #Cantidad de filas 
+m:  int          #Cantidad de columnas
+I0: float        #Porcentaje inicial de individuos infectados
+```
+##### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada en la zona noreste del sistema rectangular de dimensión n*m```
+### west(n, m, I0)
+Localiza la población infectada en la zona oeste del rectángulo
+##### Parámetros:
+```
+n:  int          #Cantidad de filas 
+m:  int	         #Cantidad de columnas
+I0: float        #Porcentaje inicial de individuos infectados
+```
+##### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada en la zona oeste del sistema rectangular de dimensión n*m```
+### center(n, m, I0)
+Localiza la población infectada en la zona central del rectángulo
+##### Parámetros:
+```
+n:  int          #Cantidad de filas 
+m:  int	         #Cantidad de columnas
+I0: float        #Porcentaje inicial de individuos infectados
+```
+##### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada en la zona central del sistema rectangular de dimensión n*m```
+### east(n, m, I0)
+Localiza la población infectada en la zona este del rectángulo
+##### Parámetros:
+```
+n:  int	         #Cantidad de filas 
+m:  int          #Cantidad de columnas
+I0: float	       #Porcentaje inicial de individuos infectados
+```
+##### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada en la zona este del sistema rectangular de dimensión n*m```
+### southwest(n, m, I0)
+Localiza la población infectada en la zona suroeste del rectángulo
+##### Parámetros:	
+```
+n:  int          #Cantidad de filas 
+m:  int          #Cantidad de columnas
+I0: float        #Porcentaje inicial de individuos infectados
+```
+##### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada en la zona suroeste del sistema rectangular de dimensión n*m```
+### south(n, m, I0)
+Localiza la población infectada en la zona sur del rectángulo
+##### Parámetros:
+```
+n:  int          #Cantidad de filas 
+m:  int	         #Cantidad de columnas
+I0: float        #Porcentaje inicial de individuos infectados
+```
+##### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada en la zona sur del sistema rectangular de dimensión n*m```
+### southeast(n, m, I0)
+Localiza la población infectada en la zona sureste del rectángulo
+##### Parámetros:	
+```
+n:  int          #Cantidad de filas 
+m:  int          #Cantidad de columnas
+I0: float	       #Porcentaje inicial de individuos infectados
+```
+##### Devoluciones: 
+```np.array   #Condición inicial con toda la población infectada en la zona sureste del sistema rectangular de dimensión n*m```
+### aleatorio(n, m, I0)
+Localiza la población infectada de manera uniforme en el rectángulo
+##### Parámetros:
+```
+n:  int          #Cantidad de filas 
+m:  int          #Cantidad de columnas
+I0: float	       #Porcentaje inicial de individuos infectados
+```
+##### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada ubicada de manera uniforme en el sistema rectangular de dimensión n*m```
+### medium_curves_sis(alpha, beta, tf, csim, I0, A)
+Genera las listas de coordenadas promedio al aplicar el modelo sis en una cantidad csim de simulaciones para una condición inicial del I0% de infectados en el espacio
+##### Parámetros:	
+```
+alpha: float	   #Tasa de recuperación
+beta:  float     #Tasa de infección
+tf:    int       #Cantidad de tics
+Csim:  int       #Cantidad de simulaciones
+I0:    float     #Porcentaje inicial de infectados
+A:     np.array  #Sistema sobre el cual se aplica el modelo
+```
+##### Devoluciones:
+```list   #Lista de coordenadas promedio para el estado S, para el estado I y valores en el tiempo de los estados S e I ubicados en listas respectivamente```
+### graph_medium_curves_sis(alpha, beta, tf, csim, I0, A)
+Grafica los valores promedio al aplicar csim veces el modelo sis para un valor inicial fijo de individuos infectados
+##### Parámetros:	
+```
+alpha: float     #Tasa de recuperación
+beta:  float     #Tasa de infección
+tf:    int       #Cantidad de tics
+Csim:  int       #Cantidad de simulaciones
+I0:    float     #Porcentaje inicial de infectados
+A:     np.array	 #Sistema sobre el cual se aplica el modelo
+```
+##### Devoluciones:
+```.plt   #Grafica con los valores promedio para cada estado del modelo sis```
+### medium_curves_sir(alpha, beta, tf, csim, I0, A)
+Genera las listas de coordenadas promedio al aplicar el modelo sir en una cantidad csim de simulaciones para una condición inicial del I0% de infectados en el espacio
+##### Parámetros:	
+```
+alpha: float     #Tasa de recuperación
+beta:  float     #Tasa de infección
+tf:    int       #Cantidad de tics
+Csim:  int       #Cantidad de simulaciones
+I0:    float     #Porcentaje inicial de infectados
+A:     np.array	 #Sistema sobre el cual se aplica el modelo
+```
+##### Devoluciones:
+```list   #Lista de coordenadas promedio para los estados S, I y R y valores en el tiempo de los estados S, I y R ubicados en listas respectivamente```
+### graph_medium_curves_sir(alpha, beta, tf, csim, I0, A)
+Grafica los valores promedio al aplicar csim veces el modelo sir para un valor inicial fijo de individuos infectados
+##### Parámetros:
+```
+alpha: float     #Tasa de recuperación
+beta:  float	   #Tasa de infección
+tf:    int       #Cantidad de tics
+Csim:  int       #Cantidad de simulaciones
+I0:    float     #Porcentaje inicial de infectados
+A:     np.array	 #Sistema sobre el cual se aplica el modelo
+```
+##### Devoluciones:
+```.plt   #Grafica con los valores promedio para cada estado del modelo sir```
+### boundary(L,M)
+Genera sub-matrices nulas en la matriz M
+##### Parámetros:
+```
+L: list	         #Lista de coordenadas que se anularan para definir donde se aplican los modelos epidemiológicos
+M: np.array	     #Arreglo sobre el cual se definen las condiciones iniciales de entorno de ejecución de los modelos epidemiológicos
+```
+##### Devoluciones: 
+```np.array   #Sistema	en el cual se aplican los modelos bajo condiciones no regulares de frontera```
+### domain_definition(n, m, a, b, M)
+Define y genera las sub-matrices nulas donde se aplicarán los análisis epidemiológicos
+##### Parámetros:	
+```
+n: int           #Cantidad de filas de la sub-matriz
+m: int	         #Cantidad de columnas de la sub-matriz
+a: int	         #Fila en la cual se va a ubicar la sub-matriz
+b: int           #Columna en la cual se va a ubicar a sub-matriz
+M: np.array	     #Arreglo sobre el cual se va a generar la sub-matriz nula
+```
+##### Devoluciones: 
+```np.array   #Sistema	en el cual se aplican los modelos bajo condiciones no regulares de frontera```
