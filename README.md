@@ -7,7 +7,6 @@ Solo debemos usar pip para instalar:
 ```pip install -i https://test.pypi.org/simple/ casimulation```
 
 ## Funciones incluidas
-```>>> from CAsimulation import camodels```
 ### spline3(A)
 Realice una interpolación cubica tipo spline, tomando como puntos los elementos de A.
 ##### Parámetros:
