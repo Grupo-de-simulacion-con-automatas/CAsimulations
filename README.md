@@ -2,23 +2,23 @@
 
 ```CAsimulations``` proporciona una manera de simular fenómenos asociados con la propagación de enfermedades, basándose en modelos *SIR* y *SIS* implementados en autómatas celulares en Python. ```CAsimulations``` incluye una gran variedad de utilidades para análisis epidemiológicos tales como la capacidad de definir la condición inicial de frontera del sistema, la condición inicial de dispersión de los individuos infectados, variaciones y comparaciones con respecto al cambio de escala y al cambio de frontera del sistema, variaciones promedio para un número arbitrario de simulaciones, entre otros. 
 
-## Instalación
+### Instalación
 Solo debemos usar pip para instalar:
 
 ```pip install -i https://test.pypi.org/simple/ casimulation==0.0.0.2```
-## Preliminares
+### Preliminares
 Se decidió implementar una interpolación tipo spline cubica para la correcta visualización de los datos obtenidos a partir de listas de coordenadas. ```spline3``` genera los coeficientes de los polinomios cúbicos que mejor se aproximan a la lista ```A``` .
-### spline3(A)
+#### spline3(A)
 Realice una interpolación cubica tipo spline, tomando como puntos los elementos de A.
-##### Parámetros:
+###### Parámetros:
 ```
 A: list   #Lista de coordenadas.
 ```
-##### Devoluciones:
+###### Devoluciones:
 ```
 np.array    #Arreglo de puntos al aplicar un spline cubico.
 ```
-#### Ejemplo:
+##### Ejemplo:
 ```
 >>> from CAsimulation import camodels as cm
 >>> Point_list=[[1,0.2],[2,2.7],[3,3],[4,1],[5,2]]
@@ -33,15 +33,15 @@ Para el caso de AC en dos dimensiones, encontramos una gran variedad de vecindar
 
 ![texto alternativo](https://docs.google.com/drawings/d/e/2PACX-1vQ68qQEzqQf9RH3dNxVmIXYT9e0MvKKLEvPHR2gfv5o4xxBwLpG9dSQvCr0HrFAILbpx-3Rqu6F-J-0/pub?w=947&h=343)
 
-### array_generator(A, i, j)
+#### array_generator(A, i, j)
 Genera la vecindad de Moore para la célula en la fila i columna j
-##### Parámetros: 	
+###### Parámetros: 	
 ```
 A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
 I: int        #Fila i de A
 J: int        #Fila j de A
 ```
-##### Devoluciones:	
+###### Devoluciones:	
 ```
 np.array    #Vecindad de Moore de la célula en la fila i columna j
 ```
@@ -49,27 +49,27 @@ Inicialmente debemos identificar dos estados básicos en la simulación basada e
 
 Identificaremos los estados *susceptible* e *infectado* con los valores numéricos 0 (cero) y 1 (uno) respectivamente.
 
-### vector_S(A)
+#### vector_S(A)
 Genera la lista de posiciones de individuos susceptibles, los cuales identificamos con 0 (cero)
-##### Parámetros:
+###### Parámetros:
 ```
 A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
-##### Devoluciones:
+###### Devoluciones:
 ```
 list    #Lista de posiciones de individuos susceptibles
 ```
-### vector_I(A)
+#### vector_I(A)
 Genera la lista de posiciones de individuos infectados, identificados con 1 (uno)	
-##### Parámetros:	
+###### Parámetros:	
 ```
 A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
-##### Devoluciones:	
+###### Devoluciones:	
 ```
 list    #Vector de posiciones de individuos infectados
 ```
-#### Ejemplo:
+##### Ejemplo:
 ```
 >>> import random
 >>> random_matrix = [[random.randint(-1,3) for e in range(6)] for e in range(8)]
