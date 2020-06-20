@@ -80,7 +80,7 @@ w: str    #Título del gráfico
 ```
 .plt    #Gráfica de las funciones x, y, z con título w
 ```
-## Autómatas celulares 2-dimensionales
+### Autómatas celulares 2-dimensionales
 Para el caso de AC en dos dimensiones, encontramos una gran variedad de vecindarios, sin embargo, para los intereses de investigación analizamos la vecindad de Moore, que consideran los vecinos diagonales y ortogonales.
 
 ![texto alternativo](Vecindad_de_Moore.png)
