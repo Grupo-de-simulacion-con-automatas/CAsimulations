@@ -534,3 +534,135 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 Podemos observar también el comportamiento del sistema:
 
 ![texto alternativo](ex_1.gif)
+
+### Las reglas de interacción *SI* , *IR* y el modelo *SIR*
+#### Regla de interacción para el estado S
+Basándonos en el principio de que los individuos susceptibles a la enfermedad no puedan recuperarse, es decir, un individuo que no haya tenido la enfermedad no podrá curarse de ella. Además, si suponemos también que los individuos que están infectados o recuperados en un tiempo �� no pueden adquirir la cualidad de susceptibilidad para un periodo de tiempo posterior, bien sea porque generaron inmunidad frente a la enfermedad (en el caso de los recuperados) o porque si tiene la enfermedad, no es un paciente con riesgo de adquirir la enfermedad debido a que ya la posee (caso infectado).
+
+La manera en la que se implemento esta regla de interacción fue mediante la función ```interaction_SI``` la cual aplica la ***regla base de evolución*** únicamente a los individuos susceptibles.
+#### interaction_SI(alpha, beta, A)
+Aplica la regla de interacción del estado S 
+###### Parámetros:	
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+A:     np.array   #Sistema 
+```
+###### Devoluciones:	
+```
+np.array    #Arreglo que cuenta con los individuos que se infectaron, individuos que se mantuvieron susceptibles e individuos que ya se encontraban recuperados
+```
+#### Regla de interacción para el estado I
+Usualmente la tasa de recuperación �� se interpreta como la probabilidad de recuperación individual, para implementar este concepto en ```Casimulations``` se interpreto la tasa de recuperación individual como una tasa de recuperación global, es decir, ��% de las personas infectadas se recuperarán de la enfermedad.
+
+Al igual que en el modelo *SIS*, se impĺementó una función ```num_R ``` la cual se encarga de describir la razón de individuos recuperados frente a individuos infectados.
+#### num_R(a, b)
+Porcentaje de recuperados
+###### Parámetros: 	
+```
+a: int    #Cantidad de recuperados por cada b infectados
+b: int    #Cantidad de infectados
+```
+###### Devoluciones:	
+```list   #Retorna la lista con una cantidad a de recuperados con respecto a una población infectada de tamaño b```
+#### interaction_IR(alpha, beta, A)
+Aplica la regla de interacción del estado I 
+###### Parámetros:	
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+A:     np.array   #Sistema 
+```
+###### Devoluciones:	
+```np.array   #Arreglo que cuenta con los individuos que se recuperaron de la enfermedad, individuos que se mantuvieron enfermos e individuos susceptibles```
+La regla de interacción para el modelo *SIR* se implemento por medio de la función ```evolution_sir```, con la cual se puede expresar la regla de evolución para el modelo *SIR*  ```evolution_SIR``` para un número tf de iteraciones.
+#### evolution_sir(alpha, beta, U)
+Aplica la regla que define el comportamiento del modelo sir
+###### Parámetros:	
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+U:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+###### Devoluciones:
+```np.array   #Evolución del sistema al aplicar la regla de comportamiento sir```
+#### evolution_SIR(alpha, beta, tf, A)
+Aplica la regla base de comportamiento sir de manera global al sistema tf veces
+###### Parámetros:	
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+###### Devoluciones:	
+```list   #Lista cuyos elementos son la evolución del sistema A desde el tiempo 0 hasta el tiempo tf```
+#### SIR_model(alpha, beta, tf, A)
+Modelo SIR
+###### Parámetros:	
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+###### Devoluciones:	
+```list   #Contiene las coordenadas (x,n^x(S)) donde x es una iteración y n^x(S) es la cantidad de individuos susceptibles normalizada. las coordenadas (x,n^x(I)) donde x es una iteración y n^x(I) es la cantidad de individuos infectados normalizada y las coordenadas (x,n^x(R)) donde x es una iteración y n^x(R) es la cantidad de individuos recuperados normalizada```
+
+![texto alternativo](system_0_1.png)
+
+#### graph_sir_S(alpha, beta, tf, A) 
+Graficá la cantidad de individuos susceptibles normalizada hasta un tiempo tf
+###### Parámetros:
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+###### Devoluciones: 
+```.plt   #Gráfica que describe la evolución del estado S en el sistema A hasta un tiempo tf```
+
+![texto alternativo](sus_sir.png)
+
+#### graph_sir_I(alpha, beta, tf, A) 
+Graficá la cantidad de individuos infectados normalizada hasta un tiempo tf
+###### Parámetros:
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+###### Devoluciones:
+```.plt   #Gráfica que describe la evolución del estado I en el sistema A hasta un tiempo tf```
+
+![texto alternativo](inf_sir.png)
+
+#### graph_sir_R(alpha, beta, tf, A) 
+Grafica la cantidad de individuos recuperados normalizada hasta un tiempo tf
+###### Parámetros:
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+###### Devoluciones:
+```.plt   #Gráfica que describe la evolución del estado R en el sistema A hasta un tiempo tf```
+
+![texto alternativo](rec_sir.png)
+
+#### graph_sir(alpha, beta, tf, A)
+Graficá la cantidad de individuos susceptibles, infectados y recuperados normalizadas hasta un tiempo tf
+###### Parámetros:
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+###### Devoluciones:
+```.plt   #Gráfica que describe la evolución de los estados S, I y R en el sistema A hasta un tiempo tf```
+
+![texto alternativo](sir_sir.png)
