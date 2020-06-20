@@ -213,6 +213,7 @@ A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
 >>> import matplotlib.pyplot as plt
 >>> plt.imshow(cm.color(random_matrix),cmap="nipy_spectral", interpolation='nearest')
 ```
+
 ![texto alternativo](color.png)
 
 Las funciones ```count_S, count_I, count_R``` y ```count_D``` nos permiten conocer el número exacto de individuos pertenecientes a alguno de los estados *S,I,R* o *D*, mientras que con las funciones ```count_s, count_i, count_r``` y ```count_d``` podemos conocer el promedio de individuos con un estado especifico con respecto a la cantidad de píxeles no vacíos.
