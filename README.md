@@ -316,3 +316,216 @@ float   #Promedio de individuos muertos en el sistema A con respecto a la cantid
 >>> print(cm.count_s(random_matrix), cm.count_i(random_matrix), cm.count_r(random_matrix), cm.count_d(random_matrix))
 0.2 0.3142857142857143 0.2857142857142857 0.2
 ```
+### La regla base de evolución y el modelo *SIS*
+Una vez dicho esto considere los siguientes eventos:
+
+1.   Si $\beta>\alpha$, es decir, si el individuo tiene un estado de susceptibilidad la probabilidad de adquirir la infección es mas alta que la probabilidad de mantenerse sano, mientras que si el individuo se encuentra infectado la probabilidad de mantenerse en ese estado sera mayor que la probabilidad de pasar al estado susceptible; debemos tener también en cuenta que el indicador $N_{ij}^t(I)$ sera de vital importancia debido a que a mayor valor de $N_{ij}^t(I)$ mayor sera la probabilidad de infectarse independientemente de el parámetro  $\beta$, teniendo esto en cuenta la regla para este evento sera:
+
+    $$\textit{"Si }x_{i,j}^{t}=0\textit{, }N_{ij}^t(I)>N_{ij}^t(S)\textit{ y }\rho>\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\textit{ entonces }x_{ij}^{t+1}=1\textit{"}$$
+    
+    donde $\rho$ es un valor aleatorio entre 0 y 100, de igual manera se define la siguiente regla:
+    $$\textit{"Si }x_{i,j}^{t}=1\textit{ y }\rho<\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\textit{, entonces }x_{ij}^{t+1}=1\textit{"}$$
+2.   Si $\beta<\alpha$, es decir, si el individuo tiene un estado de infección la probabilidad de adquirir pasar al estado sano es mas alta que la probabilidad de mantenerse infectado, mientras que si el individuo se encuentra sano la probabilidad de mantenerse en ese estado sera mayor que la probabilidad de pasar al estado infectado, teniendo esto en cuenta la regla para este evento sera:
+    $$\textit{"Si }x_{ij}^{t}=1\textit{, }N_{ij}^t(I)<N_{ij}^t(S)\textit{ y }\rho\leq\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\textit{ entonces }x_{ij}^{t+1}=0\textit{"}$$
+    de igual manera se define la siguiente regla:
+    $$\textit{"Si }x_{ij}^{t}=0\textit{ y }\rho\geq\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\textit{, entonces }x_{ij}^{t+1}=0\textit{"}$$
+
+
+Observe que los estados 1. y 2. se pueden representar mediante la siguiente asignación
+
+$$\Phi_{ij}^t(\alpha,\beta)=\left\{\begin{array}{cc}
+0 & \textrm{si }\rho\leq\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\\
+1 & \textrm{en otro caso}
+\end{array}\right.$$
+
+Claramente la asignación $\Phi_{ij}^t$ corresponde a una regla totalística, se decidió hacer uso de estas reglas sobre autómatas celulares debido a la complejidad encontrada en la variedad de vecindades que puede tener un agente perteneciente a cualquiera de los dos estados.
+
+De manera forma definimos la *regla base de interacción local* como
+
+\begin{equation}
+\Phi_{ij}^t(\alpha,\beta)=\left\{\begin{array}{cc}
+0 & \textrm{si }r\leq\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\\
+1 & \textrm{en otro caso}
+\end{array}\right.
+\end{equation}
+
+donde $\alpha$ y $\beta$ representan la tasa de recuperación y la tasa de infección, respectivamente.
+
+*Observación:* Como veremos más adelante, la cantidad de individuos que interactúan en la vecindad no necesariamente es 8, esto se deberá a que los individuos que posean el estado vació se mantendrán en ese estado para todo tiempo $t$, de esta forma el comportamiento del individuo central no se verá afectado por los espacios vacíos, por lo tanto una consideración importante en nuestra regla base de interacción local, será la cantidad de vecinos que interactúan con la célula central, de esta forma:
+
+\begin{equation}
+\Phi_{ij}^t(\alpha,\beta)=\left\{\begin{array}{cc}
+0 & \textrm{si }r\leq\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8-N_{ij}^t(V)}\cdot100\textrm{, si }N_{ij}^t(V)\neq8\\
+1 & \textrm{en otro caso}
+\end{array}\right.
+\end{equation}
+#### base_rule(alpha, beta, V)
+Aplica la regla base de interacción local 
+###### Parámetros:	
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+V:     np.array   #Vecindad 
+```
+###### Devoluciones:	
+```
+float   #Si es 1, el individuo en la célula central de se infectó o se mantuvo enfermo. Si es 0, el individuo en la célula central paso a un estado de susceptibilidad o se mantuvo susceptible
+```
+##### Ejemplo:
+```
+>>> cm.base_rule(0.2,0.5,V)
+1.0
+```
+Una vez dicho esto, podemos definir un comportamiento tipo *SIS*, el cual puede entenderse como una regla de interacción entre dos estados (susceptible e infectado). Para poder generar este tipo de dinámica basta con aplicar la regla base de evolución a cada uno de los agentes del sistema.
+#### evolution_sis(alpha, beta, U)
+Aplica la regla base de interacción global
+###### Parámetros:	
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+U:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+###### Devoluciones: 	
+```
+np.array    #Evolución del sistema al aplicar la regla base de interacción global
+```
+##### Ejemplo:
+```
+>>> random_matrix_2 =  np.array([[random.randint(0,1) for e in range(6)] for e in range(8)])
+>>> cm.evolution_sis(0.2,0.5,random_matrix_2)
+array([[1, 0, 1, 1, 1, 1],
+       [1, 1, 1, 1, 1, 1],
+       [1, 1, 1, 1, 1, 1],
+       [1, 1, 1, 1, 1, 1],
+       [1, 1, 1, 1, 1, 1],
+       [0, 1, 1, 1, 1, 1],
+       [0, 1, 1, 1, 0, 0],
+       [1, 1, 1, 1, 1, 1]])
+```
+Si usamos la función color obtenemos:
+
+![texto alternativo](color2.png)
+
+Teniendo en cuenta la manera en la que se definió la regla de evolución, podemos analizar el comportamiento de alguna enfermedad en el sistema ```random_matrix_2``` para un número *tf* de iteraciones, este tipo de análisis los podemos realizar usando la función ```evolution_SIS```.
+
+#### evolution_SIS(alpha, beta, tf, A)
+Aplica la regla base de interacción global al sistema tf veces
+###### Parámetros:	
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+###### Devoluciones:	
+```
+list    #Lista cuyos elementos son la evolución del sistema A desde el tiempo 0 hasta el tiempo tf
+```
+Finalmente, para el caso del modelo *SIS* se implemento una función ```SIS_model``` que fuera capaz de reunir las cantidades de individuos por estado junto con sus valores normalizados y la visualización del cambio generado por la regla de evolución en el sistema. 
+#### SIS_model(alpha, beta, tf, A)
+Modelo SIS
+###### Parámetros:	
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+###### Devoluciones:	
+```
+list    #Contiene las coordenadas (x,n^x(S)) donde x es una iteración y n^x(S) es la cantidad de individuos susceptibles normalizada. las coordenadas (x,n^x(I)) donde x es una iteración y n^x(I) es la cantidad de individuos infectados normalizada
+```
+Intentemos ahora definir una condición inicial para el sistema, basada en el porcentaje de individuos infectados que queremos incluir, es decir, si quisiéramos generar una condición inicial de *10%* de infectados, esto es equivalente a decir que 1 de cada 10 individuos tiene la enfermedad. La función ```num_I``` nos permite definir la razón a:b de infectados y la función ```initial_condition``` nos permite aplicarla en la condición inicial del sistema.
+#### num_I(a,b)
+Porcentaje de infectados 
+###### Parámetros:
+```
+a: int    #Cantidad de infectados por cada b habitantes
+b: int    #Cantidad de habitantes
+```
+###### Devoluciones:	
+```list   #Retorna la lista con una cantidad a de infectados con respecto a una población de tamaño b```
+#### initial_condition(I0, A)
+Define la condición inicial del sistema
+###### Parámetros: 	
+```
+I0: float       #Porcentaje de individuos infectados en el sistema 
+A:  np.array    #Arreglo sobre el modelo epidemiológico
+```
+###### Devoluciones:
+```
+np.array    #Condición inicial del sistema
+```
+##### Ejemplo:
+```
+>>> system_0 = np.zeros((5,8))
+>>> system_0 = cm.initial_condition(0.1, system_0)
+>>> system_0
+array([[0., 0., 1., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 0., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0.],
+       [0., 0., 0., 0., 1., 0., 0., 0.],
+       [0., 0., 0., 0., 0., 1., 0., 0.]])
+>>> plt.imshow(cm.color(system_0),cmap="nipy_spectral", interpolation='nearest')
+
+```
+
+![texto alternativo](system_0.png)
+
+
+#### graph_sis_S(alpha, beta, tf, A) 
+Graficá la cantidad de individuos susceptibles normalizada hasta un tiempo tf
+###### Parámetros: 
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+###### Devoluciones: 
+```
+.plt    #Gráfica que describe la evolución del estado S en el sistema A hasta un tiempo tf
+```
+##### Ejemplo:
+```
+>>> cm.graph_sis_S(0.2,0.5,30,system_0)
+```
+![texto alternativo](sus_sis.png)
+
+#### graph_sis_I(alpha, beta, tf, A) 
+Graficá la cantidad de individuos infectados normalizada hasta un tiempo tf
+###### Parámetros: 
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+###### Devoluciones: 
+```
+.plt    #Gráfica que describe la evolución del estado I en el sistema A hasta un tiempo tf
+```
+##### Ejemplo:
+```
+>>> cm.graph_sis_I(0.2,0.5,30,system_0)
+```
+![texto alternativo](inf_sis.png)
+
+#### graph_sis(alpha, beta, tf, A)
+Graficá la cantidad de individuos susceptibles e infectados normalizadas hasta un tiempo tf
+###### Parámetros:
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+###### Devoluciones:
+```
+.plt    #Gráfica que describe la evolución de los estados S e I en el sistema A hasta un tiempo tf
+```
+##### Ejemplo:
+```
+>>> cm.graph_sis(0.2,0.5,30,system_0)
+```
+![texto alternativo](sis_sis.png)
