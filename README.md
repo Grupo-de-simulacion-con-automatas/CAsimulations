@@ -94,9 +94,9 @@ array([[ 0.,  2.,  0.],
 [[0, 1], [0, 3], [0, 4], [1, 1], [1, 5], [2, 1], [2, 2], [3, 4], [4, 2], [5, 3], [7, 0]]
 ```
 ## Modelos epidemiológicos en AC
-Para comenzar con nuestro estudio en los modelos epidemiológicos usando AC, es importante definir los estados modelo. Trabajaremos con estados susceptibles $S$, infectados $I$, recuperados $R$ y muertos $D$, adicionalmente incluiremos el estado vació $V$ en nuestro modelo, esto permitirá realizar un análisis en el cambio de la topología de la vecindad de Moore, está noción se explicara de manera mas precisa en secciones posteriores. De esta manera, el conjunto de estados estará dado por $\sum=\{S,I,R,D,V\}$. 
+Para comenzar con nuestro estudio en los modelos epidemiológicos usando AC, es importante definir los estados modelo. Trabajaremos con estados susceptibles *S*, infectados *I*, recuperados *R* y muertos *D*, adicionalmente incluiremos el estado vació *V* en nuestro modelo, esto permitirá realizar un análisis en el cambio de la topología de la vecindad de Moore, está noción se explicara de manera mas precisa en secciones posteriores. De esta manera, el conjunto de estados estará dado por $\sum=\{S,I,R,D,V\}$. 
 
-Representaremos con los colores amarillo, rojo, verde y blanco los estados $ S $, $ I $, $ R $ y $ D $ respectivamente. En la siguiente ilustración se muestran únicamente uno de los casos posibles de permutación por cada estado de interacción la vecindad. 
+Representaremos con los colores amarillo, rojo, verde y blanco los estados *S*, *I*, *R* y *D* respectivamente. En la siguiente ilustración se muestran únicamente uno de los casos posibles de permutación por cada estado de interacción la vecindad. 
 
 ![texto alternativo](estados.png)
 
@@ -156,7 +156,11 @@ A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
 ###### Devoluciones:	
 ```np.array   #Arreglo con entradas en escala rgb```
-
+##### Ejemplo:
+```
+>>> import matplotlib.pyplot as plt
+>>> plt.imshow(cm.color(random_matrix),cmap="nipy_spectral", interpolation='nearest')
+```
 ![texto alternativo](color.png)
 
 Las funciones ```count_S, count_I, count_R``` y ```count_D``` nos permiten conocer el número exacto de individuos pertenecientes a alguno de los estados $S,I,R$ o $D$, mientras que con las funciones ```count_s, count_i, count_r``` y ```count_d``` podemos conocer el promedio de individuos con un estado especifico con respecto a la cantidad de píxeles no vacíos.
