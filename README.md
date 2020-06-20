@@ -28,6 +28,58 @@ array([[ 0.2       ,  2.87142857,  0.        , -0.37142857],
        [ 3.        , -1.5       , -2.14285714,  1.64285714],
        [ 1.        , -0.85714286,  2.78571429, -0.92857143]])
 ```
+####  one_function_graph(A, x)
+Graficá el spline cubico para los elementos de A.
+###### Parámetros:
+```
+A: list   #Lista de coordenadas de la función x
+x: str    #Nombre de la función
+```
+###### Devoluciones:
+```
+.plt    #Gráfica de la función x 
+```
+#### one_state_graph(A, x)
+Graficá el spline cubico para los elementos de A de manera normalizada
+###### Parámetros:
+```
+A: list   #Lista de coordenadas de la función x
+x: str    #Nombre de la función
+```
+###### Devoluciones:	
+```
+.plt    #Gráfica de la función normalizada x 
+```
+#### two_states_graph(A, B, X, Y, Z)
+Graficá el spline cubico para los elementos de A y B
+###### Parámetros:	
+```
+A: list   #Lista de coordenadas de la función x 
+B: list   #Lista de coordenadas de la función y
+x: str    #Nombre de la primera función
+y: str    #Nombre de la segunda función
+z: str    #Título del gráfico
+```
+###### Devoluciones:	
+```
+.plt    #Gráfica de las funciones x e y con título z
+```
+#### three_states_graph(A, B, C, x, y, z, w)
+Graficá el spline cubico para los elementos de A, B y C
+###### Parámetros: 	
+```
+A: list   #Lista de coordenadas de la función x
+B: list   #Lista de coordenadas de la función y
+C: list   #Lista de coordenadas de la función z
+x: str    #Nombre de la primera función
+y: str    #Nombre de la segunda función
+z: str    #Nombre de la tercera función
+w: str    #Título del gráfico 
+```
+###### Devoluciones:	
+```
+.plt    #Gráfica de las funciones x, y, z con título w
+```
 ## Autómatas celulares 2-dimensionales
 Para el caso de AC en dos dimensiones, encontramos una gran variedad de vecindarios, sin embargo, para los intereses de investigación analizamos la vecindad de Moore, que consideran los vecinos diagonales y ortogonales.
 
