@@ -530,3 +530,7 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 >>> cm.graph_sis(0.2,0.5,30,system_0)
 ```
 ![texto alternativo](sis_sis.png)
+
+Podemos observar también el comportamiento del sistema:
+
+![texto alternativo](ex_1.gif)
