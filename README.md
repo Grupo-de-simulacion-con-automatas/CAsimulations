@@ -666,3 +666,5 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```.plt   #Gráfica que describe la evolución de los estados S, I y R en el sistema A hasta un tiempo tf```
 
 ![texto alternativo](sir_sir.png)
+
+![texto alternativo](ex_2.gif)
