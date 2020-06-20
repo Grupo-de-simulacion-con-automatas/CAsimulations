@@ -31,7 +31,7 @@ array([[ 0.2       ,  2.87142857,  0.        , -0.37142857],
 ## Autómatas celulares 2-dimensionales
 Para el caso de AC en dos dimensiones, encontramos una gran variedad de vecindarios, sin embargo, para los intereses de investigación analizamos la vecindad de Moore, que consideran los vecinos diagonales y ortogonales.
 
-![texto alternativo](https://docs.google.com/drawings/d/e/2PACX-1vQ68qQEzqQf9RH3dNxVmIXYT9e0MvKKLEvPHR2gfv5o4xxBwLpG9dSQvCr0HrFAILbpx-3Rqu6F-J-0/pub?w=947&h=343)
+![texto alternativo](Vecindad_de_Moore.png)
 
 #### array_generator(A, i, j)
 Genera la vecindad de Moore para la célula en la fila i columna j
