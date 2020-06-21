@@ -216,7 +216,7 @@ A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
 
 ![texto alternativo](color.png)
 
-Las funciones ```count_S, count_I, count_R``` y ```count_D``` nos permiten conocer el número exacto de individuos pertenecientes a alguno de los estados *S,I,R* o *D*, mientras que con las funciones ```count_s, count_i, count_r``` y ```count_d``` podemos conocer el promedio de individuos con un estado especifico con respecto a la cantidad de píxeles no vacíos.
+Las funciones ```count_S, count_I, count_R``` y ```count_D``` nos permiten conocer el número exacto de individuos pertenecientes a alguno de los estados *S, I, R* o *D*, mientras que con las funciones ```count_s, count_i, count_r``` y ```count_d``` podemos conocer el promedio de individuos con un estado especifico con respecto a la cantidad de píxeles no vacíos.
 
 #### count_S(A)
 Cantidad de individuos susceptibles
@@ -468,7 +468,6 @@ array([[0., 0., 1., 0., 0., 0., 0., 0.],
        [0., 0., 0., 0., 1., 0., 0., 0.],
        [0., 0., 0., 0., 0., 1., 0., 0.]])
 >>> plt.imshow(cm.color(system_0),cmap="nipy_spectral", interpolation='nearest')
-
 ```
 
 ![texto alternativo](system_0.png)
@@ -595,6 +594,7 @@ A:     np.array   #Sistema
 ```
 ###### Devoluciones:	
 ```np.array   #Arreglo que cuenta con los individuos que se recuperaron de la enfermedad, individuos que se mantuvieron enfermos e individuos susceptibles```
+
 La regla de interacción para el modelo *SIR* se implemento por medio de la función ```evolution_sir```, con la cual se puede expresar la regla de evolución para el modelo *SIR*  ```evolution_SIR``` para un número tf de iteraciones.
 #### evolution_sir(alpha, beta, U)
 Aplica la regla que define el comportamiento del modelo sir
@@ -627,7 +627,7 @@ tf:    int        #Cantidad de iteraciones
 A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
 ###### Devoluciones:	
-```list   #Contiene las coordenadas (x,n^x(S)) donde x es una iteración y n^x(S) es la cantidad de individuos susceptibles normalizada. las coordenadas (x,n^x(I)) donde x es una iteración y n^x(I) es la cantidad de individuos infectados normalizada y las coordenadas (x,n^x(R)) donde x es una iteración y n^x(R) es la cantidad de individuos recuperados normalizada```
+```list   #Contiene las coordenadas (x,n^x(S)), (x,n^x(I)) y (x,n^x(R)) donde las primeras coomponentes de cada coordenada es una iteración y la segunda componente es la cantidad de individuos pertenceciente a los estadoss S, I o R, respectivamente.```
 
 ![texto alternativo](system_0_1.png)
 
@@ -642,7 +642,10 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
 ###### Devoluciones: 
 ```.plt   #Gráfica que describe la evolución del estado S en el sistema A hasta un tiempo tf```
-
+##### Ejemplo:
+```
+cm.graph_sir_S(0.2,0.5,30,system_0)
+```
 ![texto alternativo](sus_sir.png)
 
 #### graph_sir_I(alpha, beta, tf, A) 
@@ -656,7 +659,10 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
 ###### Devoluciones:
 ```.plt   #Gráfica que describe la evolución del estado I en el sistema A hasta un tiempo tf```
-
+##### Ejemplo:
+```
+cm.graph_sir_I(0.2,0.5,30,system_0)
+```
 ![texto alternativo](inf_sir.png)
 
 #### graph_sir_R(alpha, beta, tf, A) 
@@ -670,7 +676,10 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
 ###### Devoluciones:
 ```.plt   #Gráfica que describe la evolución del estado R en el sistema A hasta un tiempo tf```
-
+##### Ejemplo:
+```
+cm.graph_sir_R(0.2,0.5,30,system_0)
+```
 ![texto alternativo](rec_sir.png)
 
 #### graph_sir(alpha, beta, tf, A)
@@ -684,7 +693,10 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
 ###### Devoluciones:
 ```.plt   #Gráfica que describe la evolución de los estados S, I y R en el sistema A hasta un tiempo tf```
-
+##### Ejemplo:
+```
+cm.graph_sir(0.2,0.5,30,system_0)
+```
 ![texto alternativo](sir_sir.png)
 
 Podemos observar también el comportamiento del sistema mediante el siguiente código:
