@@ -720,5 +720,310 @@ Podemos observar también el comportamiento del sistema mediante el siguiente c�
 ......out.write(img_ex_2[i])
 >>> out.release()
 ```
-
 ![texto alternativo](ex_2.gif)
+```
+A: list       #Lista de coordenadas -- bloque noroeste
+B: listlista de coordenadas – bloque norte 
+C: list	lista de coordenadas – bloque noreste
+D: list	lista de coordenadas – bloque oeste
+E: list 	lista de coordenadas – bloque central
+F: list	lista de coordenadas – bloque este
+G: list	lista de coordenadas – bloque suroeste
+H: list	lista de coordenadas – bloque sur
+I: list	lista de coordenadas – bloque sureste
+J: list	lista de coordenadas – distribución aleatoria	
+```
+### La dispersión como un factor clave en la velocidad de propagación
+
+Vale la pena preguntarnos si es posible que la ubicación inicial de los individuos infectados afecta el comportamiento de la enfermedad en un periodo de tiempo determinado. Las funciones ```northwest, north, northeast, west, center, east, southwest, south``` y ```southeast``` nos permiten ubicar a casi la totalidad de la población infectada en una de nueve divisiones realizadas sobre el sistema basandonos en los puntos cardinales, también contamos con la función ```aleatorio``` la cual distribuye aleatoriamente a los individuos infectados, cabe resaltar que estas funciones son únicamente para definir la condición inicial del sistema de una manera mas especifica que la función ```initial_condition```.
+#### northwest(n, m, I0)
+Localiza la población infectada en la zona noroeste del rectángulo
+###### Parámetros:
+```
+n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados
+```
+###### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada en la zona noroeste del sistema rectangular de dimensión n*m ```
+#### north(n, m, I0)
+Localiza la población infectada en la zona norte del rectángulo 
+###### Parámetros:	
+```
+n:  int          #Cantidad de filas 
+m:  int	         #Cantidad de columnas
+I0: float	       #Porcentaje inicial de individuos infectados
+```
+###### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada en la zona norte del sistema rectangular de dimensión n*m```
+#### northeast(n, m, I0)
+Localiza la población infectada en la zona noreste del rectángulo
+###### Parámetros:	
+```
+n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados
+```
+###### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada en la zona noreste del sistema rectangular de dimensión n*m```
+#### west(n, m, I0)
+Localiza la población infectada en la zona oeste del rectángulo
+###### Parámetros:
+```
+n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados
+```
+###### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada en la zona oeste del sistema rectangular de dimensión n*m```
+#### center(n, m, I0)
+Localiza la población infectada en la zona central del rectángulo
+###### Parámetros:
+```
+n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados
+```
+###### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada en la zona central del sistema rectangular de dimensión n*m```
+#### east(n, m, I0)
+Localiza la población infectada en la zona este del rectángulo
+###### Parámetros:
+```
+n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados
+```
+###### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada en la zona este del sistema rectangular de dimensión n*m```
+#### southwest(n, m, I0)
+Localiza la población infectada en la zona suroeste del rectángulo
+###### Parámetros:	
+```
+n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados
+```
+###### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada en la zona suroeste del sistema rectangular de dimensión n*m```
+#### south(n, m, I0)
+Localiza la población infectada en la zona sur del rectángulo
+###### Parámetros:
+```
+n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados
+```
+###### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada en la zona sur del sistema rectangular de dimensión n*m```
+#### southeast(n, m, I0)
+Localiza la población infectada en la zona sureste del rectángulo
+###### Parámetros:	
+```
+n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados
+```
+###### Devoluciones: 
+```np.array   #Condición inicial con toda la población infectada en la zona sureste del sistema rectangular de dimensión n*m```
+#### aleatorio(n, m, I0)
+Localiza la población infectada de manera uniforme en el rectángulo
+###### Parámetros:
+```
+n:  int     #Cantidad de filas 
+m:  int     #Cantidad de columnas
+I0: float   #Porcentaje inicial de individuos infectados
+```
+###### Devoluciones:
+```np.array   #Condición inicial con toda la población infectada ubicada de manera uniforme en el sistema rectangular de dimensión n*m```
+```CAsimulations``` incluye también maneras de visualizar las zonas de riesgo en un sistema, es posible generar mapas de calor específicos por medio de las funciones ```heatmap_sis, heatmap_sir_I``` y ```heatmap_sir_R```, mientras que los mapas generados por ```heatmap_sis``` y ```heatmap_sir_I``` muestran el comportamiento de la población infectada para los modelos *SIS* y *SIR* respectivamente, la función ```heatmap_sir_R``` nos muestra como evolucionó la población recuperada, es decir, que individuos se recuperaron primero de la enfermedad.
+#### heatmap_sis(alpha, beta, tf, A)
+Graficá el comportamiento espacial de la enfermedad hasta un tiempo tf
+###### Parámetros: 	
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+###### Devoluciones:
+```.plt   #Gráfica del mapa de calor que describe como evoluciono la enfermedad en el sistema A hasta un tiempo tf```
+#### heatmap_sir_I(alpha, beta, tf, A)
+Graficá el comportamiento espacial de la población infectada hasta un tiempo tf para el modelo SIR
+###### Parámetros:
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+###### Devoluciones:
+```.plt   #Gráfica del mapa de calor que describe como evoluciono la población infectada en el sistema A hasta un tiempo tf para el modelo SIR```
+#### heatmap_sir_R(alpha, beta, tf, A)
+Graficá el comportamiento espacial de la población recuperada hasta un tiempo tf para el modelo SIR
+###### Parámetros:
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de iteraciones
+A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+```
+###### Devoluciones:
+```.plt   #Gráfica del mapa de calor que describe como evoluciono la población recuperada en el sistema A hasta un tiempo tf para el modelo SIR```
+##### Ejemplo:
+```
+>>> system_1 = cm.northwest(30, 30, 0.1)
+>>> plt.imshow(cm.color(system_1), cmap="nipy_spectral", interpolation='nearest')
+```
+![texto alternativo](system_1.png)
+```
+>>> cm.heatmap_sis(0.2, 0.5, 30, system_1)
+```
+![texto alternativo](hm_sis.png)
+```
+>>> cm.heatmap_sir_I(0.2, 0.5, 30, system_1)
+```
+![texto alternativo](hm_sir_I.png)
+```
+>>> cm.heatmap_sir_R(0.2, 0.5, 30, system_1)
+```
+![texto alternativo](hm_sir_R.png)
+```
+>>> ex_3 = cm.SIS_model(0.2, 0.5, 30, system_1)[4]
+>>> for i in range(30):
+......plt.imshow(cm.color(ex_3[i]),cmap="nipy_spectral", interpolation='nearest')
+......plt.savefig('ex_3'+str(i)+'.jpg')
+
+>>> img_ex_3 = []
+>>> for i in range(30):
+......img = cv2.imread('ex_3'+str(i)+'.jpg')
+......height, width, layers = img.shape
+......size = (width,height)
+......img_ex_3.append(img)
+
+>>> out = cv2.VideoWriter('ex_3.mp4',cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
+ 
+>>> for i in range(len(img_ex_3)):
+......out.write(img_ex_3[i])
+>>> out.release()
+```
+![texto alternativo](ex_3.gif)
+```
+>>> ex_4 = cm.SIR_model(0.2, 0.5, 45, system_1)[6]
+>>> for i in range(45):
+......plt.imshow(cm.color(ex_4[i]),cmap="nipy_spectral", interpolation='nearest')
+......plt.savefig('ex_4'+str(i)+'.jpg')
+
+>>> img_ex_4 = []
+>>> for i in range(45):
+......img = cv2.imread('ex_4'+str(i)+'.jpg')
+......height, width, layers = img.shape
+......size = (width,height)
+......img_ex_4.append(img)
+
+>>> out = cv2.VideoWriter('ex_4.mp4',cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
+ 
+>>> for i in range(len(img_ex_4)):
+......out.write(img_ex_4[i])
+>>> out.release()
+```
+![texto alternativo](ex_4.gif)
+
+Si lo que queremos es analizar el comportamiento para las diferentes condiciones iniciales basadas en los puntos cardinales, podemos utilizar la función ```distribution_graph``` la cual nos permitirá graficar 10 posibles condiciones iniciales.
+#### distribution_graph(A, B, C, D, E, F, G, H, I, J)
+Graficá la variación presente en los cambios de distribución inicial de población infectada
+###### Parámetros: 	
+```
+A: list   #Lista de coordenadas - bloque noroeste
+B: list   #Lista de coordenadas - bloque norte 
+C: list   #Lista de coordenadas - bloque noreste
+D: list   #Lista de coordenadas – bloque oeste
+E: list   #Lista de coordenadas – bloque central
+F: list   #Lista de coordenadas – bloque este
+G: list   #Lista de coordenadas – bloque suroeste
+H: list   #Lista de coordenadas – bloque sur
+I: list   #Lista de coordenadas – bloque sureste
+J: list   #Lista de coordenadas – distribución aleatoria	 
+```
+###### Devoluciones:	
+```
+.plt    #Gráfica de las variaciones bajo cambios en la distribución de población infectada
+```
+#####  Ejemplo:
+```
+>>> con_1=cm.SIS_model(0.2, 0.5, 30, cm.northwest(30, 30, 0.1))
+>>> con_2=cm.SIS_model(0.2, 0.5, 30, cm.north(30, 30, 0.1))
+>>> con_3=cm.SIS_model(0.2, 0.5, 30, cm.northeast(30, 30, 0.1))
+>>> con_4=cm.SIS_model(0.2, 0.5, 30, cm.west(30, 30, 0.1))
+>>> con_5=cm.SIS_model(0.2, 0.5, 30, cm.center(30, 30, 0.1))
+>>> con_6=cm.SIS_model(0.2, 0.5, 30, cm.east(30, 30, 0.1))
+>>> con_7=cm.SIS_model(0.2, 0.5, 30, cm.southwest(30, 30, 0.1))
+>>> con_8=cm.SIS_model(0.2, 0.5, 30, cm.south(30, 30, 0.1))
+>>> con_9=cm.SIS_model(0.2, 0.5, 30, cm.southeast(30, 30, 0.1))
+>>> con_10=cm.SIS_model(0.2, 0.5, 30, cm.aleatorio(30, 30, 0.1))
+>>> cm.distribution_graph(con_1[0], con_2[0], con_3[0], con_4[0], con_5[0], con_6[0], con_7[0], con_8[0], con_9[0], con_10[0])
+```
+![texto alternativo](dist.png)
+También es posible realizar un gran número de simulaciones, esto con el fin de analizar diferentes condiciones iniciales. Las funciones ```medium_surves_sis``` y ```medium_surves_sir``` son capaces de generar las coordenadas promedio para un número *csim* de simulaciones mientras que las funciones ```graph_medium_curves_sis``` y ```graph_medium_curves_sir``` nos permiten visualizar estos comportamientos "promedio".
+#### medium_curves_sis(alpha, beta, tf, csim, I0, A)
+Genera las listas de coordenadas promedio al aplicar el modelo sis en una cantidad csim de simulaciones para una condición inicial del I0% de infectados en el espacio
+###### Parámetros:	
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de tics
+Csim:  int        #Cantidad de simulaciones
+I0:    float      #Porcentaje inicial de infectados
+A:     np.array   #Sistema sobre el cual se aplica el modelo
+```
+###### Devoluciones:
+```list   #Lista de coordenadas promedio para el estado S, para el estado I y valores en el tiempo de los estados S e I ubicados en listas respectivamente```
+#### medium_curves_sir(alpha, beta, tf, csim, I0, A)
+Genera las listas de coordenadas promedio al aplicar el modelo SIR en una cantidad csim de simulaciones para una condición inicial del I0% de infectados en el espacio
+###### Parámetros:	
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de tics
+Csim:  int        #Cantidad de simulaciones
+I0:    float      #Porcentaje inicial de infectados
+A:     np.array   #Sistema sobre el cual se aplica el modelo
+```
+###### Devoluciones:
+```list   #Lista de coordenadas promedio para los estados S, I y R y valores en el tiempo de los estados S, I y R ubicados en listas respectivamente```
+#### graph_medium_curves_sis(alpha, beta, tf, csim, I0, A)
+Graficá los valores promedio al aplicar csim veces el modelo sis para un valor inicial fijo de individuos infectados
+###### Parámetros:	
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de tics
+Csim:  int        #Cantidad de simulaciones
+I0:    float      #Porcentaje inicial de infectados
+A:     np.array   #Sistema sobre el cual se aplica el modelo
+```
+###### Devoluciones:
+```.plt   #Gráfica con los valores promedio para cada estado del modelo SIS```
+#### graph_medium_curves_sir(alpha, beta, tf, csim, I0, A)
+Gráfica los valores promedio al aplicar csim veces el modelo SIR para un valor inicial fijo de individuos infectados
+###### Parámetros:
+```
+alpha: float      #Tasa de recuperación
+beta:  float      #Tasa de infección
+tf:    int        #Cantidad de tics
+Csim:  int        #Cantidad de simulaciones
+I0:    float      #Porcentaje inicial de infectados
+A:     np.array   #Sistema sobre el cual se aplica el modelo
+```
+###### Devoluciones:
+```.plt   #Gráfica con los valores promedio para cada estado del modelo SIR```
+##### ejemplos:
+```
+>>> system_2 = np.zeros((20, 20))
+>>> cm.graph_medium_curves_sir(0.2, 0.5, 30, 50, 0.1, system_2)
+```
+![texto alternativo](gmc_sir.png)
+```
+>>> cm.graph_medium_curves_sis(0.2,0.5,30,100,0,cm.southeast(15,15,0.1))
+```
+![texto alternativo](gmc_sis.png)
