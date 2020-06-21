@@ -644,7 +644,7 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```.plt   #Gráfica que describe la evolución del estado S en el sistema A hasta un tiempo tf```
 ##### Ejemplo:
 ```
-cm.graph_sir_S(0.2,0.5,30,system_0)
+>>> cm.graph_sir_S(0.2,0.5,30,system_0)
 ```
 ![texto alternativo](sus_sir.png)
 
@@ -661,7 +661,7 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```.plt   #Gráfica que describe la evolución del estado I en el sistema A hasta un tiempo tf```
 ##### Ejemplo:
 ```
-cm.graph_sir_I(0.2,0.5,30,system_0)
+>>> cm.graph_sir_I(0.2,0.5,30,system_0)
 ```
 ![texto alternativo](inf_sir.png)
 
@@ -678,7 +678,7 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```.plt   #Gráfica que describe la evolución del estado R en el sistema A hasta un tiempo tf```
 ##### Ejemplo:
 ```
-cm.graph_sir_R(0.2,0.5,30,system_0)
+>>> cm.graph_sir_R(0.2,0.5,30,system_0)
 ```
 ![texto alternativo](rec_sir.png)
 
@@ -695,7 +695,7 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```.plt   #Gráfica que describe la evolución de los estados S, I y R en el sistema A hasta un tiempo tf```
 ##### Ejemplo:
 ```
-cm.graph_sir(0.2,0.5,30,system_0)
+>>> cm.graph_sir(0.2,0.5,30,system_0)
 ```
 ![texto alternativo](sir_sir.png)
 
