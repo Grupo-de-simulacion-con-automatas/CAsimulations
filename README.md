@@ -531,7 +531,27 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
 ![texto alternativo](sis_sis.png)
 
-Podemos observar también el comportamiento del sistema:
+Podemos observar también el comportamiento del sistema mediante el siguiente código:
+```
+>>> ex_1 = cm.SIS_model(0.2,0.5,10,system_0)[4]
+>>> for i in range(10):
+......plt.imshow(cm.color(ex_1[i]),cmap="nipy_spectral", interpolation='nearest')
+......plt.savefig('ex_1'+str(i)+'.jpg')
+
+>>> import cv2
+>>> img_ex_1 = []
+>>> for i in range(10):
+......img = cv2.imread('ex_1'+str(i)+'.jpg')
+......height, width, layers = img.shape
+......size = (width,height)
+......img_ex_1.append(img)
+
+>>> out = cv2.VideoWriter('ex_1.mp4',cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
+ 
+>>> for i in range(len(img_ex_1)):
+......out.write(img_ex_1[i])
+>>> out.release()
+```
 
 ![texto alternativo](ex_1.gif)
 
@@ -666,5 +686,27 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```.plt   #Gráfica que describe la evolución de los estados S, I y R en el sistema A hasta un tiempo tf```
 
 ![texto alternativo](sir_sir.png)
+
+Podemos observar también el comportamiento del sistema mediante el siguiente código:
+```
+>>> ex_2 = cm.SIR_model(0.2,0.5,20,system_0)[6]
+>>> for i in range(20):
+......plt.imshow(cm.color(ex_2[i]),cmap="nipy_spectral", interpolation='nearest')
+......plt.savefig('ex_2'+str(i)+'.jpg')
+
+>>> import cv2
+>>> img_ex_2 = []
+>>> for i in range(10):
+......img = cv2.imread('ex_2'+str(i)+'.jpg')
+......height, width, layers = img.shape
+......size = (width,height)
+......img_ex_2.append(img)
+
+>>> out = cv2.VideoWriter('ex_2.mp4',cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
+ 
+>>> for i in range(len(img_ex_2)):
+......out.write(img_ex_2[i])
+>>> out.release()
+```
 
 ![texto alternativo](ex_2.gif)
