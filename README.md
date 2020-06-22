@@ -1027,3 +1027,4 @@ A:     np.array   #Sistema sobre el cual se aplica el modelo
 >>> cm.graph_medium_curves_sis(0.2,0.5,30,100,0,cm.southeast(15,15,0.1))
 ```
 ![texto alternativo](gmc_sis.png)
+![texto alternativo](system_2.png)
