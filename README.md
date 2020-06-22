@@ -1064,11 +1064,11 @@ A partir de esto es posible implementar funciones mas complejas para la definici
 Define un sistema tipo rombo, con vértice izquierdo ubicado en (a, b) y con dimensión de la primera submatriz cxd en el espacio M
 ###### Parámetros:
 ```
-a: int		#Fila donde se ubica el vértice izquierdo del rombo
-b: int 	       #Columna donde se ubica el vértice izquierdo del rombo
-c: int		#Cantidad de filas de la primera submatriz
-d: int		#Cantidad de columnas de la primera submatriz
-M: np.array	#Espacio donde se definirá el sistema
+a: int        #Fila donde se ubica el vértice izquierdo del rombo
+b: int        #Columna donde se ubica el vértice izquierdo del rombo
+c: int        #Cantidad de filas de la primera submatriz
+d: int        #Cantidad de columnas de la primera submatriz
+M: np.array   #Espacio donde se definirá el sistema
 ```
 ###### Devoluciones:  
 ```np.array#Arreglo de coordenadas con un sistema tipo rombo```
@@ -1076,11 +1076,11 @@ M: np.array	#Espacio donde se definirá el sistema
 Define un sistema triangular, con vértice izquierdo ubicado en (n, m) y con dimensión de la primera submatriz axb en el espacio M
 ###### Parámetros: 
 ```
-n: int		#Fila donde se ubica el vértice izquierdo del triangulo
-m: int 	       #Columna donde se ubica el vértice izquierdo del triangulo
-a: int		#Cantidad de filas de la primera submatriz
-b: int		#Cantidad de columnas de la primera submatriz
-M: np.array	#Espacio donde se definirá el sistema
+n: int        #Fila donde se ubica el vértice izquierdo del triangulo
+m: int        #Columna donde se ubica el vértice izquierdo del triangulo
+a: int        #Cantidad de filas de la primera submatriz
+b: int        #Cantidad de columnas de la primera submatriz
+M: np.array   #Espacio donde se definirá el sistema
 ```
 ###### Devoluciones:   
 ```np.array	arreglo de coordenadas con un sistema triangular```
