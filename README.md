@@ -1027,4 +1027,114 @@ A:     np.array   #Sistema sobre el cual se aplica el modelo
 >>> cm.graph_medium_curves_sis(0.2,0.5,30,100,0,cm.southeast(15,15,0.1))
 ```
 ![texto alternativo](gmc_sis.png)
+### Análisis cambiando la condición de frontera del sistema
+Implementaremos ahora una manera de definir cualquier tipo de sistema, lo primero que debemos hacer es definir el espacio sobre el cual queremos definir nuestro sistema, es decir, si por ejemplo quisiéramos definir una región triangular, lo primero que debemos hacer es definir una región rectangular que lo contenga, posteriormente se debe generar una lista con las coordenadas del sistema. La función ```boundary``` se encarga de convertir cada píxel con coordenadas en la lista que define el sistema en un agente que inicialmente tiene un estado *S*, si buscamos una manera de facilitar el trabajo de definir dicha lista, la función ```domain_definition``` nos permitirá definir bloques o submatrices para abarcar mas espacio en el espacio inicial.
+#### boundary(L,M)
+Genera sub-matrices nulas en la matriz M
+###### Parámetros:
+```
+L: list       #Lista de coordenadas que se anularan para definir donde se aplican los modelos epidemiológicos
+M: np.array   #Arreglo sobre el cual se definen las condiciones iniciales de entorno de ejecución de los modelos epidemiológicos
+```
+###### Devoluciones: 
+```np.array   #Sistema en el cual se aplican los modelos bajo condiciones no regulares de frontera```
+#### domain_definition(n, m, a, b, M)
+Define y genera las sub-matrices nulas donde se aplicarán los análisis epidemiológicos
+###### Parámetros:	
+```
+n: int        #Cantidad de filas de la sub-matriz
+m: int        #Cantidad de columnas de la sub-matriz
+a: int        #Fila en la cual se va a ubicar la sub-matriz
+b: int        #Columna en la cual se va a ubicar a sub-matriz
+M: np.array   #Arreglo sobre el cual se va a generar la sub-matriz nula
+```
+###### Devoluciones: 
+```np.array   #Sistema en el cual se aplican los modelos bajo condiciones no regulares de frontera```
+##### Ejemplo:
+```
+>>> empty_space = -np.ones((15, 20))
+>>> system_2 = cm.boundary([[2, 5], [3, 7], [8, 2], [14, 15]], empty_space)
+>>> system_2 = cm.domain_definition(3, 3, 6, 12, system_2)
+>>> system_2 = cm.domain_definition(4, 2, 8, 7, system_2)
+>>> plt.imshow(cm.color(system_2),cmap="nipy_spectral", interpolation='nearest')
+```
 ![texto alternativo](system_2.png)
+A partir de esto es posible implementar funciones mas complejas para la definición de algún sistema particular, este es el caso de las funciones ```rombo``` y la función ```triangulo```
+#### rombo(a, b, c, d, M)
+Define un sistema tipo rombo, con vértice izquierdo ubicado en (a, b) y con dimensión de la primera submatriz cxd en el espacio M
+###### Parámetros:
+```
+a: int		#Fila donde se ubica el vértice izquierdo del rombo
+b: int 	#Columna donde se ubica el vértice izquierdo del rombo
+c: int		#Cantidad de filas de la primera submatriz
+d: int		#Cantidad de columnas de la primera submatriz
+M: np.array	#Espacio donde se definirá el sistema
+```
+###### Devoluciones:  
+```np.array#Arreglo de coordenadas con un sistema tipo rombo```
+#### triangulo(n, m, a, b, M)
+Define un sistema triangular, con vértice izquierdo ubicado en (n, m) y con dimensión de la primera submatriz axb en el espacio M
+###### Parámetros: 
+```
+n: int		#Fila donde se ubica el vértice izquierdo del triangulo
+m: int 	#Columna donde se ubica el vértice izquierdo del triangulo
+a: int		#Cantidad de filas de la primera submatriz
+b: int		#Cantidad de columnas de la primera submatriz
+M: np.array	#Espacio donde se definirá el sistema
+```
+###### Devoluciones:   
+```np.array	arreglo de coordenadas con un sistema triangular```
+Entre las funciones de graficacion de ```CAsimulations``` también encontramos a ```systems_graph```, la cual nos permite comparar 7 sistemas distintos, esto con el fin de analizar la evolución de la enfermedad para diferentes tipos de sistemas.
+### systems_graph(A, B, C, D, E, F, G)
+Graficá los cambios presentes en la condición de frontera
+##### Parámetros: 	
+```
+A: list   #Lista de coordenadas – primera región
+B: list   #Lista de coordenadas – segunda región
+C: list   #Lista de coordenadas – tercera región
+D: list   #Lista de coordenadas – cuarta región
+E: list   #Lista de coordenadas – quinta región
+F: list   #Lista de coordenadas – sexta región
+G: list   #Lista de coordenadas – séptima región
+```
+##### Devoluciones:	
+```
+.plt    #Gráfica de los cambios en el modelo tomando condiciones de frontera diferentes
+```
+Ya sabemos como generar sistemas de cualquier tipo y de cualquier tamaño, es tiempo de ver las posibilidades de los modelos epidemiológicos frente a cambios de escala, si definimos por medio de ```domain_definition``` diferentes escalas para un mismo tipo de sistema, la función ```scale_differences``` nos permitirá ver calcular la variación entre dos escalas, por medio de ```scales_graph``` podremos visualizar los cambios presentes en 5 escalas diferentes, mientras que ```scales_differences_graph``` nos permitirá visualizar las diferencias entre cuatro escalas distintas.
+#### scale_differences(L1, L2)
+Calcula las diferencias por cada iteración entre dos escalas diferentes
+###### Parámetros: 
+```
+L1: list      #Lista con los valores numéricos obtenidos en una primera escala
+L2: list	#Lista con los valores numéricos obtenidos en la segunda escala
+```
+###### Devoluciones: 
+```list	Lista con las diferencias entre ambas escalas por cada iteración.```
+#### scales_graph(A, B, C, D, E)
+Graficá los cambios presentes en la variación de escalas
+###### Parámetros: 	
+```
+A: list   #Lista de coordenadas – primera escala
+B: list   #Lista de coordenadas – segunda escala
+C: list   #Lista de coordenadas – tercera escala
+D: list   #Lista de coordenadas – cuarta escala
+E: list   #Lista de coordenadas – quinta escala
+```
+###### Devoluciones:	
+```
+.plt    #Gráfica de los cambios en el modelo tomando escalas diferentes
+```
+#### scales_differences_graph(A, B, C, D)
+Graficá los cambios presentes en la variación de escalas
+###### Parámetros: 	
+```
+A: list   #Lista de coordenadas – primera escala vs última escala
+B: list   #Lista de coordenadas – segunda escala vs última escala
+C: list   #Lista de coordenadas – tercera escala vs última escala
+D: list   #Lista de coordenadas – cuarta escala vs última escala
+```
+###### Devoluciones:	
+```
+.plt    #Gráfica de los cambios en el modelo tomando escalas diferentes
+```
