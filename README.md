@@ -1065,7 +1065,7 @@ Define un sistema tipo rombo, con vértice izquierdo ubicado en (a, b) y con dim
 ###### Parámetros:
 ```
 a: int		#Fila donde se ubica el vértice izquierdo del rombo
-b: int 	#Columna donde se ubica el vértice izquierdo del rombo
+b: int 	       #Columna donde se ubica el vértice izquierdo del rombo
 c: int		#Cantidad de filas de la primera submatriz
 d: int		#Cantidad de columnas de la primera submatriz
 M: np.array	#Espacio donde se definirá el sistema
@@ -1077,7 +1077,7 @@ Define un sistema triangular, con vértice izquierdo ubicado en (n, m) y con dim
 ###### Parámetros: 
 ```
 n: int		#Fila donde se ubica el vértice izquierdo del triangulo
-m: int 	#Columna donde se ubica el vértice izquierdo del triangulo
+m: int 	       #Columna donde se ubica el vértice izquierdo del triangulo
 a: int		#Cantidad de filas de la primera submatriz
 b: int		#Cantidad de columnas de la primera submatriz
 M: np.array	#Espacio donde se definirá el sistema
@@ -1107,10 +1107,10 @@ Calcula las diferencias por cada iteración entre dos escalas diferentes
 ###### Parámetros: 
 ```
 L1: list      #Lista con los valores numéricos obtenidos en una primera escala
-L2: list	#Lista con los valores numéricos obtenidos en la segunda escala
+L2: list      #Lista con los valores numéricos obtenidos en la segunda escala
 ```
 ###### Devoluciones: 
-```list	Lista con las diferencias entre ambas escalas por cada iteración.```
+```list	#Lista con las diferencias entre ambas escalas por cada iteración.```
 #### scales_graph(A, B, C, D, E)
 Graficá los cambios presentes en la variación de escalas
 ###### Parámetros: 	
