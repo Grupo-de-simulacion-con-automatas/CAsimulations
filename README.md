@@ -83,7 +83,7 @@ w: str    #Título del gráfico
 ### Autómatas celulares 2-dimensionales
 Para el caso de AC en dos dimensiones, encontramos una gran variedad de vecindarios, sin embargo, para los intereses de investigación analizamos la vecindad de Moore, que consideran los vecinos diagonales y ortogonales.
 
-![texto alternativo](Vecindad_de_Moore.png)
+![texto alternativo](Imagenes/Vecindad_de_Moore.png)
 
 #### array_generator(A, i, j)
 Genera la vecindad de Moore para la célula en la fila i columna j
@@ -150,7 +150,7 @@ Para comenzar con nuestro estudio en los modelos epidemiológicos usando AC, es 
 
 Representaremos con los colores amarillo, rojo, verde y blanco los estados *S*, *I*, *R* y *D* respectivamente. En la siguiente ilustración se muestran únicamente uno de los casos posibles de permutación por cada estado de interacción la vecindad. 
 
-![texto alternativo](estados.png)
+![texto alternativo](Imagenes/estados.png)
 
 Para plantear adecuadamente la regla de evolución local, debemos implementar una manera de contar los individuos que tengan un estado especifico en algún tiempo $t$ y en una vecindad determinada. Las funciones ```sumaS, sumaI``` y ```sumaR``` nos permiten contar la cantidad de vecinos que sean susceptibles, infectados o recuperados respectivamente, además de incluir la función ```sumaV``` que nos permite contar la cantidad de espacios vacíos en la vecindad a estudiar.
 
@@ -214,7 +214,7 @@ A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
 >>> plt.imshow(cm.color(random_matrix),cmap="nipy_spectral", interpolation='nearest')
 ```
 
-![texto alternativo](color.png)
+![texto alternativo](Imagenes/color.png)
 
 Las funciones ```count_S, count_I, count_R``` y ```count_D``` nos permiten conocer el número exacto de individuos pertenecientes a alguno de los estados *S, I, R* o *D*, mientras que con las funciones ```count_s, count_i, count_r``` y ```count_d``` podemos conocer el promedio de individuos con un estado especifico con respecto a la cantidad de píxeles no vacíos.
 
@@ -405,7 +405,7 @@ array([[1, 0, 1, 1, 1, 1],
 ```
 Si usamos la función color obtenemos:
 
-![texto alternativo](color2.png)
+![texto alternativo](Imagenes/color2.png)
 
 Teniendo en cuenta la manera en la que se definió la regla de evolución, podemos analizar el comportamiento de alguna enfermedad en el sistema ```random_matrix_2``` para un número *tf* de iteraciones, este tipo de análisis los podemos realizar usando la función ```evolution_SIS```.
 
@@ -469,8 +469,7 @@ array([[0., 0., 1., 0., 0., 0., 0., 0.],
        [0., 0., 0., 0., 0., 1., 0., 0.]])
 >>> plt.imshow(cm.color(system_0),cmap="nipy_spectral", interpolation='nearest')
 ```
-
-![texto alternativo](system_0.png)
+![texto alternativo](Imagenes/system_0.png)
 
 
 #### graph_sis_S(alpha, beta, tf, A) 
@@ -490,7 +489,7 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
 >>> cm.graph_sis_S(0.2,0.5,30,system_0)
 ```
-![texto alternativo](sus_sis.png)
+![texto alternativo](Imagenes/sus_sis.png)
 
 #### graph_sis_I(alpha, beta, tf, A) 
 Graficá la cantidad de individuos infectados normalizada hasta un tiempo tf
@@ -509,7 +508,7 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
 >>> cm.graph_sis_I(0.2,0.5,30,system_0)
 ```
-![texto alternativo](inf_sis.png)
+![texto alternativo](Imagenes/inf_sis.png)
 
 #### graph_sis(alpha, beta, tf, A)
 Graficá la cantidad de individuos susceptibles e infectados normalizadas hasta un tiempo tf
@@ -528,7 +527,7 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
 >>> cm.graph_sis(0.2,0.5,30,system_0)
 ```
-![texto alternativo](sis_sis.png)
+![texto alternativo](Imagenes/sis_sis.png)
 
 Podemos observar también el comportamiento del sistema mediante el siguiente código:
 ```
@@ -552,7 +551,7 @@ Podemos observar también el comportamiento del sistema mediante el siguiente c�
 >>> out.release()
 ```
 
-![texto alternativo](ex_1.gif)
+![texto alternativo](Imagenes/ex_1.gif)
 
 ### Las reglas de interacción *SI* , *IR* y el modelo *SIR*
 #### Regla de interacción para el estado S
@@ -629,7 +628,7 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ###### Devoluciones:	
 ```list   #Contiene las coordenadas (x,n^x(S)), (x,n^x(I)) y (x,n^x(R)) donde las primeras coomponentes de cada coordenada es una iteración y la segunda componente es la cantidad de individuos pertenceciente a los estadoss S, I o R, respectivamente.```
 
-![texto alternativo](system_0_1.png)
+![texto alternativo](Imagenes/system_0_1.png)
 
 #### graph_sir_S(alpha, beta, tf, A) 
 Graficá la cantidad de individuos susceptibles normalizada hasta un tiempo tf
@@ -646,7 +645,7 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
 >>> cm.graph_sir_S(0.2,0.5,30,system_0)
 ```
-![texto alternativo](sus_sir.png)
+![texto alternativo](Imagenes/sus_sir.png)
 
 #### graph_sir_I(alpha, beta, tf, A) 
 Graficá la cantidad de individuos infectados normalizada hasta un tiempo tf
@@ -663,7 +662,7 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
 >>> cm.graph_sir_I(0.2,0.5,30,system_0)
 ```
-![texto alternativo](inf_sir.png)
+![texto alternativo](Imagenes/inf_sir.png)
 
 #### graph_sir_R(alpha, beta, tf, A) 
 Grafica la cantidad de individuos recuperados normalizada hasta un tiempo tf
@@ -680,7 +679,7 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
 >>> cm.graph_sir_R(0.2,0.5,30,system_0)
 ```
-![texto alternativo](rec_sir.png)
+![texto alternativo](Imagenes/rec_sir.png)
 
 #### graph_sir(alpha, beta, tf, A)
 Graficá la cantidad de individuos susceptibles, infectados y recuperados normalizadas hasta un tiempo tf
@@ -697,7 +696,7 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ```
 >>> cm.graph_sir(0.2,0.5,30,system_0)
 ```
-![texto alternativo](sir_sir.png)
+![texto alternativo](Imagenes/sir_sir.png)
 
 Podemos observar también el comportamiento del sistema mediante el siguiente código:
 ```
@@ -720,7 +719,7 @@ Podemos observar también el comportamiento del sistema mediante el siguiente c�
 ......out.write(img_ex_2[i])
 >>> out.release()
 ```
-![texto alternativo](ex_2.gif)
+![texto alternativo](Imagenes/ex_2.gif)
 ```
 A: list       #Lista de coordenadas -- bloque noroeste
 B: listlista de coordenadas – bloque norte 
@@ -875,19 +874,19 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 >>> system_1 = cm.northwest(30, 30, 0.1)
 >>> plt.imshow(cm.color(system_1), cmap="nipy_spectral", interpolation='nearest')
 ```
-![texto alternativo](system_1.png)
+![texto alternativo](Imagenes/system_1.png)
 ```
 >>> cm.heatmap_sis(0.2, 0.5, 30, system_1)
 ```
-![texto alternativo](hm_sis.png)
+![texto alternativo](Imagenes/hm_sis.png)
 ```
 >>> cm.heatmap_sir_I(0.2, 0.5, 30, system_1)
 ```
-![texto alternativo](hm_sir_I.png)
+![texto alternativo](Imagenes/hm_sir_I.png)
 ```
 >>> cm.heatmap_sir_R(0.2, 0.5, 30, system_1)
 ```
-![texto alternativo](hm_sir_R.png)
+![texto alternativo](Imagenes/hm_sir_R.png)
 ```
 >>> ex_3 = cm.SIS_model(0.2, 0.5, 30, system_1)[4]
 >>> for i in range(30):
@@ -907,7 +906,7 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ......out.write(img_ex_3[i])
 >>> out.release()
 ```
-![texto alternativo](ex_3.gif)
+![texto alternativo](Imagenes/ex_3.gif)
 ```
 >>> ex_4 = cm.SIR_model(0.2, 0.5, 45, system_1)[6]
 >>> for i in range(45):
@@ -927,7 +926,7 @@ A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
 ......out.write(img_ex_4[i])
 >>> out.release()
 ```
-![texto alternativo](ex_4.gif)
+![texto alternativo](Imagenes/ex_4.gif)
 
 Si lo que queremos es analizar el comportamiento para las diferentes condiciones iniciales basadas en los puntos cardinales, podemos utilizar la función ```distribution_graph``` la cual nos permitirá graficar 10 posibles condiciones iniciales.
 #### distribution_graph(A, B, C, D, E, F, G, H, I, J)
@@ -963,7 +962,7 @@ J: list   #Lista de coordenadas – distribución aleatoria
 >>> con_10=cm.SIS_model(0.2, 0.5, 30, cm.aleatorio(30, 30, 0.1))
 >>> cm.distribution_graph(con_1[0], con_2[0], con_3[0], con_4[0], con_5[0], con_6[0], con_7[0], con_8[0], con_9[0], con_10[0])
 ```
-![texto alternativo](dist.png)
+![texto alternativo](Imagenes/dist.png)
 También es posible realizar un gran número de simulaciones, esto con el fin de analizar diferentes condiciones iniciales. Las funciones ```medium_surves_sis``` y ```medium_surves_sir``` son capaces de generar las coordenadas promedio para un número *csim* de simulaciones mientras que las funciones ```graph_medium_curves_sis``` y ```graph_medium_curves_sir``` nos permiten visualizar estos comportamientos "promedio".
 #### medium_curves_sis(alpha, beta, tf, csim, I0, A)
 Genera las listas de coordenadas promedio al aplicar el modelo sis en una cantidad csim de simulaciones para una condición inicial del I0% de infectados en el espacio
@@ -1022,11 +1021,11 @@ A:     np.array   #Sistema sobre el cual se aplica el modelo
 >>> system_2 = np.zeros((20, 20))
 >>> cm.graph_medium_curves_sir(0.2, 0.5, 30, 50, 0.1, system_2)
 ```
-![texto alternativo](gmc_sir.png)
+![texto alternativo](Imagenes/gmc_sir.png)
 ```
 >>> cm.graph_medium_curves_sis(0.2,0.5,30,100,0,cm.southeast(15,15,0.1))
 ```
-![texto alternativo](gmc_sis.png)
+![texto alternativo](Imagenes/gmc_sis.png)
 ### Análisis cambiando la condición de frontera del sistema
 Implementaremos ahora una manera de definir cualquier tipo de sistema, lo primero que debemos hacer es definir el espacio sobre el cual queremos definir nuestro sistema, es decir, si por ejemplo quisiéramos definir una región triangular, lo primero que debemos hacer es definir una región rectangular que lo contenga, posteriormente se debe generar una lista con las coordenadas del sistema. La función ```boundary``` se encarga de convertir cada píxel con coordenadas en la lista que define el sistema en un agente que inicialmente tiene un estado *S*, si buscamos una manera de facilitar el trabajo de definir dicha lista, la función ```domain_definition``` nos permitirá definir bloques o submatrices para abarcar mas espacio en el espacio inicial.
 #### boundary(L,M)
