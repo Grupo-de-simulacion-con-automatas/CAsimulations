@@ -5,7 +5,7 @@
 ### Instalación
 Solo debemos usar pip para instalar:
 
-```pip install -i https://test.pypi.org/simple/ casimulation==0.0.0.2```
+```pip install -i https://test.pypi.org/simple/ casimulation```
 ### Preliminares
 Se decidió implementar una interpolación tipo spline cubica para la correcta visualización de los datos obtenidos a partir de listas de coordenadas. ```spline3``` genera los coeficientes de los polinomios cúbicos que mejor se aproximan a la lista ```A``` .
 #### spline3(A)
