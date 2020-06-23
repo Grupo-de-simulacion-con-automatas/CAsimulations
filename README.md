@@ -1058,7 +1058,7 @@ M: np.array   #Arreglo sobre el cual se va a generar la sub-matriz nula
 >>> system_2 = cm.domain_definition(4, 2, 8, 7, system_2)
 >>> plt.imshow(cm.color(system_2),cmap="nipy_spectral", interpolation='nearest')
 ```
-![texto alternativo](imagenes/system_2.png)
+![texto alternativo](/imagenes/system_2.png)
 A partir de esto es posible implementar funciones mas complejas para la definición de algún sistema particular, este es el caso de las funciones ```rombo``` y la función ```triangulo```
 #### rombo(a, b, c, d, M)
 Define un sistema tipo rombo, con vértice izquierdo ubicado en (a, b) y con dimensión de la primera submatriz cxd en el espacio M
