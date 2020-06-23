@@ -1085,9 +1085,9 @@ M: np.array   #Espacio donde se definirá el sistema
 ###### Devoluciones:   
 ```np.array	arreglo de coordenadas con un sistema triangular```
 Entre las funciones de graficacion de ```CAsimulations``` también encontramos a ```systems_graph```, la cual nos permite comparar 7 sistemas distintos, esto con el fin de analizar la evolución de la enfermedad para diferentes tipos de sistemas.
-### systems_graph(A, B, C, D, E, F, G)
+#### systems_graph(A, B, C, D, E, F, G)
 Graficá los cambios presentes en la condición de frontera
-##### Parámetros: 	
+###### Parámetros: 	
 ```
 A: list   #Lista de coordenadas – primera región
 B: list   #Lista de coordenadas – segunda región
@@ -1097,7 +1097,7 @@ E: list   #Lista de coordenadas – quinta región
 F: list   #Lista de coordenadas – sexta región
 G: list   #Lista de coordenadas – séptima región
 ```
-##### Devoluciones:	
+###### Devoluciones:	
 ```
 .plt    #Gráfica de los cambios en el modelo tomando condiciones de frontera diferentes
 ```
