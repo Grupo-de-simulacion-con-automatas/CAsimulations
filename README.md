@@ -1071,6 +1071,12 @@ M: np.array   #Espacio donde se definirá el sistema
 ```
 ###### Devoluciones:  
 ```np.array#Arreglo de coordenadas con un sistema tipo rombo```
+##### Ejemplo:
+```
+>>> empty = -np.ones((9,14))
+>>> Rombo = cm.rombo(1,14,4,0,empty)
+>>> plt.imshow(cm.color(Rombo),cmap="nipy_spectral", interpolation='nearest')
+```
 #### triangulo(n, m, a, b, M)
 Define un sistema triangular, con vértice izquierdo ubicado en (n, m) y con dimensión de la primera submatriz axb en el espacio M
 ###### Parámetros: 
@@ -1083,6 +1089,12 @@ M: np.array   #Espacio donde se definirá el sistema
 ```
 ###### Devoluciones:   
 ```np.array	arreglo de coordenadas con un sistema triangular```
+##### Ejemplo:
+```
+>>> empty = -np.ones((10,19))
+>>> Triangle = cm.triangulo(1,19,9,0,empty)
+>>> plt.imshow(cm.color(Triangle),cmap="nipy_spectral", interpolation='nearest')
+```
 Entre las funciones de graficacion de ```CAsimulations``` también encontramos a ```systems_graph```, la cual nos permite comparar 7 sistemas distintos, esto con el fin de analizar la evolución de la enfermedad para diferentes tipos de sistemas.
 #### systems_graph(A, B, C, D, E, F, G)
 Graficá los cambios presentes en la condición de frontera
@@ -1099,6 +1111,17 @@ G: list   #Lista de coordenadas – séptima región
 ###### Devoluciones:	
 ```
 .plt    #Gráfica de los cambios en el modelo tomando condiciones de frontera diferentes
+```
+##### Ejemplo:
+```
+>>> lineal = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,np.zeros((1,20))))
+>>> square = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,np.zeros((10,10))))
+>>> rectangle = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,np.zeros((10,20))))
+>>> rombo = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,Rombo))
+>>> triangle = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,Triangle))
+>>> square_2 = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,np.zeros((5,5))))
+>>> square_3 = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,np.zeros((3,3))))
+>>> cm.systems_graph(lineal[1],square[1],rectangle[1],rombo[1],triangle[1],square_2[1],square_3[1])
 ```
 Ya sabemos como generar sistemas de cualquier tipo y de cualquier tamaño, es tiempo de ver las posibilidades de los modelos epidemiológicos frente a cambios de escala, si definimos por medio de ```domain_definition``` diferentes escalas para un mismo tipo de sistema, la función ```scale_differences``` nos permitirá ver calcular la variación entre dos escalas, por medio de ```scales_graph``` podremos visualizar los cambios presentes en 5 escalas diferentes, mientras que ```scales_differences_graph``` nos permitirá visualizar las diferencias entre cuatro escalas distintas.
 #### scale_differences(L1, L2)
@@ -1124,6 +1147,20 @@ E: list   #Lista de coordenadas – quinta escala
 ```
 .plt    #Gráfica de los cambios en el modelo tomando escalas diferentes
 ```
+##### Ejemplo:
+```
+>>> lineal_1 = np.zeros((1,100))
+>>> lineal_2 = np.zeros((1,200))
+>>> lineal_3 = np.zeros((1,300))
+>>> lineal_4 = np.zeros((1,400))
+>>> lineal_5 = np.zeros((1,500))
+>>> sis_l1 = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,lineal_1))
+>>> sis_l2 = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,lineal_2))
+>>> sis_l3 = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,lineal_3))
+>>> sis_l4 = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,lineal_4))
+>>> sis_l5 = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,lineal_5))
+>>> cm.scales_graph(sis_l1[1],sis_l2[1],sis_l3[1],sis_l4[1],sis_l5[1])
+```
 #### scales_differences_graph(A, B, C, D)
 Graficá los cambios presentes en la variación de escalas
 ###### Parámetros: 	
@@ -1136,4 +1173,194 @@ D: list   #Lista de coordenadas – cuarta escala vs última escala
 ###### Devoluciones:	
 ```
 .plt    #Gráfica de los cambios en el modelo tomando escalas diferentes
+```
+##### Ejemplo:
+```
+>>> l1_vs_l5 = cm.scale_differences(sis_l1[2],sis_l5[2])
+>>> l2_vs_l5 = cm.scale_differences(sis_l2[2],sis_l5[2])
+>>> l3_vs_l5 = cm.scale_differences(sis_l3[2],sis_l5[2])
+>>> l4_vs_l5 = cm.scale_differences(sis_l4[2],sis_l5[2])
+>>> cm.scales_difference_graph(l1_vs_l5,l2_vs_l5,l3_vs_l5,l4_vs_l5)
+```
+### Modelos SIS y SIR con natalidad y mortalidad
+Para el caso del análisis de propagación con natalidad y mortalidad ```CAsimulations``` nos ofrece la posibilidad de distribuir edades sobre los agentes de acuerdo con el porcentaje que necesitamos, usando la función ```ages```  podemos asignarle edades a todos los agentes del sistema de acuerdo con un porcentaje que se necesite, por ejemplo: si quisiéramos que el 15% de la población tuviera entre 14 y 25 años lo único que debemos hacer es incluir en la lista rangos ```[14,25,0.15]``` y posteriormente usar ```ages```sobre el sistema.
+#### ages(rangos, A)
+Genera la matriz de edades para A basada en los datos de rangos
+###### Parámetros:
+```
+rangos: list		#Lista de rangos de edad: Las primeras dos componentes de cada elemento deben ser los valores extremos del rango y la tercera componente, lo proporción de individuos con esa edad en el espacio
+A:      np.array	#Sistema sobre el cual se definirán las edades
+```
+###### Devoluciones:
+```np.array   #Matriz de edades```
+También podemos seleccionar un grupo de edad sobre el sistema, la función ```age_group``` nos permite conocer las coordenadas de los individuos que tengan una edad en un rango deseado, contamos además con la función ```evolution_ages``` la cual representará el paso del tiempo, los parámetros *time_unit* y *year* nos servirán para saber si el los agentes en el sistema "cumplieron años", esto ocurrirá si *time_unit* es un múltiplo de *year*.
+#### age_group(a, b, A)
+Genera las posiciones de los individuos que tienen entre a y b años en A
+###### Parámetros:
+```
+a: int			#Valor inicial del grupo de edad
+b: int			#Valor final del grupo de edad
+A: np.array		#Matriz de edades
+```
+###### Devoluciones:
+```list   #Lista con las coordenadas de los individuos en el grupo de edad```
+#### evolution_ages(br,mr,E,time_unit,year):
+Evolución por año de los agentes
+###### Parámetros:
+```
+br: float		#Tasa de natalidad
+mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+E: np.array		#Matriz de edades
+time_unit: int	#Unidad de tiempo a analizar (minutos, días, meses, años)
+year: int		#Unidad de tiempo de referencia (por lo general un año)
+```
+###### Devoluciones:
+```np.array   #Matriz con la evolución de edades```
+Una vez controlado el factor de edad de los agentes, podemos implementar las reglas de interacción para los modelos SIS y SIR con natalidad y mortalidad, usando las funciones ```evolution_sis_bm``` y ```evolution_sir_bm``` podemos conocer el comportamiento de alguna enfermedad para un día o mes según se tome *time_unit* con respecto a la unidad de *year*. Por otro lado, las funciones ```evolution_SIS_bm``` y ```evolution_SIR_bm``` nos permitirán aplicar el modelo una cantidad *tf* de veces. Finalmente, las funciones ```SIS_bm_model``` y ```SIR_bm_model``` generarán los datos de la enfermedad, luego de aplicarla sobre un sistema especifico para *tf* iteraciones, mientras que ```graph_sis_bm``` y ```graph_sir_bm``` nos permitirán visualizar el comportamiento de la enfermedad.
+#### evolution_sis_bm(alpha,beta,br,mr,A,E,time_unit,year)
+Regla de evolución del modelo SIS con natalidad y mortalidad
+###### Parámetros:
+```
+alpha: float	#Tasa de recuperación	
+beta: float		#Tasa de infección
+br: float		#Tasa de natalidad
+mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array		#Sistema a evaluar
+E: np.array		#Matriz de edades del sistema A
+time_unit: init	#Unidad de tiempo a analizar (minutos, días, meses, años)
+year: int		#Unidad de tiempo de referencia (por lo general un año)
+```
+###### Devoluciones:
+```list   #En la primera componente encontraremos la evolución del sistema con natalidad y mortalidad mientras que en la segunda las edades con las que cuentan los agentes al realizar la evolución SIS```
+#### evolution_sir_bm(alpha,beta,br,mr,A,E,time_unit,year)
+Regla de evolución del modelo SIR con natalidad y mortalidad
+###### Parámetros:
+```
+alpha: float	#Tasa de recuperación	
+beta: float		#Tasa de infección
+br: float		#Tasa de natalidad
+mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array		#Sistema a evaluar
+E: np.array		#Matriz de edades del sistema A
+time_unit: init	#Unidad de tiempo a analizar (minutos, días, meses, años)
+year: int		#Unidad de tiempo de referencia (por lo general un año)
+```
+###### Devoluciones:
+```list   #En la primera componente encontraremos la evolución del sistema con natalidad y mortalidad mientras que en la segunda las edades con las que cuentan los agentes al realizar la evolución SIR```
+#### evolution_SIS_bm(alpha,beta,tf,br,mr,A,E,year)
+Aplica el modelo SIS con natalidad y mortalidad tf veces sobre el sistema A
+###### Parámetros:
+```
+alpha: float	#Tasa de recuperación	
+beta: float		#Tasa de infección
+tf: int			#Cantidad de iteraciones basado en la unidad de tiempo
+br: float		#Tasa de natalidad
+mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array		#Sistema a evaluar
+E: np.array		#Matriz de edades del sistema A
+year: int		#Unidad de tiempo de referencia (por lo general un año)
+```
+###### Devoluciones:
+```list   #Lista con las evoluciones del sistema bajo un modelo SIS con natalidad y mortalidad, cada elemento de la lista contiene el sistema junto con su matriz de edades```
+#### evolution_SIR_bm(alpha,beta,tf,br,mr,A,E,year)
+Aplica el modelo SIR con natalidad y mortalidad tf veces sobre el sistema A
+###### Parámetros:
+```
+alpha: float	#Tasa de recuperación	
+beta: float		#Tasa de infección
+tf: int			#Cantidad de iteraciones basado en la unidad de tiempo
+br: float		#Tasa de natalidad
+mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array		#Sistema a evaluar
+E: np.array		#Matriz de edades del sistema A
+year: int		#Unidad de tiempo de referencia (por lo general un año)
+```
+###### Devoluciones:
+```list   #Lista con las evoluciones del sistema bajo un modelo SIR con natalidad y mortalidad, cada elemento de la lista contiene el sistema junto con su matriz de edades```
+#### SIS_bm_model(alpha,beta,tf,br,mr,A,E,year)
+Modelo SIS con natalidad y mortalidad
+###### Parámetros:
+```
+alpha: float	#Tasa de recuperación	
+beta: float		#Tasa de infección
+tf: int			#Cantidad de iteraciones basado en la unidad de tiempo
+br: float		#Tasa de natalidad
+mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array		#Sistema a evaluar
+E: np.array		#Matriz de edades del sistema A
+year: int		#Unidad de tiempo de referencia (por lo general un año)
+```
+###### Devoluciones:
+```list   #Lista que contiene las cantidad de individuos pertenecientes a los estados S, I  y D junto con su iteración, cantidad de individuos para cada estado, lista con las evoluciones del sistema y de sus edades```
+#### SIR_bm_model(alpha,beta,tf,br,mr,A,E,year)
+Modelo SIR con natalidad y mortalidad
+###### Parámetros:
+```
+alpha: float	#Tasa de recuperación	
+beta: float		#Tasa de infección
+tf: int			#Cantidad de iteraciones basado en la unidad de tiempo
+br: float		#Tasa de natalidad
+mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array		#Sistema a evaluar
+E: np.array		#Matriz de edades del sistema A
+year: int		#Unidad de tiempo de referencia (por lo general un año)
+```
+###### Devoluciones:
+```list   #Lista que contiene las cantidad de individuos pertenecientes a los estados S, R,  I  y D junto con su iteración, cantidad de individuos para cada estado, lista con las evoluciones del sistema y de sus edades```
+##### Ejemplo:
+```
+>>> ranges = [[1, 15, 0.2], [16, 40, 0.6], [41, 100, 0.2]]
+>>> mr = [[1, 25, 0.25], [26, 51, 0.44], [52, 100, 0.8]]
+>>> sys = np.zeros((10,10))
+>>> ages_sys = cm.ages(ranges, sys)
+>>> ex_5 = cm.SIS_bm_model(0.2, 0.5, 30, 2, mr, sys, ages_sys, 365)[9]
+>>> for i in range(30):
+......plt.imshow(cm.color(ex_5[i]),cmap="nipy_spectral", interpolation='nearest')
+......plt.savefig('ex_5'+str(i)+'.jpg')
+>>> img_ex_5 = []
+>>> for i in range(30):
+......img = cv2.imread('ex_5'+str(i)+'.jpg')
+......height, width, layers = img.shape
+......size = (width,height)
+......img_ex_5.append(img)
+
+>>> out = cv2.VideoWriter('ex_2.mp4',cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
+ 
+>>> for i in range(len(img_ex_2)):
+......out.write(img_ex_2[i])
+>>> out.release()
+```
+#### graph_sis_bm(alpha,beta,tf,br,mr,A,E,year)
+Gráfica del modelo SIS con natalidad y mortalidad
+###### Parámetros:
+```
+alpha: float	#Tasa de recuperación	
+beta: float		#Tasa de infección
+tf: int			#Cantidad de iteraciones basado en la unidad de tiempo
+br: float		#Tasa de natalidad
+mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array		#Sistema a evaluar
+E: np.array		#Matriz de edades del sistema A
+year: int		#Unidad de tiempo de referencia (por lo general un año)
+```
+###### Devoluciones: 
+```.plt   #Gráfica del modelo SIS con natalidad y mortalidad```
+#### graph_sir_bm(alpha,beta,tf,br,mr,A,E,year)
+Gráfica del modelo SIR con natalidad y mortalidad
+###### Parámetros:
+```
+alpha: float	#Tasa de recuperación	
+beta: float		#Tasa de infección
+tf: int			#Cantidad de iteraciones basado en la unidad de tiempo
+br: float		#Tasa de natalidad
+mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array		#Sistema a evaluar
+E: np.array		#Matriz de edades del sistema A
+year: int		#Unidad de tiempo de referencia (por lo general un año)
+```
+###### Devoluciones: 
+```.plt   #Gráfica del modelo SIR con natalidad y mortalidad```
+##### Ejemplo:
+```
+>>> cm.graph_sis_bm(0.2, 0.5, 30, 2, mr, sys, ages_sys, 365)
 ```
