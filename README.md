@@ -1334,10 +1334,10 @@ year: int		#Unidad de tiempo de referencia (por lo general un año)
 ......size = (width,height)
 ......img_ex_5.append(img)
 
->>> out = cv2.VideoWriter('ex_2.mp4',cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
+>>> out = cv2.VideoWriter('ex_5.mp4',cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
  
->>> for i in range(len(img_ex_2)):
-......out.write(img_ex_2[i])
+>>> for i in range(len(img_ex_5)):
+......out.write(img_ex_5[i])
 >>> out.release()
 ```
 
