@@ -1077,6 +1077,8 @@ M: np.array   #Espacio donde se definirá el sistema
 >>> Rombo = cm.rombo(1,14,4,0,empty)
 >>> plt.imshow(cm.color(Rombo),cmap="nipy_spectral", interpolation='nearest')
 ```
+
+![texto alternativo](Imagenes/rombo.png)
 #### triangulo(n, m, a, b, M)
 Define un sistema triangular, con vértice izquierdo ubicado en (n, m) y con dimensión de la primera submatriz axb en el espacio M
 ###### Parámetros: 
@@ -1095,6 +1097,8 @@ M: np.array   #Espacio donde se definirá el sistema
 >>> Triangle = cm.triangulo(1,19,9,0,empty)
 >>> plt.imshow(cm.color(Triangle),cmap="nipy_spectral", interpolation='nearest')
 ```
+
+![texto alternativo](Imagenes/triangulo.png)
 Entre las funciones de graficacion de ```CAsimulations``` también encontramos a ```systems_graph```, la cual nos permite comparar 7 sistemas distintos, esto con el fin de analizar la evolución de la enfermedad para diferentes tipos de sistemas.
 #### systems_graph(A, B, C, D, E, F, G)
 Graficá los cambios presentes en la condición de frontera
@@ -1123,6 +1127,8 @@ G: list   #Lista de coordenadas – séptima región
 >>> square_3 = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,np.zeros((3,3))))
 >>> cm.systems_graph(lineal[1],square[1],rectangle[1],rombo[1],triangle[1],square_2[1],square_3[1])
 ```
+
+![texto alternativo](Imagenes/sys_gr.png)
 Ya sabemos como generar sistemas de cualquier tipo y de cualquier tamaño, es tiempo de ver las posibilidades de los modelos epidemiológicos frente a cambios de escala, si definimos por medio de ```domain_definition``` diferentes escalas para un mismo tipo de sistema, la función ```scale_differences``` nos permitirá ver calcular la variación entre dos escalas, por medio de ```scales_graph``` podremos visualizar los cambios presentes en 5 escalas diferentes, mientras que ```scales_differences_graph``` nos permitirá visualizar las diferencias entre cuatro escalas distintas.
 #### scale_differences(L1, L2)
 Calcula las diferencias por cada iteración entre dos escalas diferentes
@@ -1161,6 +1167,8 @@ E: list   #Lista de coordenadas – quinta escala
 >>> sis_l5 = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,lineal_5))
 >>> cm.scales_graph(sis_l1[1],sis_l2[1],sis_l3[1],sis_l4[1],sis_l5[1])
 ```
+
+![texto alternativo](Imagenes/esc_gr.png)
 #### scales_differences_graph(A, B, C, D)
 Graficá los cambios presentes en la variación de escalas
 ###### Parámetros: 	
@@ -1182,6 +1190,8 @@ D: list   #Lista de coordenadas – cuarta escala vs última escala
 >>> l4_vs_l5 = cm.scale_differences(sis_l4[2],sis_l5[2])
 >>> cm.scales_difference_graph(l1_vs_l5,l2_vs_l5,l3_vs_l5,l4_vs_l5)
 ```
+
+![texto alternativo](Imagenes/dif_gr.png)
 ### Modelos SIS y SIR con natalidad y mortalidad
 Para el caso del análisis de propagación con natalidad y mortalidad ```CAsimulations``` nos ofrece la posibilidad de distribuir edades sobre los agentes de acuerdo con el porcentaje que necesitamos, usando la función ```ages```  podemos asignarle edades a todos los agentes del sistema de acuerdo con un porcentaje que se necesite, por ejemplo: si quisiéramos que el 15% de la población tuviera entre 14 y 25 años lo único que debemos hacer es incluir en la lista rangos ```[14,25,0.15]``` y posteriormente usar ```ages```sobre el sistema.
 #### ages(rangos, A)
@@ -1330,6 +1340,8 @@ year: int		#Unidad de tiempo de referencia (por lo general un año)
 ......out.write(img_ex_2[i])
 >>> out.release()
 ```
+
+![texto alternativo](Imagenes/ex_5.gif)
 #### graph_sis_bm(alpha,beta,tf,br,mr,A,E,year)
 Gráfica del modelo SIS con natalidad y mortalidad
 ###### Parámetros:
@@ -1364,6 +1376,7 @@ year: int		#Unidad de tiempo de referencia (por lo general un año)
 ```
 >>> cm.graph_sis_bm(0.2, 0.5, 30, 2, mr, sys, ages_sys, 365)
 ```
+![texto alternativo](Imagenes/gr_sir_bm.png)
 ### Modelos SIS y SIR con muerte por enfermedad
 ```CAsimulation``` nos permite también analizar enfermedades que puedan causar la muerte en los individuos que la posean de una manera muy especifica, si se tratase de una enfermedad que afecte mas a un grupo especifico de edad, podremos definir los rangos sobre los cuales la enfermedad afecta gravemente, usando ```dead_by_disease``` podremos aplicar las tasas de mortalidad por enfermedad a estos grupos especificos y mediante las funciones ```evolutioin_sis_dd``` y ```evolution_sir_dd``` podremos aplicar esta característica a cada iteración de la misma manera que se aplicó en los modelos con natalidad y mortalidad. Adicionalmente, las funciones ```evolution_SIS_dd``` y ```evolution_SIR_dd``` nos permiten analizar el comportamiento hasta un tiempo o iteración especifica, con lo cual llegamos finalmente a los modelos con muerte por enfermedad: ```SIS_dd_model``` y ```SIR_dd_model```, la manera en que podremos visualizar de manera concreta el estos comportamientos será usando las funciones ```graph_sis_dd``` y ```graph_sir_dd```.
 #### dead_by_disease(ranges_dead,A,E)
@@ -1478,7 +1491,30 @@ year: int		#Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```list   #Lista que cuenta con las cantidades normalizadas por estados S, I, R y D de la población con respecto a la iteración, incluye además las cantidades normalizadas de las poblaciones con tales estados y las respectivas evoluciones del sistema junto con cada matriz de edad por iteración.```
-
+##### Ejemplo:
+```
+>>> ranges_dead = [[0,25,0.002],[26,40,0.05],[41,100,0.0028]]
+>>> ranges = [[1, 15, 0.2], [16, 40, 0.6], [41, 100, 0.2]]
+>>> sys_6 = np.zeros((10,10))
+>>> sys_6 = cm.initial_condition(0.7,sys_6)
+>>> ages_sys_6 = cm.ages(ranges,sys_6)
+>>> mr = [[1, 25, 0.25], [26, 51, 0.14], [52, 100, 0.08]]
+>>> ex_6 = cm.SIS_dd_model(0.2,0.37,20,7,mr,ranges_dead,sys_6,ages_sys_6,365)[6]
+>>>for i in range(20):
+......plt.imshow(cm.color(ex_6[i]),cmap="nipy_spectral", interpolation='nearest')
+......plt.savefig('ex_6'+str(i)+'.jpg')
+>>> img_ex_6 = []
+>>> for i in range(20):
+......img = cv2.imread('ex_6'+str(i)+'.jpg')
+......height, width, layers = img.shape
+......size = (width,height)
+......img_ex_6.append(img)
+>>> out = cv2.VideoWriter('ex_6.mp4',cv2.VideoWriter_fourcc(*'DIVX'), 15, size) 
+>>> for i in range(len(img_ex_6)):
+......out.write(img_ex_6[i])
+>>> out.release()
+```
+![texto alternativo](Imagenes/ex_6.gif)
 #### graph_sis_dd(alpha,beta,tf,br,mr,ranges_dead,A,E,year)
 Gráfica del modelo SIS con muerte por enfermedad
 ###### Parámetros:
@@ -1512,6 +1548,11 @@ year: int		#Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```.plt   #Gráfica del modelo SIR con muerte por enfermedad```
+###### Ejemplo:
+```
+>>> cm.graph_sis_dd(0.2,0.37,20,7,mr,ranges_dead,sys_6,ages_sys_6,365)
+```
+![texto alternativo](Imagenes/sis_dd.png)
 Si lo que queremos es evaluar diferentes condiciones iniciales y analizar el comportamiento promedio de alguna enfermedad particular, las funciones ```graph_medium_curves_sis_dd``` y ```graph_medium_curves_sir_dd``` nos permitirán graficar los comportamientos promedio para un mismo sistema, bajo diferentes condiciones iniciales, representando los comportamientos obtenidos al usar ```medium_curves_sis_dd``` o ```medium_curves_sir_dd```.
 #### medium_curves_sis_dd(alpha,beta,tf,csim,I0,br,mr,ranges_dead,A,E,year)
 Promedio de csim simulaciones para el modelo SIS con muerte por enfermedad
