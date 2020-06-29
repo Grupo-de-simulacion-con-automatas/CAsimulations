@@ -1198,8 +1198,8 @@ Para el caso del análisis de propagación con natalidad y mortalidad ```CAsimul
 Genera la matriz de edades para A basada en los datos de rangos
 ###### Parámetros:
 ```
-rangos: list		#Lista de rangos de edad: Las primeras dos componentes de cada elemento deben ser los valores extremos del rango y la tercera componente, lo proporción de individuos con esa edad en el espacio
-A:      np.array	#Sistema sobre el cual se definirán las edades
+rangos: list         #Lista de rangos de edad: Las primeras dos componentes de cada elemento deben ser los valores extremos del rango y la tercera componente, lo proporción de individuos con esa edad en el espacio
+A:      np.array     #Sistema sobre el cual se definirán las edades
 ```
 ###### Devoluciones:
 ```np.array   #Matriz de edades```
@@ -1208,9 +1208,9 @@ También podemos seleccionar un grupo de edad sobre el sistema, la función ```a
 Genera las posiciones de los individuos que tienen entre a y b años en A
 ###### Parámetros:
 ```
-a: int			#Valor inicial del grupo de edad
-b: int			#Valor final del grupo de edad
-A: np.array		#Matriz de edades
+a: int               #Valor inicial del grupo de edad
+b: int               #Valor final del grupo de edad
+A: np.array          #Matriz de edades
 ```
 ###### Devoluciones:
 ```list   #Lista con las coordenadas de los individuos en el grupo de edad```
@@ -1218,11 +1218,11 @@ A: np.array		#Matriz de edades
 Evolución por año de los agentes
 ###### Parámetros:
 ```
-br: float		#Tasa de natalidad
-mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-E: np.array		#Matriz de edades
-time_unit: int	#Unidad de tiempo a analizar (minutos, días, meses, años)
-year: int		#Unidad de tiempo de referencia (por lo general un año)
+br: float            #Tasa de natalidad
+mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+E:  np.array         #Matriz de edades
+time_unit: int       #Unidad de tiempo a analizar (minutos, días, meses, años)
+year: int            #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```np.array   #Matriz con la evolución de edades```
@@ -1231,14 +1231,14 @@ Una vez controlado el factor de edad de los agentes, podemos implementar las reg
 Regla de evolución del modelo SIS con natalidad y mortalidad
 ###### Parámetros:
 ```
-alpha: float	#Tasa de recuperación	
-beta: float		#Tasa de infección
-br: float		#Tasa de natalidad
-mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array		#Sistema a evaluar
-E: np.array		#Matriz de edades del sistema A
-time_unit: init	#Unidad de tiempo a analizar (minutos, días, meses, años)
-year: int		#Unidad de tiempo de referencia (por lo general un año)
+alpha: float         #Tasa de recuperación	
+beta: float          #Tasa de infección
+br: float            #Tasa de natalidad
+mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema a evaluar
+E: np.array          #Matriz de edades del sistema A
+time_unit: int       #Unidad de tiempo a analizar (minutos, días, meses, años)
+year: int            #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```list   #En la primera componente encontraremos la evolución del sistema con natalidad y mortalidad mientras que en la segunda las edades con las que cuentan los agentes al realizar la evolución SIS```
@@ -1246,14 +1246,14 @@ year: int		#Unidad de tiempo de referencia (por lo general un año)
 Regla de evolución del modelo SIR con natalidad y mortalidad
 ###### Parámetros:
 ```
-alpha: float	#Tasa de recuperación	
-beta: float		#Tasa de infección
-br: float		#Tasa de natalidad
-mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array		#Sistema a evaluar
-E: np.array		#Matriz de edades del sistema A
-time_unit: init	#Unidad de tiempo a analizar (minutos, días, meses, años)
-year: int		#Unidad de tiempo de referencia (por lo general un año)
+alpha: float         #Tasa de recuperación	
+beta: float          #Tasa de infección
+br:   float          #Tasa de natalidad
+mr:   list           #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema a evaluar
+E: np.array          #Matriz de edades del sistema A
+time_unit: int       #Unidad de tiempo a analizar (minutos, días, meses, años)
+year: int            #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```list   #En la primera componente encontraremos la evolución del sistema con natalidad y mortalidad mientras que en la segunda las edades con las que cuentan los agentes al realizar la evolución SIR```
@@ -1261,14 +1261,14 @@ year: int		#Unidad de tiempo de referencia (por lo general un año)
 Aplica el modelo SIS con natalidad y mortalidad tf veces sobre el sistema A
 ###### Parámetros:
 ```
-alpha: float	#Tasa de recuperación	
-beta: float		#Tasa de infección
-tf: int		#Cantidad de iteraciones basado en la unidad de tiempo
-br: float		#Tasa de natalidad
-mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array		#Sistema a evaluar
-E: np.array		#Matriz de edades del sistema A
-year: int		#Unidad de tiempo de referencia (por lo general un año)
+alpha: float         #Tasa de recuperación	
+beta: float          #Tasa de infección
+tf: int              #Cantidad de iteraciones basado en la unidad de tiempo
+br: float            #Tasa de natalidad
+mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema a evaluar
+E: np.array          #Matriz de edades del sistema A
+year: int            #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```list   #Lista con las evoluciones del sistema bajo un modelo SIS con natalidad y mortalidad, cada elemento de la lista contiene el sistema junto con su matriz de edades```
@@ -1276,14 +1276,14 @@ year: int		#Unidad de tiempo de referencia (por lo general un año)
 Aplica el modelo SIR con natalidad y mortalidad tf veces sobre el sistema A
 ###### Parámetros:
 ```
-alpha: float	#Tasa de recuperación	
-beta: float		#Tasa de infección
-tf: int		#Cantidad de iteraciones basado en la unidad de tiempo
-br: float		#Tasa de natalidad
-mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array		#Sistema a evaluar
-E: np.array		#Matriz de edades del sistema A
-year: int		#Unidad de tiempo de referencia (por lo general un año)
+alpha: float         #Tasa de recuperación	
+beta: float          #Tasa de infección
+tf: int              #Cantidad de iteraciones basado en la unidad de tiempo
+br: float            #Tasa de natalidad
+mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema a evaluar
+E: np.array          #Matriz de edades del sistema A
+year: int            #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```list   #Lista con las evoluciones del sistema bajo un modelo SIR con natalidad y mortalidad, cada elemento de la lista contiene el sistema junto con su matriz de edades```
@@ -1291,14 +1291,14 @@ year: int		#Unidad de tiempo de referencia (por lo general un año)
 Modelo SIS con natalidad y mortalidad
 ###### Parámetros:
 ```
-alpha: float	#Tasa de recuperación	
-beta: float		#Tasa de infección
-tf: int		#Cantidad de iteraciones basado en la unidad de tiempo
-br: float		#Tasa de natalidad
-mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array		#Sistema a evaluar
-E: np.array		#Matriz de edades del sistema A
-year: int		#Unidad de tiempo de referencia (por lo general un año)
+alpha: float         #Tasa de recuperación	
+beta: float          #Tasa de infección
+tf: int              #Cantidad de iteraciones basado en la unidad de tiempo
+br: float            #Tasa de natalidad
+mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema a evaluar
+E: np.array          #Matriz de edades del sistema A
+year: int            #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```list   #Lista que contiene las cantidad de individuos pertenecientes a los estados S, I  y D junto con su iteración, cantidad de individuos para cada estado, lista con las evoluciones del sistema y de sus edades```
@@ -1306,14 +1306,14 @@ year: int		#Unidad de tiempo de referencia (por lo general un año)
 Modelo SIR con natalidad y mortalidad
 ###### Parámetros:
 ```
-alpha: float	#Tasa de recuperación	
-beta: float		#Tasa de infección
-tf: int		#Cantidad de iteraciones basado en la unidad de tiempo
-br: float		#Tasa de natalidad
-mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array		#Sistema a evaluar
-E: np.array		#Matriz de edades del sistema A
-year: int		#Unidad de tiempo de referencia (por lo general un año)
+alpha: float	       #Tasa de recuperación	
+beta: float          #Tasa de infección
+tf: int              #Cantidad de iteraciones basado en la unidad de tiempo
+br: float            #Tasa de natalidad
+mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema a evaluar
+E: np.array          #Matriz de edades del sistema A
+year: int            #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```list   #Lista que contiene las cantidad de individuos pertenecientes a los estados S, R,  I  y D junto con su iteración, cantidad de individuos para cada estado, lista con las evoluciones del sistema y de sus edades```
@@ -1346,14 +1346,14 @@ year: int		#Unidad de tiempo de referencia (por lo general un año)
 Gráfica del modelo SIS con natalidad y mortalidad
 ###### Parámetros:
 ```
-alpha: float	#Tasa de recuperación	
-beta: float		#Tasa de infección
-tf: int		#Cantidad de iteraciones basado en la unidad de tiempo
-br: float		#Tasa de natalidad
-mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array		#Sistema a evaluar
-E: np.array		#Matriz de edades del sistema A
-year: int		#Unidad de tiempo de referencia (por lo general un año)
+alpha: float         #Tasa de recuperación	
+beta: float          #Tasa de infección
+tf: int              #Cantidad de iteraciones basado en la unidad de tiempo
+br: float            #Tasa de natalidad
+mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema a evaluar
+E: np.array          #Matriz de edades del sistema A
+year: int            #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones: 
 ```.plt   #Gráfica del modelo SIS con natalidad y mortalidad```
@@ -1361,14 +1361,14 @@ year: int		#Unidad de tiempo de referencia (por lo general un año)
 Gráfica del modelo SIR con natalidad y mortalidad
 ###### Parámetros:
 ```
-alpha: float	#Tasa de recuperación	
-beta: float		#Tasa de infección
-tf: int		#Cantidad de iteraciones basado en la unidad de tiempo
-br: float		#Tasa de natalidad
-mr: list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array		#Sistema a evaluar
-E: np.array		#Matriz de edades del sistema A
-year: int		#Unidad de tiempo de referencia (por lo general un año)
+alpha: float         #Tasa de recuperación	
+beta: float          #Tasa de infección
+tf: int              #Cantidad de iteraciones basado en la unidad de tiempo
+br: float            #Tasa de natalidad
+mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema a evaluar
+E: np.array          #Matriz de edades del sistema A
+year: int            #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones: 
 ```.plt   #Gráfica del modelo SIR con natalidad y mortalidad```
@@ -1383,9 +1383,9 @@ year: int		#Unidad de tiempo de referencia (por lo general un año)
 Aplica probabilidades de muerte por enfermedad a grupos de edad sobre el sistema A 
 ###### Parámetros:
 ```
-ranges_dead: list	#Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array		#Sistema sobre el cual se esta trabajando
-E: np.array 		#Matriz de edades del sistema A
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema sobre el cual se esta trabajando
+E: np.array          #Matriz de edades del sistema A
 ```
 ###### Devoluciones:
 ```list   #Lista que contiene la evolución del sistema al aplicar la muerte por enfermedad y la matriz de edades luego de aplicar la regla de muerte por enfermedad```
@@ -1394,15 +1394,15 @@ E: np.array 		#Matriz de edades del sistema A
 Regla de evolución para el modelo SIS con muerte por enfermedad
 ###### Parámetros:
 ```
-alpha: float		#Tasa de recuperación	
-beta:  float		#Tasa de infección
-br:    float		#Tasa de natalidad
-mr:    list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list	#Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+alpha: float         #Tasa de recuperación	
+beta:  float         #Tasa de infección
+br:    float         #Tasa de natalidad
+mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
 A:     np.array      #Sistema a evaluar
-E:     np.array	#Matriz de edades del sistema A
-time_unit:   int	#Unidad de tiempo a analizar (minutos, días, meses, años)
-year:  int		#Unidad de tiempo de referencia (por lo general un año)
+E:     np.array      #Matriz de edades del sistema A
+time_unit:   int     #Unidad de tiempo a analizar (minutos, días, meses, años)
+year:  int           #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```list   #Lista con el sistema al aplicar el modelo SIS con muerte por enfermedad y con la matriz de edades del sistema```
@@ -1411,15 +1411,15 @@ year:  int		#Unidad de tiempo de referencia (por lo general un año)
 Regla de evolución para el modelo SIR con muerte por enfermedad
 ###### Parámetros:
 ```
-alpha: float		#Tasa de recuperación	
-beta:  float		#Tasa de infección
-br:    float		#Tasa de natalidad
-mr:    list 		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list	#Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array	#Sistema a evaluar
-E:     np.array	#Matriz de edades del sistema A
+alpha: float         #Tasa de recuperación	
+beta:  float         #Tasa de infección
+br:    float         #Tasa de natalidad
+mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A:     np.array      #Sistema a evaluar
+E:     np.array      #Matriz de edades del sistema A
 time_unit:   int     #Unidad de tiempo a analizar (minutos, días, meses, años)
-year:  int		#Unidad de tiempo de referencia (por lo general un año)
+year:  int           #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```list   #Lista con el sistema al aplicar el modelo SIR con muerte por enfermedad y con la matriz de edades del sistema```
@@ -1428,15 +1428,15 @@ year:  int		#Unidad de tiempo de referencia (por lo general un año)
 Aplica el modelo SIS con muerte por enfermedad tf veces sobre el sistema A
 ###### Parámetros:
 ```
-alpha: float		#Tasa de recuperación	
-beta:  float		#Tasa de infección
-tf:    int		#Cantidad de iteraciones basado en la unidad de tiempo
-br:    float		#Tasa de natalidad
-mr:    list 		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list	#Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array	#Sistema a evaluar
-E:     np.array	#Matriz de edades del sistema A
-year:  int  		#Unidad de tiempo de referencia (por lo general un año)
+alpha: float         #Tasa de recuperación	
+beta:  float         #Tasa de infección
+tf:    int           #Cantidad de iteraciones basado en la unidad de tiempo
+br:    float         #Tasa de natalidad
+mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A:     np.array      #Sistema a evaluar
+E:     np.array      #Matriz de edades del sistema A
+year:  int           #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```list   #Lista con las evoluciones del sistema luego de aplicar el modelo SIS con muerte por enfermedad y las matrices de edad por cada iteración.```
@@ -1445,15 +1445,15 @@ year:  int  		#Unidad de tiempo de referencia (por lo general un año)
 Aplica el modelo SIR con muerte por enfermedad tf veces sobre el sistema A
 ###### Parámetros:
 ```
-alpha: float		#Tasa de recuperación	
-beta:  float		#Tasa de infección
-tf:    int		#Cantidad de iteraciones basado en la unidad de tiempo
-br:    float		#Tasa de natalidad
-mr:    list 		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list	#Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array	#Sistema a evaluar
-E:     np.array	#Matriz de edades del sistema A
-year:  int	    	#Unidad de tiempo de referencia (por lo general un año)
+alpha: float         #Tasa de recuperación	
+beta:  float         #Tasa de infección
+tf:    int           #Cantidad de iteraciones basado en la unidad de tiempo
+br:    float         #Tasa de natalidad
+mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A:     np.array      #Sistema a evaluar
+E:     np.array      #Matriz de edades del sistema A
+year:  int           #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```list   #Lista con las evoluciones del sistema luego de aplicar el modelo SIR con muerte por enfermedad y las matrices de edad por cada iteración.```
@@ -1462,15 +1462,15 @@ year:  int	    	#Unidad de tiempo de referencia (por lo general un año)
 Modelo SIS con muerte por enfermedad
 ###### Parámetros:
 ```
-alpha: float		#Tasa de recuperación	
-beta:  float		#Tasa de infección
-tf:    int		#Cantidad de iteraciones basado en la unidad de tiempo
-br:    float		#Tasa de natalidad
-mr:    list 		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list	#Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array	#Sistema a evaluar
-E:     np.array	#Matriz de edades del sistema A
-year:  int  		#Unidad de tiempo de referencia (por lo general un año)
+alpha: float         #Tasa de recuperación	
+beta:  float         #Tasa de infección
+tf:    int           #Cantidad de iteraciones basado en la unidad de tiempo
+br:    float         #Tasa de natalidad
+mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A:     np.array      #Sistema a evaluar
+E:     np.array      #Matriz de edades del sistema A
+year:  int           #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```list   #Lista que cuenta con las cantidades normalizadas por estados S, I y D de la población con respecto a la iteración, incluye además las cantidades normalizadas de las poblaciones con tales estados y las respectivas evoluciones del sistema junto con cada matriz de edad por iteración.```
@@ -1519,15 +1519,15 @@ year:  int  		#Unidad de tiempo de referencia (por lo general un año)
 Gráfica del modelo SIS con muerte por enfermedad
 ###### Parámetros:
 ```
-alpha: float		#Tasa de recuperación	
-beta:  float		#Tasa de infección
-tf:    int		#Cantidad de iteraciones basado en la unidad de tiempo
-br:    float		#Tasa de natalidad
-mr:    list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list	#Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array	#Sistema a evaluar
-E:     np.array	#Matriz de edades del sistema A
-year:  int  		#Unidad de tiempo de referencia (por lo general un año)
+alpha: float         #Tasa de recuperación	
+beta:  float         #Tasa de infección
+tf:    int           #Cantidad de iteraciones basado en la unidad de tiempo
+br:    float         #Tasa de natalidad
+mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A:     np.array      #Sistema a evaluar
+E:     np.array      #Matriz de edades del sistema A
+year:  int           #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```.plt   #Gráfica del modelo SIS con muerte por enfermedad```
@@ -1558,17 +1558,17 @@ Si lo que queremos es evaluar diferentes condiciones iniciales y analizar el com
 Promedio de csim simulaciones para el modelo SIS con muerte por enfermedad
 ###### Parámetros:
 ```
-alpha: float		#Tasa de recuperación	
-beta:  float		#Tasa de infección
-tf:    int		#Cantidad de iteraciones basado en la unidad de tiempo
-csim:  int		#Cantidad de simulaciones
-I0:    float		#Porcentaje inicial de infectados en el sistema
-br:    float		#Tasa de natalidad
-mr:    list 		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list	#Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array	#Sistema a evaluar
-E:     np.array	#Matriz de edades del sistema A
-year:  int  		#Unidad de tiempo de referencia (por lo general un año)
+alpha: float         #Tasa de recuperación	
+beta:  float         #Tasa de infección
+tf:    int           #Cantidad de iteraciones basado en la unidad de tiempo
+csim:  int           #Cantidad de simulaciones
+I0:    float         #Porcentaje inicial de infectados en el sistema
+br:    float         #Tasa de natalidad
+mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A:     np.array      #Sistema a evaluar
+E:     np.array      #Matriz de edades del sistema A
+year:  int           #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```list   #Lista que cuenta con los promedios de las cantidades normalizadas por estados S, I y D de la población con respecto a la iteración, incluye además los promedios de las cantidades normalizadas de las poblaciones con tales estados y las respectivas evoluciones del sistema junto con cada matriz de edad por iteración.```
@@ -1577,17 +1577,17 @@ year:  int  		#Unidad de tiempo de referencia (por lo general un año)
 Grafica del promedio de simulaciones para el modelo SIS con muerte por enfermedad
 ###### Parámetros:
 ```
-alpha: float		#Tasa de recuperación	
-beta:  float		#Tasa de infección
-tf:    int		#Cantidad de iteraciones basado en la unidad de tiempo
-csim:  int		#Cantidad de simulaciones
-I0:    float		#Porcentaje inicial de infectados en el sistema
-br:    float		#Tasa de natalidad
-mr:    list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list	#Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array	#Sistema a evaluar
-E:     np.array	#Matriz de edades del sistema A
-year:  int		#Unidad de tiempo de referencia (por lo general un año)
+alpha: float         #Tasa de recuperación	
+beta:  float         #Tasa de infección
+tf:    int           #Cantidad de iteraciones basado en la unidad de tiempo
+csim:  int           #Cantidad de simulaciones
+I0:    float         #Porcentaje inicial de infectados en el sistema
+br:    float         #Tasa de natalidad
+mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A:     np.array      #Sistema a evaluar
+E:     np.array      #Matriz de edades del sistema A
+year:  int           #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```.plt   #Gráfica del modelo SIS con muerte por enfermedad promedio para un número csim de simulaciones``` 
@@ -1596,17 +1596,17 @@ year:  int		#Unidad de tiempo de referencia (por lo general un año)
 Promedio de csim simulaciones para el modelo SIR con muerte por enfermedad
 ###### Parámetros:
 ```
-alpha: float		#Tasa de recuperación	
-beta:  float		#Tasa de infección
-tf:    int		#Cantidad de iteraciones basado en la unidad de tiempo
-csim:  int		#Cantidad de simulaciones
-I0:    float		#Porcentaje inicial de infectados en el sistema
-br:    float		#Tasa de natalidad
-mr:    list		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list	#Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array	#Sistema a evaluar
-E:     np.array	#Matriz de edades del sistema A
-year:  int		#Unidad de tiempo de referencia (por lo general un año)
+alpha: float         #Tasa de recuperación	
+beta:  float         #Tasa de infección
+tf:    int           #Cantidad de iteraciones basado en la unidad de tiempo
+csim:  int           #Cantidad de simulaciones
+I0:    float         #Porcentaje inicial de infectados en el sistema
+br:    float         #Tasa de natalidad
+mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A:     np.array      #Sistema a evaluar
+E:     np.array      #Matriz de edades del sistema A
+year:  int           #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```list   #Lista que cuenta con los promedios de las cantidades normalizadas por estados S, I, R y D de la población con respecto a la iteración, incluye además los promedios de las cantidades normalizadas de las poblaciones con tales estados y las respectivas evoluciones del sistema junto con cada matriz de edad por iteración.```
@@ -1615,17 +1615,17 @@ year:  int		#Unidad de tiempo de referencia (por lo general un año)
 Grafica del promedio de simulaciones para el modelo SIR con muerte por enfermedad
 ###### Parámetros:
 ```
-alpha: float	    #Tasa de recuperación	
-beta:  float	    #Tasa de infección
-tf:    int	    #Cantidad de iteraciones basado en la unidad de tiempo
-csim:  int	    #Cantidad de simulaciones
-I0:    float	    #Porcentaje inicial de infectados en el sistema
-br:    float	    #Tasa de natalidad
-mr:    list	    #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array   #Sistema a evaluar
-E:     np.array   #Matriz de edades del sistema A
-year:  int	    #Unidad de tiempo de referencia (por lo general un año)
+alpha: float         #Tasa de recuperación	
+beta:  float         #Tasa de infección
+tf:    int           #Cantidad de iteraciones basado en la unidad de tiempo
+csim:  int           #Cantidad de simulaciones
+I0:    float         #Porcentaje inicial de infectados en el sistema
+br:    float         #Tasa de natalidad
+mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A:     np.array      #Sistema a evaluar
+E:     np.array      #Matriz de edades del sistema A
+year:  int           #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```.plt   #Gráfica del modelo SIR con muerte por enfermedad promedio para un número csim de simulaciones```
