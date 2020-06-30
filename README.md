@@ -1629,3 +1629,187 @@ year:  int           #Unidad de tiempo de referencia (por lo general un año)
 ```
 ###### Devoluciones:
 ```.plt   #Gráfica del modelo SIR con muerte por enfermedad promedio para un número csim de simulaciones```
+### Modelos SIS y SIR con movimiento de agentes
+Para implementar el movimiento en nuestros análisis, debemos añadir un nuevo tipo de espacio vacío en nuestro sistema, este espacio será identificado con el valor numérico 75. La idea de incluir un nuevo tipo de estado para un píxel, nos sirve para conservar la estructura del sistema.
+
+```CAsimulation``` toma las reglas de movimiento como unas reglas del tipo probabilístico, el usuario puede definir una probabilidad de movimiento para cada estado, esto nos permite visualizar diferentes escenarios de comportamiento de los agentes, la función ```transport``` nos permite modelar estas reglas de movimiento para cada posible estado usando ```state_coor```, la cual actúa como una generalización de funciones similares a  ```vector_S```, finalmente si lo que queremos es visualizar como se desarrollan las reglas de movimiento entre dos sistemas, la función ```superposición``` resulta ser una herramienta indispensable pues nos permite superponer los sistemas con los que estemos trabajando.
+
+#### state_coor(A, state_value)
+Enlista los agentes que tengan un estado identificado con state_value
+###### Parámetros:
+```
+A: np.array          #Sistema sobre el cual se está trabajando
+state_value: int	#Valor con el cual se identifica el estado de interés
+```
+###### Devoluciones:
+```list   #Lista con las coordenadas de los individuos que tengan el estado identificado con state_value```
+
+#### transport(output,arrival,ages,list_prob)
+Todos los agentes tendrán una probabilidad de moverse, de acuerdo con el estado que posea
+###### Parámetros:
+```
+output: np.array     #Sistema de salida: los individuos en output son los que podrán moverse
+arrival: np.array    #Sistema de llegada: Los individuos que se muevan de output caerán en arrival
+ages: np.array       #Edades de los individuos en el sistema
+list_prob: list      #Lista con la probabilidad de movimiento de cada estado
+```
+###### Devoluciones:
+```list  #Lista con los cambios realizados sobre output y arrival luego de aplicar el movimiento de agentes, además incluye la matriz de edades de los agentes luego de realizar el movimiento```
+#### superposicion(A,B)
+Permite visualizar dos sistemas sobre un mismo dominio 
+###### Parámetros:
+```
+A: np.array          #Sistema 1
+B: np.array          #Sistema 2
+```
+###### Devoluciones:
+```np.array   #Arreglo en el cual están descritos los sistemas A y B```
+Es tiempo de hablar de los modelos SIS y SIR, con movimiento. De manera similar a como se definieron las funciones previas para cada uno de los modelos anteriores, se definen ```evolution_sis_wm```, ```evolution_sir_wm```, ```evolution_SIS_wm``` y ```evolution_SIR_wm```, obteniendo al final las funciones que describen los comportamientos SIS y SIR con una población "movil", las cuales se identificarán como ```SIS_wm_model``` y ```SIR_wm_model```. Finalmente se definieron también las funciones que nos permitirán visualizar estos comportamientos de manera analítica, las funciones ```graph_sis_wm``` y ```graph_sir_wm``` actuarán como funciones de análisis gráfico para un número arbitrario de iteraciones.
+#### evolution_sis_wm(alpha,beta,list_prob,br,mr,ranges_dead,A,B,E,time_unit,year)
+Regla de evolución para el modelo SIS con movimiento de agentes
+###### Parámetros:
+```
+alpha: float         #Tasa de recuperación	
+beta: float          #Tasa de infección
+list_prob: list      #Lista con la probabilidad de movimiento de cada estado
+br: float            #Tasa de natalidad
+mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema 1 a evaluar
+B: np.array          #Sistema 2 a evaluar
+E: np.array          #Matriz de edades del sistema A
+time_unit: int       #Unidad de tiempo a analizar (minutos, días, meses, años)
+year: int            #Unidad de tiempo de referencia (por lo general un año)
+```
+###### Devoluciones:
+```list   #Lista con el sistema al aplicar el modelo SIS con movimiento a cada sistema y con la matriz de edades del sistema```
+
+#### evolution_sir_wm(alpha,beta,list_prob,br,mr,ranges_dead,A,B,E,time_unit,year)
+Regla de evolución para el modelo SIR con movimiento de agentes
+###### Parámetros:
+```
+alpha: float         #Tasa de recuperación	
+beta: float          #Tasa de infección
+list_prob: list      #Lista con la probabilidad de movimiento de cada estado
+br: float            #Tasa de natalidad
+mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema 1 a evaluar
+B: np.array          #Sistema 2 a evaluar
+E: np.array          #Matriz de edades del sistema A
+time_unit: int       #Unidad de tiempo a analizar (minutos, días, meses, años)
+year: int            #Unidad de tiempo de referencia (por lo general un año)
+```
+###### Devoluciones:
+```list   #Lista con el sistema al aplicar el modelo SIR con movimiento a cada sistema y con la matriz de edades del sistema``` 
+#### evolution_SIS_wm(alpha,beta,tf,list_prob,br,mr,ranges_dead,A,B,E,year)
+Aplica el modelo SIS con movimiento tf veces sobre los sistemas A y B
+###### Parámetros:
+```
+alpha: float         #Tasa de recuperación	
+beta: float          #Tasa de infección
+tf: int              #Cantidad de iteraciones
+list_prob: list      #Lista con la probabilidad de movimiento de cada estado
+br: float            #Tasa de natalidad
+mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema 1 a evaluar
+B: np.array          #Sistema 2 a evaluar
+E: np.array          #Matriz de edades del sistema A
+year: int            #Unidad de tiempo de referencia (por lo general un año)
+```
+###### Devoluciones:
+```list   #Lista con los sistemas A y B luego de aplicar el modelo SIS con transporte, incluye también la matriz de edades luego de esta transformación```
+
+#### evolution_SIR_wm(alpha,beta,tf,list_prob,br,mr,ranges_dead,A,B,E,year)
+Aplica el modelo SIR con movimiento tf veces sobre los sistemas A y B
+###### Parámetros:
+```
+alpha: float         #Tasa de recuperación	
+beta: float          #Tasa de infección
+tf: int              #Cantidad de iteraciones
+list_prob: list      #Lista con la probabilidad de movimiento de cada estado
+br: float            #Tasa de natalidad
+mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema 1 a evaluar
+B: np.array          #Sistema 2 a evaluar
+E: np.array          #Matriz de edades del sistema A
+year: int            #Unidad de tiempo de referencia (por lo general un año)
+```
+###### Devoluciones:
+```list   #Lista con los sistemas A y B luego de aplicar el modelo SIR con transporte, incluye también la matriz de edades luego de esta transformación```
+#### SIS_wm_model(alpha,beta,tf,list_prob,br,mr,ranges_dead,A,B,E,year)
+Modelo SIS con movimiento
+###### Parámetros:
+```
+alpha: float         #Tasa de recuperación	
+beta: float          #Tasa de infección
+tf: int              #Cantidad de iteraciones
+list_prob: list      #Lista con la probabilidad de movimiento de cada estado
+br: float            #Tasa de natalidad
+mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema 1 a evaluar
+B: np.array          #Sistema 2 a evaluar
+E: np.array          #Matriz de edades del sistema A
+year: int            #Unidad de tiempo de referencia (por lo general un año)
+```
+###### Devoluciones:
+```list   #Lista que contiene el comportamiento de los estados S, I y D con respecto a cada iteración (Se forman en tuplas donde la primera componente es la iteración y la segunda el comportamiento de alguno de los estados), se incluyen también los valores numéricos de crecimiento y por último la evolución del sistema junto con la evolución de u matriz de edades```
+
+#### SIR_wm_model(alpha,beta,tf,list_prob,br,mr,ranges_dead,A,B,E,year)
+Modelo SIR con movimiento
+###### Parámetros:
+```
+alpha: float         #Tasa de recuperación	
+beta: float          #Tasa de infección
+tf: int              #Cantidad de iteraciones
+list_prob: list      #Lista con la probabilidad de movimiento de cada estado
+br: float            #Tasa de natalidad
+mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema 1 a evaluar
+B: np.array          #Sistema 2 a evaluar
+E: np.array          #Matriz de edades del sistema A
+year: int            #Unidad de tiempo de referencia (por lo general un año)
+```
+###### Devoluciones:
+```list   #Lista que contiene el comportamiento de los estados S, I, R y D con respecto a cada iteración (Se forman en tuplas donde la primera componente es la iteración y la segunda el comportamiento de alguno de los estados), se incluyen también los valores numéricos de crecimiento y por último la evolución del sistema junto con la evolución de u matriz de edades```
+#### graph_sis_wm(alpha,beta,tf,list_prob,br,mr,ranges_dead,A,B,E,year)
+Gráfica del modelo SIS con movimiento
+###### Parámetros:
+```
+alpha: float         #Tasa de recuperación	
+beta: float          #Tasa de infección
+tf: int              #Cantidad de iteraciones
+list_prob: list      #Lista con la probabilidad de movimiento de cada estado
+br: float            #Tasa de natalidad
+mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema 1 a evaluar
+B: np.array          #Sistema 2 a evaluar
+E: np.array          #Matriz de edades del sistema A
+year: int            #Unidad de tiempo de referencia (por lo general un año)
+```
+###### Devoluciones:
+```.plt   #Gráfica del modelo SIS con movimiento```
+
+#### graph_sir_wm(alpha,beta,tf,list_prob,br,mr,ranges_dead,A,B,E,year)
+Gráfica del modelo SIR con movimiento
+###### Parámetros:
+```
+alpha: float         #Tasa de recuperación	
+beta: float          #Tasa de infección
+tf: int              #Cantidad de iteraciones
+list_prob: list      #Lista con la probabilidad de movimiento de cada estado
+br: float            #Tasa de natalidad
+mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
+A: np.array          #Sistema 1 a evaluar
+B: np.array          #Sistema 2 a evaluar
+E: np.array          #Matriz de edades del sistema A
+year: int            #Unidad de tiempo de referencia (por lo general un año)
+``` 
+###### Devoluciones:
+```.plt   #Gráfica del modelo SIR con movimiento```
