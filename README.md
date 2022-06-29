@@ -1,1815 +1,845 @@
-# CAsimulations
+# CAsimulations: Modelación de las dinámicas de la propagación de una enfermedad usando AC
 
-```CAsimulations``` proporciona una manera de simular fenómenos asociados con la propagación de enfermedades, basándose en modelos *SIR* y *SIS* implementados en autómatas celulares en Python. ```CAsimulations``` incluye una gran variedad de utilidades para análisis epidemiológicos tales como la capacidad de definir la condición inicial de frontera del sistema, la condición inicial de dispersión de los individuos infectados, variaciones y comparaciones con respecto al cambio de escala y al cambio de frontera del sistema, variaciones promedio para un número arbitrario de simulaciones, entre otros. 
+```CAsimulations``` proporciona una manera de simular fenómenos asociados con la propagación de enfermedades, basándose en modelos SIS, SIR y algunas de sus variaciones implementadas en autómatas celulares en Python. ```CAsimulations``` incluye una gran variedad de utilidades para análisis epidemiológicos tales como la capacidad de definir la condición inicial de frontera del sistema, la condición inicial de dispersión de los individuos infectados, variaciones y comparaciones con respecto al cambio de escala y al cambio de frontera del sistema, variaciones promedio para un número arbitrario de simulaciones, entre otros.
 
-### Instalación
-Solo debemos usar pip para instalar:
+Si desea profundizar sobre los fundamentos detrás de la lógica implementada en la librería, puede dirigirse al [documento principal](https://github.com/Grupo-de-simulacion-con-automatas/Prediccion-del-comportamiento-de-una-enfermedad-simulada-en-AC-con-un-algoritmo-en-RN/blob/master/Documentos/Proyecto_de_grado.pdf).
 
-```pip install -i https://test.pypi.org/simple/ casimulation```
-### Preliminares
-Se decidió implementar una interpolación tipo spline cubica para la correcta visualización de los datos obtenidos a partir de listas de coordenadas. ```spline3``` genera los coeficientes de los polinomios cúbicos que mejor se aproximan a la lista ```A``` .
-#### spline3(A)
-Realice una interpolación cubica tipo spline, tomando como puntos los elementos de A.
-###### Parámetros:
-```
-A: list   #Lista de coordenadas.
-```
-###### Devoluciones:
-```
-np.array    #Arreglo de puntos al aplicar un spline cubico.
-```
-##### Ejemplo:
-```
->>> from CAsimulation import camodels as cm
->>> Point_list=[[1,0.2],[2,2.7],[3,3],[4,1],[5,2]]
->>> cm.spline3(Point_list)
-array([[ 0.2       ,  2.87142857,  0.        , -0.37142857],
-       [ 2.7       ,  1.75714286, -1.11428571, -0.34285714],
-       [ 3.        , -1.5       , -2.14285714,  1.64285714],
-       [ 1.        , -0.85714286,  2.78571429, -0.92857143]])
-```
-####  one_function_graph(A, x)
-Grafica el spline cubico para los elementos de A.
-###### Parámetros:
-```
-A: list   #Lista de coordenadas de la función x
-x: str    #Nombre de la función
-```
-###### Devoluciones:
-```
-.plt    #Gráfica de la función x 
-```
-#### one_state_graph(A, x)
-Graficá el spline cubico para los elementos de A de manera normalizada
-###### Parámetros:
-```
-A: list   #Lista de coordenadas de la función x
-x: str    #Nombre de la función
-```
-###### Devoluciones:	
-```
-.plt    #Gráfica de la función normalizada x 
-```
-#### two_states_graph(A, B, X, Y, Z)
-Graficá el spline cubico para los elementos de A y B
-###### Parámetros:	
-```
-A: list   #Lista de coordenadas de la función x 
-B: list   #Lista de coordenadas de la función y
-x: str    #Nombre de la primera función
-y: str    #Nombre de la segunda función
-z: str    #Título del gráfico
-```
-###### Devoluciones:	
-```
-.plt    #Gráfica de las funciones x e y con título z
-```
-#### three_states_graph(A, B, C, x, y, z, w)
-Graficá el spline cubico para los elementos de A, B y C
-###### Parámetros: 	
-```
-A: list   #Lista de coordenadas de la función x
-B: list   #Lista de coordenadas de la función y
-C: list   #Lista de coordenadas de la función z
-x: str    #Nombre de la primera función
-y: str    #Nombre de la segunda función
-z: str    #Nombre de la tercera función
-w: str    #Título del gráfico 
-```
-###### Devoluciones:	
-```
-.plt    #Gráfica de las funciones x, y, z con título w
-```
-### Autómatas celulares 2-dimensionales
-Para el caso de AC en dos dimensiones, encontramos una gran variedad de vecindarios, sin embargo, para los intereses de investigación analizamos la vecindad de Moore, que consideran los vecinos diagonales y ortogonales.
-
-![texto alternativo](Imagenes/Vecindad_de_Moore.png)
-
-#### array_generator(A, i, j)
-Genera la vecindad de Moore para la célula en la fila i columna j
-###### Parámetros: 	
-```
-A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
-I: int        #Fila i de A
-J: int        #Fila j de A
-```
-###### Devoluciones:	
-```
-np.array    #Vecindad de Moore de la célula en la fila i columna j
-```
-Inicialmente debemos identificar dos estados básicos en la simulación basada en modelos de propagación. El primero de ellos será el estado de susceptibilidad, los agentes (píxeles o componentes de la matriz) que tengan este estado, podrán adquirir la enfermedad y por otro lado tendremos los individuos que cuenten con el estado de infección, los cuales podrían infectar a los individuos susceptibles.
-
-Identificaremos los estados *susceptible* e *infectado* con los valores numéricos 0 (cero) y 1 (uno) respectivamente.
-
-#### vector_S(A)
-Genera la lista de posiciones de individuos susceptibles, los cuales identificamos con 0 (cero)
-###### Parámetros:
-```
-A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:
-```
-list    #Lista de posiciones de individuos susceptibles
-```
-#### vector_I(A)
-Genera la lista de posiciones de individuos infectados, identificados con 1 (uno)	
-###### Parámetros:	
-```
-A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:	
-```
-list    #Vector de posiciones de individuos infectados
-```
-##### Ejemplo:
-```
->>> import random
->>> random_matrix = [[random.randint(-1,3) for e in range(6)] for e in range(8)]
->>> random_matrix
-[[3, 1, 0, 1, 1, 2],
- [0, 1, -1, -1, 2, 1],
- [-1, 1, 1, 0, 2, 0],
- [0, -1, 2, -1, 1, -1],
- [0, 2, 1, -1, -1, 2],
- [-1, -1, 3, 1, 0, 2],
- [3, 3, 2, 2, -1, 3],
- [1, 2, -1, -1, 3, 3]]
->>> cm.array_generator(random_matrix, 3,4)
-array([[ 0.,  2.,  0.],
-       [-1.,  1., -1.],
-       [-1., -1.,  2.]])
->>> import numpy as np
->>> random_matrix=np.array(random_matrix)
->>> cm.vector_S(random_matrix)
-[[0, 2], [1, 0], [2, 3], [2, 5], [3, 0], [4, 0], [5, 4]]
->>> cm.vector_I(random_matrix)
-[[0, 1], [0, 3], [0, 4], [1, 1], [1, 5], [2, 1], [2, 2], [3, 4], [4, 2], [5, 3], [7, 0]]
-```
-## Modelos epidemiológicos en AC
-Para comenzar con nuestro estudio en los modelos epidemiológicos usando AC, es importante definir los estados modelo. Trabajaremos con estados susceptibles *S*, infectados *I*, recuperados *R* y muertos *D*, adicionalmente incluiremos el estado vació *V* en nuestro modelo, esto permitirá realizar un análisis en el cambio de la topología de la vecindad de Moore, está noción se explicara de manera mas precisa en secciones posteriores. De esta manera, el conjunto de estados estará dado por $\sum=\{S,I,R,D,V\}$. 
-
-Representaremos con los colores amarillo, rojo, verde y blanco los estados *S*, *I*, *R* y *D* respectivamente. En la siguiente ilustración se muestran únicamente uno de los casos posibles de permutación por cada estado de interacción la vecindad. 
-
-![texto alternativo](Imagenes/estados.png)
+Para importar la librería, ejecute el siguiente comando pip en su entorno de Python:
 
-Para plantear adecuadamente la regla de evolución local, debemos implementar una manera de contar los individuos que tengan un estado especifico en algún tiempo $t$ y en una vecindad determinada. Las funciones ```sumaS, sumaI``` y ```sumaR``` nos permiten contar la cantidad de vecinos que sean susceptibles, infectados o recuperados respectivamente, además de incluir la función ```sumaV``` que nos permite contar la cantidad de espacios vacíos en la vecindad a estudiar.
+```pip install -i https://test.pypi.org/simple/ CAsimulation```
 
-#### sumaS(V)
-cantidad de individuos susceptibles en la vecindad
-###### Parámetros:
-```
-V: np.array   #Vecindad
-```
-###### Devoluciones:
-```
-int   #Cantidad de individuos susceptibles en la vecindad V
-```
-#### sumaI(V)
-cantidad de individuos infectados en la vecindad
-###### Parámetros: 	
-```
-V: np.array   #Vecindad
-```
-###### Devoluciones:	
-```
-int   #Cantidad de individuos infectados en la vecindad V
-```
-#### sumaR(V)
-cantidad de individuos recuperados en la vecindad
-###### Parámetros: 	
-```
-V: np.array   #Vecindad
-```
-###### Devoluciones:	
-```
-int   #Cantidad de individuos recuperados en la vecindad V
-```
-#### sumaV(V)
-cantidad de espacios vacíos en la vecindad
-###### Parámetros: 	
-```
-V: np.array   #Vecindad
-```
-###### Devoluciones:	
-```
-int   #Cantidad de espacios vacíos en la vecindad V
-```
-##### Ejemplo:
-```
->>> V = cm.array_generator(random_matrix, 6, 3)
->>> print(cm.sumaS(V), cm.sumaI(V), cm.sumaR(V), cm.sumaV(V))
-1 1 1 3
-```
-#### color(A)
-La función ```color``` nos permite graficar el entorno espacial de una manera intuitiva en una escala de colores rgb, usando la paleta nipy_spectral de Python.
-###### Parámetros:
-```
-A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:	
-```np.array   #Arreglo con entradas en escala rgb```
-##### Ejemplo:
-```
->>> import matplotlib.pyplot as plt
->>> plt.imshow(cm.color(random_matrix),cmap="nipy_spectral", interpolation='nearest')
-```
+Una vez instalada, podemos proceder a cargar la librería, para lo cual tendrá que ejecutar el siguiente script
 
-![texto alternativo](Imagenes/color.png)
+```from CAsimulation import epidemiologicalModelsInCA as ca```
 
-Las funciones ```count_S, count_I, count_R``` y ```count_D``` nos permiten conocer el número exacto de individuos pertenecientes a alguno de los estados *S, I, R* o *D*, mientras que con las funciones ```count_s, count_i, count_r``` y ```count_d``` podemos conocer el promedio de individuos con un estado especifico con respecto a la cantidad de píxeles no vacíos.
+Con la línea anterior podrá acceder a los módulos que le brindarán la posibilidad de implementar las herramientas descritas en el documento de una manera fácil y rápida. Si desea analizar detalladamente las funciones de la librería, puede dirigirse al [enlace](https://github.com/Grupo-de-simulacion-con-automatas/Prediccion-del-comportamiento-de-una-enfermedad-simulada-en-AC-con-un-algoritmo-en-RN/tree/master/Codigo/CAsimulation/casimulation) o implementar los módulos de manera individual.
 
-#### count_S(A)
-Cantidad de individuos susceptibles
-###### Parámetros:	
-```
-A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones: 	
-```
-int   #Cantidad de individuos susceptibles en el sistema A
-```
-#### count_I(A)
-Cantidad de individuos infectados
-###### Parámetros:	
-```
-A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:	
-```
-int   #Cantidad de individuos infectados en el sistema A
-```
-#### count_R(A)
-Cantidad de individuos recuperados
-###### Parámetros:	
-```
-A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:	
-```
-int   #Cantidad de individuos recuperados en el sistema A
-```
-#### count_D(A)
-Cantidad de individuos muertos
-###### Parámetros:	
-```
-A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:	
-```
-int   #Cantidad de individuos recuperados en el sistema A
-```
-#### num_individuals(A)
-Cantidad de espacios no vacíos
-###### Parámetros:	
-```
-A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:
-```
-int   #Cantidad de espacios no vacíos en el sistema A
-```
-#### count_s(A)
-Promedio de individuos susceptibles
-###### Parámetros: 	
-```
-A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:	
-```
-float   #Promedio de individuos susceptibles en el sistema A con respecto a la cantidad de espacios no                                                   vacíos
-```
-#### count_i(A)
-Promedio de individuos infectados
-###### Parámetros:	
-```
-A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:	
-```
-float   #Promedio de individuos infectados en el sistema A con respecto a la cantidad de espacios no vacíos
-```
-#### count_r(A)
-Promedio de individuos recuperados
-###### Parámetros: 	
-```
-A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:
-```
-float   #Promedio de individuos recuperados en el sistema A con respecto a la cantidad de espacios no vacíos
-```
-#### count_d(A)
-Promedio de individuos muertos
-###### Parámetros:
-```
-A: np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:
-```
-float   #Promedio de individuos muertos en el sistema A con respecto a la cantidad de espacios no vacíos
-```
-##### Ejemplo:
-```
->>> print(cm.count_S(random_matrix), cm.count_I(random_matrix), cm.count_R(random_matrix), cm.count_D(random_matrix))
-7 11 10 7
->>> print(cm.num_individuals(random_matrix))
-35
->>> print(cm.count_s(random_matrix), cm.count_i(random_matrix), cm.count_r(random_matrix), cm.count_d(random_matrix))
-0.2 0.3142857142857143 0.2857142857142857 0.2
-```
-### La regla base de evolución y el modelo *SIS*
-Una vez dicho esto considere los siguientes eventos:
+**Observación:** Los valores que se muestran sobre las matrices que describen las evoluciones del sistema, son precisamente los indicadores de cada estado. El indicador para cada estado se muestra en la siguiente tabla:
 
-1.   Si $\beta>\alpha$, es decir, si el individuo tiene un estado de susceptibilidad la probabilidad de adquirir la infección es mas alta que la probabilidad de mantenerse sano, mientras que si el individuo se encuentra infectado la probabilidad de mantenerse en ese estado sera mayor que la probabilidad de pasar al estado susceptible; debemos tener también en cuenta que el indicador $N_{ij}^t(I)$ sera de vital importancia debido a que a mayor valor de $N_{ij}^t(I)$ mayor sera la probabilidad de infectarse independientemente de el parámetro  $\beta$, teniendo esto en cuenta la regla para este evento sera:
+| Estado | Indicador |
+|-------------------|-------------|
+| Susceptible    | 0    |
+| Infectado 	  | 1       |
+| Recuperado  | 2 |
+| Muerto  | 3 |
+| Espacio vacío| -1 |
 
-    $$\textit{"Si }x_{i,j}^{t}=0\textit{, }N_{ij}^t(I)>N_{ij}^t(S)\textit{ y }\rho>\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\textit{ entonces }x_{ij}^{t+1}=1\textit{"}$$
-    
-    donde $\rho$ es un valor aleatorio entre 0 y 100, de igual manera se define la siguiente regla:
-    $$\textit{"Si }x_{i,j}^{t}=1\textit{ y }\rho<\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\textit{, entonces }x_{ij}^{t+1}=1\textit{"}$$
-2.   Si $\beta<\alpha$, es decir, si el individuo tiene un estado de infección la probabilidad de adquirir pasar al estado sano es mas alta que la probabilidad de mantenerse infectado, mientras que si el individuo se encuentra sano la probabilidad de mantenerse en ese estado sera mayor que la probabilidad de pasar al estado infectado, teniendo esto en cuenta la regla para este evento sera:
-    $$\textit{"Si }x_{ij}^{t}=1\textit{, }N_{ij}^t(I)<N_{ij}^t(S)\textit{ y }\rho\leq\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\textit{ entonces }x_{ij}^{t+1}=0\textit{"}$$
-    de igual manera se define la siguiente regla:
-    $$\textit{"Si }x_{ij}^{t}=0\textit{ y }\rho\geq\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\textit{, entonces }x_{ij}^{t+1}=0\textit{"}$$
+A continuación presentaremos la documentación de cada uno de los módulos de la librería, si desea consultar ejemplos particulares puede consultar directamente el [documento principal](https://github.com/Grupo-de-simulacion-con-automatas/Prediccion-del-comportamiento-de-una-enfermedad-simulada-en-AC-con-un-algoritmo-en-RN/blob/master/Documentos/Proyecto_de_grado.pdf) o los [ejemplos particulares](https://github.com/Grupo-de-simulacion-con-automatas/Prediccion-del-comportamiento-de-una-enfermedad-simulada-en-AC-con-un-algoritmo-en-RN/tree/master/Codigo).
 
+Los módulos de la siguiente manera:
+1. [AgeManagement](#AgeManagement)
+2. [CellManagement](#CellManagement)
+3. [CellSpaceConfiguration](#CellSpaceConfiguration)
+4. [CompartmentalModelsInEDOS](#CompartmentalModelsInEDOS)
+5. [DataManager](#DataManager)
+6. [Models](#Models)
+7. [NeighborhoodManager](#NeighborhoodManager)
+8. [PlotsManager](#PlotsManager)
+9. [SystemVisualization](#SystemVisualization)
+10. [epidemiologicalModelsInCA](#epidemiologicalModelsInCA) 
 
-Observe que los estados 1. y 2. se pueden representar mediante la siguiente asignación
+## AgeManagement<a name="AgeManagement"></a>
+El módulo```AgeManagement``` se encarga de controlar todos los procesos que tengan que ver con el manejo de las edades de algún conjunto de células, esto en particular para los modelos con natalidad y mortalidad; y los que tienen en cuenta la muerte por enfermedad, ambos descritos en el  [documento principal](https://github.com/Grupo-de-simulacion-con-automatas/Prediccion-del-comportamiento-de-una-enfermedad-simulada-en-AC-con-un-algoritmo-en-RN/blob/master/Documentos/Proyecto_de_grado.pdf).
 
-$$\Phi_{ij}^t(\alpha,\beta)=\left\{\begin{array}{cc}
-0 & \textrm{si }\rho\leq\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\\
-1 & \textrm{en otro caso}
-\end{array}\right.$$
+Con este módulo podremos crear a la matriz de edades, dados los rangos y las proporciones de edades en el sistema, y, por otro lado, tenemos a las evoluciones para la matriz de edades descritas en los modelos que implementan esta característica. Para importar este módulo puede usar la siguiente línea:
 
-Claramente la asignación $\Phi_{ij}^t$ corresponde a una regla totalística, se decidió hacer uso de estas reglas sobre autómatas celulares debido a la complejidad encontrada en la variedad de vecindades que puede tener un agente perteneciente a cualquiera de los dos estados.
+```from CAsimulation import AgeManagement as am```
 
-De manera forma definimos la *regla base de interacción local* como
+Para usar la clase ```AgesMatrix``` debe establecer inicialmente los rangos de edades y sus proporciones en el sistema, es decir, que porcentaje de los individuos tiene cierto rango de edad; y, por otro lado, será necesario que ya tenga definido un espacio de células. 
 
-\begin{equation}
-\Phi_{ij}^t(\alpha,\beta)=\left\{\begin{array}{cc}
-0 & \textrm{si }r\leq\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8}\cdot100\\
-1 & \textrm{en otro caso}
-\end{array}\right.
-\end{equation}
+```
+from CAsimulation import epidemiologicalModelsInCA as em
 
-donde $\alpha$ y $\beta$ representan la tasa de recuperación y la tasa de infección, respectivamente.
+# Espacio de células
+cellSpace = em.CellSpace(5,5)  # Sistema con 25 células (dim(cellSpace) = 5x5)
 
-*Observación:* Como veremos más adelante, la cantidad de individuos que interactúan en la vecindad no necesariamente es 8, esto se deberá a que los individuos que posean el estado vació se mantendrán en ese estado para todo tiempo $t$, de esta forma el comportamiento del individuo central no se verá afectado por los espacios vacíos, por lo tanto una consideración importante en nuestra regla base de interacción local, será la cantidad de vecinos que interactúan con la célula central, de esta forma:
+# Rangos de edades
+ranges = [[0,20,0.5], [21,60,0.25], [61,100,0.25]]  # El 50% tienen entre 0 y 20, el 25% entre 
+                                                    # 21 y 60 , y el 25% restante tiene entre 61 y 100
 
-\begin{equation}
-\Phi_{ij}^t(\alpha,\beta)=\left\{\begin{array}{cc}
-0 & \textrm{si }r\leq\frac{\beta}{\alpha}\cdot \frac{N_{ij}^t(I)}{8-N_{ij}^t(V)}\cdot100\textrm{, si }N_{ij}^t(V)\neq8\\
-1 & \textrm{en otro caso}
-\end{array}\right.
-\end{equation}
-#### base_rule(alpha, beta, V)
-Aplica la regla base de interacción local 
-###### Parámetros:	
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-V:     np.array   #Vecindad 
-```
-###### Devoluciones:	
-```
-float   #Si es 1, el individuo en la célula central de se infectó o se mantuvo enfermo. Si es 0, el individuo en la célula central paso a un estado de susceptibilidad o se mantuvo susceptible
+# Matriz de edades
+agesMatrix = am.AgesMatrix(ranges, cellSpace)
 ```
-##### Ejemplo:
+No es necesario utilizar un script adicional, ya que al instanciar la clase ```AgesMatrix``` se genera automáticamente la matriz de edades. Para ver dicha matriz, ejecute el siguiente comando:
+
 ```
->>> cm.base_rule(0.2,0.5,V)
-1.0
+agesMatrix.agesMatrix
+>>> array([[52.,  0., 52., 52., 52.],
+           [15., 75., 12.,  8., 41.],
+           [ 5.,  7., 10.,  7.,  7.],
+           [12., 71.,  5., 52., 74.],
+           [16., 24.,  7., 53., 15.]])
 ```
-Una vez dicho esto, podemos definir un comportamiento tipo *SIS*, el cual puede entenderse como una regla de interacción entre dos estados (susceptible e infectado). Para poder generar este tipo de dinámica basta con aplicar la regla base de evolución a cada uno de los agentes del sistema.
-#### evolution_sis(alpha, beta, U)
-Aplica la regla base de interacción global
-###### Parámetros:	
+
+Una vez tenemos definida la matriz de edades, podremos aplicar las reglas de evolución que tienen en cuenta las edades de las células. En particular nos encontramos con el manejo de edades descrito en la regla para modelos con natalidad y mortalidad, y los modelos con muerte por enfermedad.
+
+Debido a que una de las características de nuestra propuesta es considerar diferentes rangos de edades para aplicar las reglas de evolución que definimos en el documento, debemos ser capaces de identificar a los individuos que poseen cierta edad. Esto lo podremos hacer con la siguiente línea de código:
 ```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-U:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+# Parámetros para instanciar la clase AgeMatrixEvolution
+birthRate = 0.02
+annualUnit = 365
+mortabilityRatesByAgeRange = [[1,20,0.05],[21,100,0.025]]
+ages = agesMatrix.agesMatrix
+
+ageMatrixManagement = am.AgeMatrixEvolution(ages, birthRate, annualUnit, mortabilityRatesByAgeRange)
+ageMatrixManagement.ageGroupPositions(42, 65)  # Coordenadas de células con edades entre 42 y 65 "años"
+>>> [[0, 0], [0, 2], [0, 3], [0, 4], [3, 3], [4, 3]]
 ```
-###### Devoluciones: 	
+Para aplicar la regla que describe la evolución para la matriz de edades considerando la natalidad y la mortalidad, debemos establecer la iteración sobre la que estamos aplicando el modelo. Si esta iteración es múltiplo de ```annualUnit``` diremos que las células cumplen un ciclo temporal (años, meses, décadas, minutos, etc).  El siguiente script nos muestra la manera adecuada de implementar esta característica:
+
 ```
-np.array    #Evolución del sistema al aplicar la regla base de interacción global
+ageMatrixManagement.evolutionRuleForAges(10)
+>>> array([[52.,  0., 52., 52., 52.],
+           [15., 75., 12.,  8., 41.],
+           [ 5.,  7., 10.,  7.,  7.],
+           [12., 71.,  5., 52., 74.],
+           [16., 24.,  7., 53., 15.]])
+
+ageMatrixManagement.evolutionRuleForAges(365*2)
+>>> array([[53.,  1., 53., 53., 53.],
+           [16., 76., 13.,  9., 42.],
+           [ 6.,  8., 11.,  8.,  8.],
+           [13., 72.,  6., 53., 75.],
+           [17., 25.,  8., 54., 16.]])
 ```
-##### Ejemplo:
+Para aplicar la regla que describe la evolución para las edades del sistema de células considerando la muerte por enfermedad podemos ejecutar el siguiente script:
 ```
->>> random_matrix_2 =  np.array([[random.randint(0,1) for e in range(6)] for e in range(8)])
->>> cm.evolution_sis(0.2,0.5,random_matrix_2)
-array([[1, 0, 1, 1, 1, 1],
-       [1, 1, 1, 1, 1, 1],
-       [1, 1, 1, 1, 1, 1],
-       [1, 1, 1, 1, 1, 1],
-       [1, 1, 1, 1, 1, 1],
-       [0, 1, 1, 1, 1, 1],
-       [0, 1, 1, 1, 0, 0],
-       [1, 1, 1, 1, 1, 1]])
+cellSpace = cellSpace.initialLocationOfInfected(0.5)  # Suponemos que el 50% de la población posee la enfermedad
+cellSpace.system
+>>> array([[1., 0., 1., 1., 0.],
+           [1., 1., 1., 1., 1.],
+           [1., 1., 1., 1., 0.],
+           [0., 1., 1., 1., 1.],
+           [1., 1., 1., 1., 1.]])
+	       
+deathByDiseaseRatesByAgeRanges = [[1,50,0.2], [51,100,0.4]]
+systemAfterEvolution, agesMatrixAfterEvolution = ageMatrixManagement.deathByDiseaseRule(cellSpace, deathByDiseaseRatesByAgeRanges)
+systemAfterEvolution.system
+>>> array([[1., 3., 3., 3., 0.],
+           [1., 1., 3., 3., 1.],
+           [1., 1., 3., 1., 0.],
+           [0., 1., 3., 3., 3.],
+           [1., 1., 1., 3., 3.]])
+
+agesMatrixAfterEvolution
+>>> array([[52.,  0.,  0.,  0., 52.],
+           [15., 75.,  0.,  0., 41.],
+           [ 5.,  7.,  0.,  7.,  7.],
+           [12., 71.,  0.,  0.,  0.],
+           [ 0., 24.,  7.,  0.,  0.]])
+	       
 ```
-Si usamos la función color obtenemos:
 
-![texto alternativo](Imagenes/color2.png)
+## CellManagement<a name="CellManagement"></a>
+Con el módulo ```CellManagement``` podrá darle manejo a propiedades espaciales que le permitan manipular o redefinir la lógica para el comportamiento mismo de las células. Adicionalmente, tendremos la capacidad de acceder a un conjunto de células, vía sus coordenadas, dado un estado específico del modelo. Para importar el módulo ```CellManagement``` puede usar la siguiente línea:
 
-Teniendo en cuenta la manera en la que se definió la regla de evolución, podemos analizar el comportamiento de alguna enfermedad en el sistema ```random_matrix_2``` para un número *tf* de iteraciones, este tipo de análisis los podemos realizar usando la función ```evolution_SIS```.
+```from CAsimulation.CellManagement import CellManagement as cm```
 
-#### evolution_SIS(alpha, beta, tf, A)
-Aplica la regla base de interacción global al sistema tf veces
-###### Parámetros:	
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de iteraciones
-A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:	
-```
-list    #Lista cuyos elementos son la evolución del sistema A desde el tiempo 0 hasta el tiempo tf
-```
-Finalmente, para el caso del modelo *SIS* se implemento una función ```SIS_model``` que fuera capaz de reunir las cantidades de individuos por estado junto con sus valores normalizados y la visualización del cambio generado por la regla de evolución en el sistema. 
-#### SIS_model(alpha, beta, tf, A)
-Modelo SIS
-###### Parámetros:	
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de iteraciones
-A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:	
+Con este módulo será posible generar una copia de un sistema a partir de uno existente, con la posibilidad de expandir su dimensión. Esto lo podremos hacer con la función ```InsideCopy```.  Para implementar esta función podemos usar un script como el siguiente:
 ```
-list    #Contiene las coordenadas (x,n^x(S)) donde x es una iteración y n^x(S) es la cantidad de individuos susceptibles normalizada. las coordenadas (x,n^x(I)) donde x es una iteración y n^x(I) es la cantidad de individuos infectados normalizada
-```
-Intentemos ahora definir una condición inicial para el sistema, basada en el porcentaje de individuos infectados que queremos incluir, es decir, si quisiéramos generar una condición inicial de *10%* de infectados, esto es equivalente a decir que 1 de cada 10 individuos tiene la enfermedad. La función ```num_I``` nos permite definir la razón a:b de infectados y la función ```initial_condition``` nos permite aplicarla en la condición inicial del sistema.
-#### num_I(a,b)
-Porcentaje de infectados 
-###### Parámetros:
-```
-a: int    #Cantidad de infectados por cada b habitantes
-b: int    #Cantidad de habitantes
-```
-###### Devoluciones:	
-```list   #Retorna la lista con una cantidad a de infectados con respecto a una población de tamaño b```
-#### initial_condition(I0, A)
-Define la condición inicial del sistema
-###### Parámetros: 	
-```
-I0: float       #Porcentaje de individuos infectados en el sistema 
-A:  np.array    #Arreglo sobre el modelo epidemiológico
-```
-###### Devoluciones:
-```
-np.array    #Condición inicial del sistema
-```
-##### Ejemplo:
-```
->>> system_0 = np.zeros((5,8))
->>> system_0 = cm.initial_condition(0.1, system_0)
->>> system_0
-array([[0., 0., 1., 0., 0., 0., 0., 0.],
-       [0., 0., 0., 0., 0., 0., 0., 0.],
-       [0., 0., 0., 0., 1., 0., 0., 0.],
-       [0., 0., 0., 0., 1., 0., 0., 0.],
-       [0., 0., 0., 0., 0., 1., 0., 0.]])
->>> plt.imshow(cm.color(system_0),cmap="nipy_spectral", interpolation='nearest')
-```
-![texto alternativo](Imagenes/system_0.png)
+from CAsimulation import epidemiologicalModelsInCA as em
 
+cellSpace = em.CellSpace(5,5).initialLocationOfInfected(0.4)
+cellSpace.system
+>>> array([[0., 1., 0., 0., 0.], 
+           [1., 1., 0., 1., 1.], 
+           [0., 0., 0., 0., 1.], 
+           [0., 1., 0., 0., 0.], 
+           [0., 1., 0., 0., 1.]])
 
-#### graph_sis_S(alpha, beta, tf, A) 
-Grafica la cantidad de individuos susceptibles normalizada hasta un tiempo tf
-###### Parámetros: 
+cellSpaceCopy = cm.CellManagement(cellSpace).InsideCopy(1, 3)
+cellSpaceCopy.system
+>>> array([[-1., -1., -1., -1., -1., -1., -1., -1., -1., -1., -1.], 
+           [-1., -1., -1., 0., 1., 0., 0., 0., -1., -1., -1.], 
+           [-1., -1., -1., 1., 1., 0., 1., 1., -1., -1., -1.], 
+           [-1., -1., -1., 0., 0., 0., 0., 1., -1., -1., -1.], 
+           [-1., -1., -1., 0., 1., 0., 0., 0., -1., -1., -1.], 
+           [-1., -1., -1., 0., 1., 0., 0., 1., -1., -1., -1.], 
+           [-1., -1., -1., -1., -1., -1., -1., -1., -1., -1., -1.]])
+```
+Debemos resaltar que los valores -1 indican espacios vacíos, es decir, celdas que no interactúan de ninguna forma con las demás.
+
+Si ahora lo que desea es conocer las coordenadas por estado, puede usar la función ```StateCoordinates```, la cual toma como parámetro al indicador de un estado específico y retorna una lista de coordenadas, como se muestra a continuación:
+```
+cm.CellManagement(cellSpace).StateCoordinates(1) # Coordenadas de las células infectadas
+>>> [[0, 1], [1, 0], [1, 1], [1, 3], [1, 4], [2, 4], [3, 1], [4, 1], [4, 4]]
+```
+
+Puede también determinar el porcentaje de individuos con un estado específico y visualizar como distribuirían, si deseará por ejemplo, establecer una condición inicial particular. Para esto usaremos la función ```StatePercentageInSpace```, la cual se implementa de la siguiente manera:
+
+```
+cm.CellManagement(cellSpace).StatePercentageInSpace(2, 8, 1)
+>>> [0, 0, 0, 0, 1, 1, 0]
+
+cm.CellManagement(cellSpace).StatePercentageInSpace(2, 10, 2, -1)
+>>> [-1, -1, 2, 2, -1, -1, -1, -1, -1]
 ```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de iteraciones
-A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones: 
-```
-.plt    #Gráfica que describe la evolución del estado S en el sistema A hasta un tiempo tf
-```
-##### Ejemplo:
+La última función que encontraremos en este módulo nos permite definir la condición inicial de una manera sencilla con la característica de distribuir aleatoriamente a las células dado el porcentaje inicial de infectados.
+
 ```
->>> cm.graph_sis_S(0.2,0.5,30,system_0)
+cellSpaceWithInitialCondition = cm.CellManagement(cellSpace).InitialCondition(0.4)
+cellSpaceWithInitialCondition.system
+>>> array([[0., 1., 0., 0., 1.], 
+           [1., 1., 0., 1., 1.], 
+           [0., 1., 1., 0., 1.], 
+           [1., 1., 1., 0., 0.], 
+           [0., 1., 0., 0., 1.]])
 ```
-![texto alternativo](Imagenes/sus_sis.png)
 
-#### graph_sis_I(alpha, beta, tf, A) 
-Grafica la cantidad de individuos infectados normalizada hasta un tiempo tf
-###### Parámetros: 
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de iteraciones
-A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+## CellSpaceConfiguration<a name="CellSpaceConfiguration"></a>
+Como su nombre lo indica, el módulo ```CellSpaceConfiguration``` será el encargado de las configuraciones sobre el espacio de células, como por ejemplo, las condiciones iniciales o las condiciones de frontera. Para importar el módulo ```CellSpaceConfiguration``` puede usar la siguiente línea:
+
 ```
-###### Devoluciones: 
+from CAsimulation.CellSpaceConfiguration import CellSpaceConfiguration as cc
 ```
-.plt    #Gráfica que describe la evolución del estado I en el sistema A hasta un tiempo tf
+Podemos definir de tres maneras diferentes al espacio de células: la primera genera un espacio completo en el sentido de que no hay celdas vacías; la segunda manera crea una región de células que pueden interactuar en la esquina superior izquierda, dejando una cantidad determinada de espacios vacíos; y la última, permite definir varias regiones de células que interactuan en diferentes ubicaciones. Esto será de vital importancia si desea analizar el comportamiento de alguna enfermedad en espacios con diferentes condiciones de frontera. 
+
+Para generar estos espacios puede ejecutar las siguientes líneas, dependiendo del contexto en el contexto en el que este definiendo su espacio de células:
 ```
-##### Ejemplo:
+csc1 = cc.CellSpaceConfiguration(3,3)  # Espacio de 9 células sin celdas vacías
+csc2 = cc.CellSpaceConfiguration(3,3,5,6)  # Espacio de 9 células ubicado en una matriz de espacios 
+                                           # vacíos de dimensión 5x6
+csc3 = cc.CellSpaceConfiguration(3,3,7,7,1,2)  # Espacio de 9 células ubicado en una matriz de 
+                                               # espacios vacíos de dimensión 7x7 ubicado en la 
+                                               # posición 1,2
 ```
->>> cm.graph_sis_I(0.2,0.5,30,system_0)
+Este módulo nos permite observar la construcción de los espacios y los parámetros con los que se define, independientemente de la manera en la que se define:
 ```
-![texto alternativo](Imagenes/inf_sis.png)
+# Parámetros con los que se define el espacio de células
+csc1.basicParameters()
+>>> (3, 3, -1, -1, 0, 0)
 
-#### graph_sis(alpha, beta, tf, A)
-Grafica la cantidad de individuos susceptibles e infectados normalizadas hasta un tiempo tf
-###### Parámetros:
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de iteraciones
-A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:
+csc1.system
+>>> array([[0., 0., 0.], 
+           [0., 0., 0.], 
+           [0., 0., 0.]])
+
+csc2.system
+>>> array([[ 0., 0., 0., -1., -1., -1.], 
+           [ 0., 0., 0., -1., -1., -1.], 
+           [ 0., 0., 0., -1., -1., -1.], 
+           [-1., -1., -1., -1., -1., -1.], 
+           [-1., -1., -1., -1., -1., -1.]])
+
+csc3.system
+>>> array([[-1., -1., -1., -1., -1., -1., -1.], 
+           [-1., -1., 0., 0., 0., -1., -1.], 
+           [-1., -1., 0., 0., 0., -1., -1.], 
+           [-1., -1., 0., 0., 0., -1., -1.], 
+           [-1., -1., -1., -1., -1., -1., -1.], 
+           [-1., -1., -1., -1., -1., -1., -1.], 
+           [-1., -1., -1., -1., -1., -1., -1.]])
 ```
-.plt    #Gráfica que describe la evolución de los estados S e I en el sistema A hasta un tiempo tf
+Una de las cualidades de este módulo es que permite definir sistemas no necesariamente regulares, lo que a su vez nos brinda la capacidad por ejemplo, de aislar individuos bajo diferentes supuestos. Para implementar la función ```rectangularBoundary``` debe tener en cuenta que los dos primeros parámetros corresponden a la dimensión de una segunda región de células que pueden interactuar; y los dos últimos parámetros indican la ubicación de esta segunda región.
 ```
-##### Ejemplo:
+cellSystem = csc3.rectangularBoundary(2,3,4,3)  # Sistema de dimensión 2x3 ubicado en la posición 4,3
+cellSystem
+>>> array([[-1., -1., -1., -1., -1., -1., -1.], 
+           [-1., -1., 0., 0., 0., -1., -1.], 
+           [-1., -1., 0., 0., 0., -1., -1.], 
+           [-1., -1., 0., 0., 0., -1., -1.], 
+           [-1., -1., -1., 0., 0., 0., -1.], 
+           [-1., -1., -1., 0., 0., 0., -1.], 
+           [-1., -1., -1., -1., -1., -1., -1.]])
 ```
->>> cm.graph_sis(0.2,0.5,30,system_0)
+Por último, presentamos a la función que nos permitirá definir una condición inicial de población infectada con la posibilidad de partir de una ubicación específica, como se muestra en los siguientes fragmentos de código:
 ```
-![texto alternativo](Imagenes/sis_sis.png)
+csc1.initialLocationOfInfected(0.5, "center")  # 50% de la población en el centro, esta infectada
+>>> array([[0., 0., 0.], 
+           [0., 1., 0.], 
+           [0., 0., 0.]])
+           
+csc1.initialLocationOfInfected(0.5).system  # El 50% del total de la población posee la enfermedad
+>>> array([[0., 1., 1.], 
+           [1., 0., 1.], 
+           [0., 0., 1.]])
 
-Podemos observar también el comportamiento del sistema mediante el siguiente código:
+csc3.initialLocationOfInfected(0.5).system  # El 50% del total de la población posee la enfermedad 
+                                            # sin importar la regularidad del espacio de células
+>>> array([[-1., -1., -1., -1., -1., -1., -1.], 
+           [-1., -1., 1., 0., 1., -1., -1.], 
+           [-1., -1., 1., 0., 0., -1., -1.], 
+           [-1., -1., 0., 0., 0., -1., -1.], 
+           [-1., -1., -1., 0., 1., 1., -1.], 
+           [-1., -1., -1., 1., 0., 1., -1.], 
+           [-1., -1., -1., -1., -1., -1., -1.]])
 ```
->>> ex_1 = cm.SIS_model(0.2,0.5,10,system_0)[4]
->>> for i in range(10):
-......plt.imshow(cm.color(ex_1[i]),cmap="nipy_spectral", interpolation='nearest')
-......plt.savefig('ex_1'+str(i)+'.jpg')
 
->>> import cv2
->>> img_ex_1 = []
->>> for i in range(10):
-......img = cv2.imread('ex_1'+str(i)+'.jpg')
-......height, width, layers = img.shape
-......size = (width,height)
-......img_ex_1.append(img)
 
->>> out = cv2.VideoWriter('ex_1.mp4',cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
- 
->>> for i in range(len(img_ex_1)):
-......out.write(img_ex_1[i])
->>> out.release()
-```
+## CompartmentalModelsInEDOS<a name="CompartmentalModelsInEDOS"></a>
+Con el módulo ```CompartmentalModelsInEDOS```podremos aplicar el método de Euler para ecuaciones diferenciales y visualizar sus soluciones, en nuestro caso lo usaremos para observar los comportamientos descritos por los modelos compartimentales clásicos, sin embargo, el lector puede implementarlo en el contexto sobre el que esté trabajando.
 
-![texto alternativo](Imagenes/ex_1.gif)
+Puede importar esté módulo de la siguiente manera:
 
-### Las reglas de interacción *SI* , *IR* y el modelo *SIR*
-#### Regla de interacción para el estado S
-Basándonos en el principio de que los individuos susceptibles a la enfermedad no puedan recuperarse, es decir, un individuo que no haya tenido la enfermedad no podrá curarse de ella. Además, si suponemos también que los individuos que están infectados o recuperados en un tiempo �� no pueden adquirir la cualidad de susceptibilidad para un periodo de tiempo posterior, bien sea porque generaron inmunidad frente a la enfermedad (en el caso de los recuperados) o porque si tiene la enfermedad, no es un paciente con riesgo de adquirir la enfermedad debido a que ya la posee (caso infectado).
+```from CAsimulation import CompartmentalModelsInEDOS as ca ```
 
-La manera en la que se implemento esta regla de interacción fue mediante la función ```interaction_SI``` la cual aplica la ***regla base de evolución*** únicamente a los individuos susceptibles.
-#### interaction_SI(alpha, beta, A)
-Aplica la regla de interacción del estado S 
-###### Parámetros:	
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-A:     np.array   #Sistema 
-```
-###### Devoluciones:	
-```
-np.array    #Arreglo que cuenta con los individuos que se infectaron, individuos que se mantuvieron susceptibles e individuos que ya se encontraban recuperados
-```
-#### Regla de interacción para el estado I
-Usualmente la tasa de recuperación �� se interpreta como la probabilidad de recuperación individual, para implementar este concepto en ```Casimulations``` se interpreto la tasa de recuperación individual como una tasa de recuperación global, es decir, ��% de las personas infectadas se recuperarán de la enfermedad.
+Antes de empezar a usar este módulo debemos definir el sistema de ecuaciones adecuadamente, como se muestra  a continuación
 
-Al igual que en el modelo *SIS*, se impĺementó una función ```num_R ``` la cual se encarga de describir la razón de individuos recuperados frente a individuos infectados.
-#### num_R(a, b)
-Porcentaje de recuperados
-###### Parámetros: 	
-```
-a: int    #Cantidad de recuperados por cada b infectados
-b: int    #Cantidad de infectados
 ```
-###### Devoluciones:	
-```list   #Retorna la lista con una cantidad a de recuperados con respecto a una población infectada de tamaño b```
-#### interaction_IR(alpha, beta, A)
-Aplica la regla de interacción del estado I 
-###### Parámetros:	
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-A:     np.array   #Sistema 
-```
-###### Devoluciones:	
-```np.array   #Arreglo que cuenta con los individuos que se recuperaron de la enfermedad, individuos que se mantuvieron enfermos e individuos susceptibles```
+# Parámetros del modelo:
+alpha =  0.2
+mu = 1/(75*365)
+theta = 0.4
+beta = 0.5
 
-La regla de interacción para el modelo *SIR* se implemento por medio de la función ```evolution_sir```, con la cual se puede expresar la regla de evolución para el modelo *SIR*  ```evolution_SIR``` para un número tf de iteraciones.
-#### evolution_sir(alpha, beta, U)
-Aplica la regla que define el comportamiento del modelo sir
-###### Parámetros:	
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-U:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:
-```np.array   #Evolución del sistema al aplicar la regla de comportamiento sir```
-#### evolution_SIR(alpha, beta, tf, A)
-Aplica la regla base de comportamiento sir de manera global al sistema tf veces
-###### Parámetros:	
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de iteraciones
-A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:	
-```list   #Lista cuyos elementos son la evolución del sistema A desde el tiempo 0 hasta el tiempo tf```
-#### SIR_model(alpha, beta, tf, A)
-Modelo SIR
-###### Parámetros:	
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de iteraciones
-A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:	
-```list   #Contiene las coordenadas (x,n^x(S)), (x,n^x(I)) y (x,n^x(R)) donde las primeras componentes de cada coordenada es una iteración y la segunda componente es la cantidad de individuos perteneciente a los estados S, I o R, respectivamente.```
+# Funciones del modelo:
+def S_function(values, beta = beta, mu = mu, theta = theta):
+    S = values[0]; I = values[1]
+    return mu*(1 - S) + (1 - theta)*alpha*I - beta*S*I
 
-![texto alternativo](Imagenes/system_0_1.png)
+def I_function(values, alpha = alpha, beta = beta, mu = mu, theta = theta):
+    S = values[0]; I = values[1]
+    return beta*S*I - (1 - theta)*alpha*I - mu*I
 
-#### graph_sir_S(alpha, beta, tf, A) 
-Grafica la cantidad de individuos susceptibles normalizada hasta un tiempo tf
-###### Parámetros:
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de iteraciones
-A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones: 
-```.plt   #Gráfica que describe la evolución del estado S en el sistema A hasta un tiempo tf```
-##### Ejemplo:
-```
->>> cm.graph_sir_S(0.2,0.5,30,system_0)
-```
-![texto alternativo](Imagenes/sus_sir.png)
+listOfFunctions = [S_function, I_function]
 
-#### graph_sir_I(alpha, beta, tf, A) 
-Grafica la cantidad de individuos infectados normalizada hasta un tiempo tf
-###### Parámetros:
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de iteraciones
-A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
+# Condiciones iniciales:
+initialValues = [0.9, 0.1]  # S_0 = 0.9; I_0 = 0.1
 ```
-###### Devoluciones:
-```.plt   #Gráfica que describe la evolución del estado I en el sistema A hasta un tiempo tf```
-##### Ejemplo:
-```
->>> cm.graph_sir_I(0.2,0.5,30,system_0)
-```
-![texto alternativo](Imagenes/inf_sir.png)
 
-#### graph_sir_R(alpha, beta, tf, A) 
-Grafica la cantidad de individuos recuperados normalizada hasta un tiempo tf
-###### Parámetros:
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de iteraciones
-A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:
-```.plt   #Gráfica que describe la evolución del estado R en el sistema A hasta un tiempo tf```
-##### Ejemplo:
-```
->>> cm.graph_sir_R(0.2,0.5,30,system_0)
-```
-![texto alternativo](Imagenes/rec_sir.png)
+El módulo ```CompartmentalModelsInEDOS``` permite establecer la cantidad de iteraciones y el valor h empleado en el método de Euler.
 
-#### graph_sir(alpha, beta, tf, A)
-Graficá la cantidad de individuos susceptibles, infectados y recuperados normalizadas hasta un tiempo tf
-###### Parámetros:
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de iteraciones
-A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:
-```.plt   #Gráfica que describe la evolución de los estados S, I y R en el sistema A hasta un tiempo tf```
-##### Ejemplo:
 ```
->>> cm.graph_sir(0.2,0.5,30,system_0)
+# Se instancia el módulo
+discreteSolutions = ca.CompartmentalModelsInEDOS(listOfFunctions, initialValues)
+discreteSolutions.n_iterations(1100)
+discreteSolutions.h(0.1)
 ```
-![texto alternativo](Imagenes/sir_sir.png)
 
-Podemos observar también el comportamiento del sistema mediante el siguiente código:
-```
->>> ex_2 = cm.SIR_model(0.2,0.5,20,system_0)[6]
->>> for i in range(20):
-......plt.imshow(cm.color(ex_2[i]),cmap="nipy_spectral", interpolation='nearest')
-......plt.savefig('ex_2'+str(i)+'.jpg')
-
->>> import cv2
->>> img_ex_2 = []
->>> for i in range(10):
-......img = cv2.imread('ex_2'+str(i)+'.jpg')
-......height, width, layers = img.shape
-......size = (width,height)
-......img_ex_2.append(img)
-
->>> out = cv2.VideoWriter('ex_2.mp4',cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
- 
->>> for i in range(len(img_ex_2)):
-......out.write(img_ex_2[i])
->>> out.release()
-```
-![texto alternativo](Imagenes/ex_2.gif)
-```
-A: list       #Lista de coordenadas -- bloque noroeste
-B: listlista de coordenadas – bloque norte 
-C: list	lista de coordenadas – bloque noreste
-D: list	lista de coordenadas – bloque oeste
-E: list 	lista de coordenadas – bloque central
-F: list	lista de coordenadas – bloque este
-G: list	lista de coordenadas – bloque suroeste
-H: list	lista de coordenadas – bloque sur
-I: list	lista de coordenadas – bloque sureste
-J: list	lista de coordenadas – distribución aleatoria	
-```
-### La dispersión como un factor clave en la velocidad de propagación
+Si desea visualizar los parámetros que está usando en su modelo, puede ejecutar la siguiente línea:
 
-Vale la pena preguntarnos si es posible que la ubicación inicial de los individuos infectados afecta el comportamiento de la enfermedad en un periodo de tiempo determinado. Las funciones ```northwest, north, northeast, west, center, east, southwest, south``` y ```southeast``` nos permiten ubicar a casi la totalidad de la población infectada en una de nueve divisiones realizadas sobre el sistema basandonos en los puntos cardinales, también contamos con la función ```aleatorio``` la cual distribuye aleatoriamente a los individuos infectados, cabe resaltar que estas funciones son únicamente para definir la condición inicial del sistema de una manera mas especifica que la función ```initial_condition```.
-#### northwest(n, m, I0)
-Localiza la población infectada en la zona noroeste del rectángulo
-###### Parámetros:
-```
-n:  int     #Cantidad de filas 
-m:  int     #Cantidad de columnas
-I0: float   #Porcentaje inicial de individuos infectados
-```
-###### Devoluciones:
-```np.array   #Condición inicial con toda la población infectada en la zona noroeste del sistema rectangular de dimensión n*m ```
-#### north(n, m, I0)
-Localiza la población infectada en la zona norte del rectángulo 
-###### Parámetros:	
-```
-n:  int          #Cantidad de filas 
-m:  int	         #Cantidad de columnas
-I0: float	       #Porcentaje inicial de individuos infectados
-```
-###### Devoluciones:
-```np.array   #Condición inicial con toda la población infectada en la zona norte del sistema rectangular de dimensión n*m```
-#### northeast(n, m, I0)
-Localiza la población infectada en la zona noreste del rectángulo
-###### Parámetros:	
-```
-n:  int     #Cantidad de filas 
-m:  int     #Cantidad de columnas
-I0: float   #Porcentaje inicial de individuos infectados
-```
-###### Devoluciones:
-```np.array   #Condición inicial con toda la población infectada en la zona noreste del sistema rectangular de dimensión n*m```
-#### west(n, m, I0)
-Localiza la población infectada en la zona oeste del rectángulo
-###### Parámetros:
-```
-n:  int     #Cantidad de filas 
-m:  int     #Cantidad de columnas
-I0: float   #Porcentaje inicial de individuos infectados
-```
-###### Devoluciones:
-```np.array   #Condición inicial con toda la población infectada en la zona oeste del sistema rectangular de dimensión n*m```
-#### center(n, m, I0)
-Localiza la población infectada en la zona central del rectángulo
-###### Parámetros:
-```
-n:  int     #Cantidad de filas 
-m:  int     #Cantidad de columnas
-I0: float   #Porcentaje inicial de individuos infectados
-```
-###### Devoluciones:
-```np.array   #Condición inicial con toda la población infectada en la zona central del sistema rectangular de dimensión n*m```
-#### east(n, m, I0)
-Localiza la población infectada en la zona este del rectángulo
-###### Parámetros:
-```
-n:  int     #Cantidad de filas 
-m:  int     #Cantidad de columnas
-I0: float   #Porcentaje inicial de individuos infectados
-```
-###### Devoluciones:
-```np.array   #Condición inicial con toda la población infectada en la zona este del sistema rectangular de dimensión n*m```
-#### southwest(n, m, I0)
-Localiza la población infectada en la zona suroeste del rectángulo
-###### Parámetros:	
-```
-n:  int     #Cantidad de filas 
-m:  int     #Cantidad de columnas
-I0: float   #Porcentaje inicial de individuos infectados
-```
-###### Devoluciones:
-```np.array   #Condición inicial con toda la población infectada en la zona suroeste del sistema rectangular de dimensión n*m```
-#### south(n, m, I0)
-Localiza la población infectada en la zona sur del rectángulo
-###### Parámetros:
-```
-n:  int     #Cantidad de filas 
-m:  int     #Cantidad de columnas
-I0: float   #Porcentaje inicial de individuos infectados
-```
-###### Devoluciones:
-```np.array   #Condición inicial con toda la población infectada en la zona sur del sistema rectangular de dimensión n*m```
-#### southeast(n, m, I0)
-Localiza la población infectada en la zona sureste del rectángulo
-###### Parámetros:	
-```
-n:  int     #Cantidad de filas 
-m:  int     #Cantidad de columnas
-I0: float   #Porcentaje inicial de individuos infectados
-```
-###### Devoluciones: 
-```np.array   #Condición inicial con toda la población infectada en la zona sureste del sistema rectangular de dimensión n*m```
-#### aleatorio(n, m, I0)
-Localiza la población infectada de manera uniforme en el rectángulo
-###### Parámetros:
-```
-n:  int     #Cantidad de filas 
-m:  int     #Cantidad de columnas
-I0: float   #Porcentaje inicial de individuos infectados
-```
-###### Devoluciones:
-```np.array   #Condición inicial con toda la población infectada ubicada de manera uniforme en el sistema rectangular de dimensión n*m```
-```CAsimulation``` incluye también maneras de visualizar las zonas de riesgo en un sistema, es posible generar mapas de calor específicos por medio de las funciones ```heatmap_sis, heatmap_sir_I``` y ```heatmap_sir_R```, mientras que los mapas generados por ```heatmap_sis``` y ```heatmap_sir_I``` muestran el comportamiento de la población infectada para los modelos *SIS* y *SIR* respectivamente, la función ```heatmap_sir_R``` nos muestra como evolucionó la población recuperada, es decir, que individuos se recuperaron primero de la enfermedad.
-#### heatmap_sis(alpha, beta, tf, A)
-Grafica el comportamiento espacial de la enfermedad hasta un tiempo tf
-###### Parámetros: 	
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de iteraciones
-A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:
-```.plt   #Gráfica del mapa de calor que describe como evoluciono la enfermedad en el sistema A hasta un tiempo tf```
-#### heatmap_sir_I(alpha, beta, tf, A)
-Grafica el comportamiento espacial de la población infectada hasta un tiempo tf para el modelo SIR
-###### Parámetros:
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de iteraciones
-A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:
-```.plt   #Gráfica del mapa de calor que describe como evoluciono la población infectada en el sistema A hasta un tiempo tf para el modelo SIR```
-#### heatmap_sir_R(alpha, beta, tf, A)
-Grafica el comportamiento espacial de la población recuperada hasta un tiempo tf para el modelo SIR
-###### Parámetros:
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de iteraciones
-A:     np.array   #Arreglo donde se aplicará el modelo epidemiológico
-```
-###### Devoluciones:
-```.plt   #Gráfica del mapa de calor que describe como evoluciono la población recuperada en el sistema A hasta un tiempo tf para el modelo SIR```
-##### Ejemplo:
-```
->>> system_1 = cm.northwest(30, 30, 0.1)
->>> plt.imshow(cm.color(system_1), cmap="nipy_spectral", interpolation='nearest')
-```
-![texto alternativo](Imagenes/system_1.png)
-```
->>> cm.heatmap_sis(0.2, 0.5, 30, system_1)
-```
-![texto alternativo](Imagenes/hm_sis.png)
-```
->>> cm.heatmap_sir_I(0.2, 0.5, 30, system_1)
-```
-![texto alternativo](Imagenes/hm_sir_I.png)
-```
->>> cm.heatmap_sir_R(0.2, 0.5, 30, system_1)
 ```
-![texto alternativo](Imagenes/hm_sir_R.png)
+discreteSolutions.PrintParameters()
+>>> h: 0.1 
+    n_iterations: 1100 
+    differentialEquations: [<function S_function at 0x7f5462cb14d0>, 
+                            <function I_function at 0x7f5462cb1200>]
 ```
->>> ex_3 = cm.SIS_model(0.2, 0.5, 30, system_1)[4]
->>> for i in range(30):
-......plt.imshow(cm.color(ex_3[i]),cmap="nipy_spectral", interpolation='nearest')
-......plt.savefig('ex_3'+str(i)+'.jpg')
 
->>> img_ex_3 = []
->>> for i in range(30):
-......img = cv2.imread('ex_3'+str(i)+'.jpg')
-......height, width, layers = img.shape
-......size = (width,height)
-......img_ex_3.append(img)
+Puede obtener las soluciones discretas del sistema que esté trabajando de dos formas: la primera le presenta el conjunto de coordenadas por iteración para estado del modelo; y la segunda le muestra los datos en forma de gráfica, brindándole la posibilidad de acceder a los datos.
 
->>> out = cv2.VideoWriter('ex_3.mp4',cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
- 
->>> for i in range(len(img_ex_3)):
-......out.write(img_ex_3[i])
->>> out.release()
 ```
-![texto alternativo](Imagenes/ex_3.gif)
+# Conjunto de datos correspondiente a las soluciones del modelo
+discreteSolutions.ModelSolutions()
+>>> [[[0.9,
+       0.8967003652968036,
+       0.8933088972548366,
+       0.8898241746599574,
+       0.8862448313902722,
+       ...],
+      [0.1,
+       0.10329963470319635,
+       0.10669110274516336,
+       0.1101758253400425,
+       0.11375516860972777,
+       ...]],
+      range(0, 1100)]
+
+# Gráfica de las soluciones del modelo
+nameVariables = ["Susceptibles", "Infectados"]
+colorOfVariables = ["yellow", "red"]
+discreteSolutions.titlePlot = "Modelo SIS"
+discreteSolutions.plotSolutions(nameVariables, colorOfVariables)
 ```
->>> ex_4 = cm.SIR_model(0.2, 0.5, 45, system_1)[6]
->>> for i in range(45):
-......plt.imshow(cm.color(ex_4[i]),cmap="nipy_spectral", interpolation='nearest')
-......plt.savefig('ex_4'+str(i)+'.jpg')
+![Modelo SIS](Codigo/Imagenes/ex1SIS.PNG)
 
->>> img_ex_4 = []
->>> for i in range(45):
-......img = cv2.imread('ex_4'+str(i)+'.jpg')
-......height, width, layers = img.shape
-......size = (width,height)
-......img_ex_4.append(img)
+Si desea consultar más ejemplos, puede dirigirse al cuadernillo [Modelos compartimentales clásicos](https://github.com/Grupo-de-simulacion-con-automatas/CAsimulations-Modelacion-de-dinamicas-topologicas-en-la-propagacion-de-una-enfermedad-usando-CA/blob/master/Codigo/1.%20Modelos%20compartimentales%20en%20ecuaciones%20diferenciales.ipynb).
 
->>> out = cv2.VideoWriter('ex_4.mp4',cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
- 
->>> for i in range(len(img_ex_4)):
-......out.write(img_ex_4[i])
->>> out.release()
-```
-![texto alternativo](Imagenes/ex_4.gif)
+## DataManager<a name="DataManager"></a>
+Este módulo será el encargado de darle manejo a todos los datos que puedan extraerse de las aplicaciones por iteración de cada uno de los modelos descritos en el [documento principal](https://github.com/Grupo-de-simulacion-con-automatas/Prediccion-del-comportamiento-de-una-enfermedad-simulada-en-AC-con-un-algoritmo-en-RN/blob/master/Documentos/Proyecto_de_grado.pdf). Para importar el módulo ```DataManager``` puede usar la siguiente línea:
 
-Si lo que queremos es analizar el comportamiento para las diferentes condiciones iniciales basadas en los puntos cardinales, podemos utilizar la función ```distribution_graph``` la cual nos permitirá graficar 10 posibles condiciones iniciales.
-#### distribution_graph(A, B, C, D, E, F, G, H, I, J)
-Grafica la variación presente en los cambios de distribución inicial de población infectada
-###### Parámetros: 	
-```
-A: list   #Lista de coordenadas - bloque noroeste
-B: list   #Lista de coordenadas - bloque norte 
-C: list   #Lista de coordenadas - bloque noreste
-D: list   #Lista de coordenadas – bloque oeste
-E: list   #Lista de coordenadas – bloque central
-F: list   #Lista de coordenadas – bloque este
-G: list   #Lista de coordenadas – bloque suroeste
-H: list   #Lista de coordenadas – bloque sur
-I: list   #Lista de coordenadas – bloque sureste
-J: list   #Lista de coordenadas – distribución aleatoria	 
-```
-###### Devoluciones:	
-```
-.plt    #Gráfica de las variaciones bajo cambios en la distribución de población infectada
-```
-#####  Ejemplo:
-```
->>> con_1=cm.SIS_model(0.2, 0.5, 30, cm.northwest(30, 30, 0.1))
->>> con_2=cm.SIS_model(0.2, 0.5, 30, cm.north(30, 30, 0.1))
->>> con_3=cm.SIS_model(0.2, 0.5, 30, cm.northeast(30, 30, 0.1))
->>> con_4=cm.SIS_model(0.2, 0.5, 30, cm.west(30, 30, 0.1))
->>> con_5=cm.SIS_model(0.2, 0.5, 30, cm.center(30, 30, 0.1))
->>> con_6=cm.SIS_model(0.2, 0.5, 30, cm.east(30, 30, 0.1))
->>> con_7=cm.SIS_model(0.2, 0.5, 30, cm.southwest(30, 30, 0.1))
->>> con_8=cm.SIS_model(0.2, 0.5, 30, cm.south(30, 30, 0.1))
->>> con_9=cm.SIS_model(0.2, 0.5, 30, cm.southeast(30, 30, 0.1))
->>> con_10=cm.SIS_model(0.2, 0.5, 30, cm.aleatorio(30, 30, 0.1))
->>> cm.distribution_graph(con_1[0], con_2[0], con_3[0], con_4[0], con_5[0], con_6[0], con_7[0], con_8[0], con_9[0], con_10[0])
-```
-![texto alternativo](Imagenes/dist.png)
-También es posible realizar un gran número de simulaciones, esto con el fin de analizar diferentes condiciones iniciales. Las funciones ```medium_surves_sis``` y ```medium_surves_sir``` son capaces de generar las coordenadas promedio para un número *csim* de simulaciones mientras que las funciones ```graph_medium_curves_sis``` y ```graph_medium_curves_sir``` nos permiten visualizar estos comportamientos "promedio".
-#### medium_curves_sis(alpha, beta, tf, csim, I0, A)
-Genera las listas de coordenadas promedio al aplicar el modelo sis en una cantidad csim de simulaciones para una condición inicial del I0% de infectados en el espacio
-###### Parámetros:	
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de tics
-Csim:  int        #Cantidad de simulaciones
-I0:    float      #Porcentaje inicial de infectados
-A:     np.array   #Sistema sobre el cual se aplica el modelo
-```
-###### Devoluciones:
-```list   #Lista de coordenadas promedio para el estado S, para el estado I y valores en el tiempo de los estados S e I ubicados en listas respectivamente```
-#### medium_curves_sir(alpha, beta, tf, csim, I0, A)
-Genera las listas de coordenadas promedio al aplicar el modelo SIR en una cantidad csim de simulaciones para una condición inicial del I0% de infectados en el espacio
-###### Parámetros:	
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de tics
-Csim:  int        #Cantidad de simulaciones
-I0:    float      #Porcentaje inicial de infectados
-A:     np.array   #Sistema sobre el cual se aplica el modelo
-```
-###### Devoluciones:
-```list   #Lista de coordenadas promedio para los estados S, I y R y valores en el tiempo de los estados S, I y R ubicados en listas respectivamente```
-#### graph_medium_curves_sis(alpha, beta, tf, csim, I0, A)
-Graficá los valores promedio al aplicar csim veces el modelo sis para un valor inicial fijo de individuos infectados
-###### Parámetros:	
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de tics
-Csim:  int        #Cantidad de simulaciones
-I0:    float      #Porcentaje inicial de infectados
-A:     np.array   #Sistema sobre el cual se aplica el modelo
-```
-###### Devoluciones:
-```.plt   #Gráfica con los valores promedio para cada estado del modelo SIS```
-#### graph_medium_curves_sir(alpha, beta, tf, csim, I0, A)
-Gráfica los valores promedio al aplicar csim veces el modelo SIR para un valor inicial fijo de individuos infectados
-###### Parámetros:
-```
-alpha: float      #Tasa de recuperación
-beta:  float      #Tasa de infección
-tf:    int        #Cantidad de tics
-Csim:  int        #Cantidad de simulaciones
-I0:    float      #Porcentaje inicial de infectados
-A:     np.array   #Sistema sobre el cual se aplica el modelo
-```
-###### Devoluciones:
-```.plt   #Gráfica con los valores promedio para cada estado del modelo SIR```
-##### ejemplos:
-```
->>> system_2 = np.zeros((20, 20))
->>> cm.graph_medium_curves_sir(0.2, 0.5, 30, 50, 0.1, system_2)
 ```
-![texto alternativo](Imagenes/gmc_sir.png)
+from CAsimulation import DataManager as dm
 ```
->>> cm.graph_medium_curves_sis(0.2,0.5,30,100,0,cm.southeast(15,15,0.1))
+En este módulo encontraremos a la clase ```SystemMetrics``` que nos permite extraer las métricas de cada iteración, luego de aplicar el modelo epidemiológico. Para instanciar esta clase inicialmente debemos crear un espacio de células y definir además, los estados para los cuales se extraerán las métricas.
 ```
-![texto alternativo](Imagenes/gmc_sis.png)
-### Análisis cambiando la condición de frontera del sistema
-Implementaremos ahora una manera de definir cualquier tipo de sistema, lo primero que debemos hacer es definir el espacio sobre el cual queremos definir nuestro sistema, es decir, si por ejemplo quisiéramos definir una región triangular, lo primero que debemos hacer es definir una región rectangular que lo contenga, posteriormente se debe generar una lista con las coordenadas del sistema. La función ```boundary``` se encarga de convertir cada píxel con coordenadas en la lista que define el sistema en un agente que inicialmente tiene un estado *S*, si buscamos una manera de facilitar el trabajo de definir dicha lista, la función ```domain_definition``` nos permitirá definir bloques o submatrices para abarcar mas espacio en el espacio inicial.
-#### boundary(L,M)
-Genera sub-matrices nulas en la matriz M
-###### Parámetros:
-```
-L: list       #Lista de coordenadas que se anularan para definir donde se aplican los modelos epidemiológicos
-M: np.array   #Arreglo sobre el cual se definen las condiciones iniciales de entorno de ejecución de los modelos epidemiológicos
-```
-###### Devoluciones: 
-```np.array   #Sistema en el cual se aplican los modelos bajo condiciones no regulares de frontera```
-#### domain_definition(n, m, a, b, M)
-Define y genera las sub-matrices nulas donde se aplicarán los análisis epidemiológicos
-###### Parámetros:	
-```
-n: int        #Cantidad de filas de la sub-matriz
-m: int        #Cantidad de columnas de la sub-matriz
-a: int        #Fila en la cual se va a ubicar la sub-matriz
-b: int        #Columna en la cual se va a ubicar a sub-matriz
-M: np.array   #Arreglo sobre el cual se va a generar la sub-matriz nula
-```
-###### Devoluciones: 
-```np.array   #Sistema en el cual se aplican los modelos bajo condiciones no regulares de frontera```
-##### Ejemplo:
-```
->>> empty_space = -np.ones((15, 20))
->>> system_2 = cm.boundary([[2, 5], [3, 7], [8, 2], [14, 15]], empty_space)
->>> system_2 = cm.domain_definition(3, 3, 6, 12, system_2)
->>> system_2 = cm.domain_definition(4, 2, 8, 7, system_2)
->>> plt.imshow(cm.color(system_2),cmap="nipy_spectral", interpolation='nearest')
-```
-![texto alternativo](Imagenes/system_2.png)
-A partir de esto es posible implementar funciones mas complejas para la definición de algún sistema particular, este es el caso de las funciones ```rombo``` y la función ```triangulo```
-#### rombo(a, b, c, d, M)
-Define un sistema tipo rombo, con vértice izquierdo ubicado en (a, b) y con dimensión de la primera submatriz cxd en el espacio M
-###### Parámetros:
-```
-a: int        #Columna donde se ubica el vértice izquierdo del rombo
-b: int        #Ancho del rombo -1 
-c: int        #Fila donde se ubica el vértice izquierdo del rombo 
-d: int        #Columna donde se ubica la primera submatriz 
-M: np.array   #Espacio donde se definirá el sistema
-```
-###### Devoluciones:  
-```np.array#Arreglo de coordenadas con un sistema tipo rombo```
-##### Ejemplo:
-```
->>> empty = -np.ones((9,14))
->>> Rombo = cm.rombo(1,14,4,0,empty)
->>> plt.imshow(cm.color(Rombo),cmap="nipy_spectral", interpolation='nearest')
-```
+csc = cc.CellSpaceConfiguration(3,3,7,7,1,2)
 
-![texto alternativo](Imagenes/rombo.png)
-#### triangulo(n, m, a, b, M)
-Define un sistema triangular, con vértice izquierdo ubicado en (n, m) y con dimensión de la primera submatriz axb en el espacio M
-###### Parámetros: 
-```
-n: int        #Columna donde se ubica el vértice izquierdo del triangulo
-m: int        #Ancho del triangulo
-a: int        #Fila donde se ubica el vértice izquierdo del triángulo
-b: int        #Columna donde se ubica la primera submatriz
-M: np.array   #Espacio donde se definirá el sistema
-```
-###### Devoluciones:   
-```np.array	arreglo de coordenadas con un sistema triangular```
-##### Ejemplo:
-```
->>> empty = -np.ones((10,19))
->>> Triangle = cm.triangulo(1,19,9,0,empty)
->>> plt.imshow(cm.color(Triangle),cmap="nipy_spectral", interpolation='nearest')
-```
+SISstates = [0, 1]
+# Métricas para el modelo SIS
+metricsWithoutEmptyCells = dm.SystemMetrics(csc, SISstates)
 
-![texto alternativo](Imagenes/triangulo.png)
-Entre las funciones de visualización de ```CAsimulation``` también encontramos a ```systems_graph```, la cual nos permite comparar 7 sistemas distintos, esto con el fin de analizar la evolución de la enfermedad para diferentes tipos de sistemas.
-#### systems_graph(A, B, C, D, E, F, G)
-Grafica los cambios presentes en la condición de frontera
-###### Parámetros: 	
-```
-A: list   #Lista de coordenadas – primera región
-B: list   #Lista de coordenadas – segunda región
-C: list   #Lista de coordenadas – tercera región
-D: list   #Lista de coordenadas – cuarta región
-E: list   #Lista de coordenadas – quinta región
-F: list   #Lista de coordenadas – sexta región
-G: list   #Lista de coordenadas – séptima región
-```
-###### Devoluciones:	
-```
-.plt    #Gráfica de los cambios en el modelo tomando condiciones de frontera diferentes
-```
-##### Ejemplo:
-```
->>> lineal = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,np.zeros((1,20))))
->>> square = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,np.zeros((10,10))))
->>> rectangle = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,np.zeros((10,20))))
->>> rombo = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,Rombo))
->>> triangle = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,Triangle))
->>> square_2 = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,np.zeros((5,5))))
->>> square_3 = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,np.zeros((3,3))))
->>> cm.systems_graph(lineal[1],square[1],rectangle[1],rombo[1],triangle[1],square_2[1],square_3[1])
-```
+SISstatesWithEmptySpaces = [0, 1, -1]
+# Métricas para el modelo SIS con espacios vacíos
+metrics = dm.SystemMetrics(csc, SISstatesWithEmptySpaces)  
+```
+Podemos extraer dos tipos de datos: las proporciones y las cantidades de individuos por estado:
+```
+# Proporciones
+metricsWithoutEmptyCells.statusInTheSystem()
+>>> [1.0, 0.0]
 
-![texto alternativo](Imagenes/sys_gr.png)
-Ya sabemos como generar sistemas de cualquier tipo y de cualquier tamaño, es tiempo de ver las posibilidades de los modelos epidemiológicos frente a cambios de escala, si definimos por medio de ```domain_definition``` diferentes escalas para un mismo tipo de sistema, la función ```scale_differences``` nos permitirá ver calcular la variación entre dos escalas, por medio de ```scales_graph``` podremos visualizar los cambios presentes en 5 escalas diferentes, mientras que ```scales_differences_graph``` nos permitirá visualizar las diferencias entre cuatro escalas distintas.
-#### scale_differences(L1, L2)
-Calcula las diferencias por cada iteración entre dos escalas diferentes
-###### Parámetros: 
-```
-L1: list      #Lista con los valores numéricos obtenidos en una primera escala
-L2: list      #Lista con los valores numéricos obtenidos en la segunda escala
-```
-###### Devoluciones: 
-```list	#Lista con las diferencias entre ambas escalas por cada iteración.```
-#### scales_graph(A, B, C, D, E)
-Grafica los cambios presentes en la variación de escalas
-###### Parámetros: 	
-```
-A: list   #Lista de coordenadas – primera escala
-B: list   #Lista de coordenadas – segunda escala
-C: list   #Lista de coordenadas – tercera escala
-D: list   #Lista de coordenadas – cuarta escala
-E: list   #Lista de coordenadas – quinta escala
-```
-###### Devoluciones:	
-```
-.plt    #Gráfica de los cambios en el modelo tomando escalas diferentes
-```
-##### Ejemplo:
-```
->>> lineal_1 = np.zeros((1,100))
->>> lineal_2 = np.zeros((1,200))
->>> lineal_3 = np.zeros((1,300))
->>> lineal_4 = np.zeros((1,400))
->>> lineal_5 = np.zeros((1,500))
->>> sis_l1 = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,lineal_1))
->>> sis_l2 = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,lineal_2))
->>> sis_l3 = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,lineal_3))
->>> sis_l4 = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,lineal_4))
->>> sis_l5 = cm.SIS_model(0.2,0.5,30,cm.initial_condition(0.1,lineal_5))
->>> cm.scales_graph(sis_l1[1],sis_l2[1],sis_l3[1],sis_l4[1],sis_l5[1])
-```
+metrics.statusInTheSystem() # Porcentajes
+>>> [0.30612244897959184, 0.0, 0.6938775510204082]
 
-![texto alternativo](Imagenes/esc_gr.png)
-#### scales_differences_graph(A, B, C, D)
-Grafica los cambios presentes en la variación de escalas
-###### Parámetros: 	
-```
-A: list   #Lista de coordenadas – primera escala vs última escala
-B: list   #Lista de coordenadas – segunda escala vs última escala
-C: list   #Lista de coordenadas – tercera escala vs última escala
-D: list   #Lista de coordenadas – cuarta escala vs última escala
-```
-###### Devoluciones:	
-```
-.plt    #Gráfica de los cambios en el modelo tomando escalas diferentes
-```
-##### Ejemplo:
-```
->>> l1_vs_l5 = cm.scale_differences(sis_l1[2],sis_l5[2])
->>> l2_vs_l5 = cm.scale_differences(sis_l2[2],sis_l5[2])
->>> l3_vs_l5 = cm.scale_differences(sis_l3[2],sis_l5[2])
->>> l4_vs_l5 = cm.scale_differences(sis_l4[2],sis_l5[2])
->>> cm.scales_difference_graph(l1_vs_l5,l2_vs_l5,l3_vs_l5,l4_vs_l5)
-```
+# Cantidades
+metricsWithoutEmptyCells.statusInTheSystem(False)
+>>> [9, 0]
 
-![texto alternativo](Imagenes/dif_gr.png)
-### Modelos SIS y SIR con natalidad y mortalidad
-Para el caso del análisis de propagación con natalidad y mortalidad ```CAsimulation``` nos ofrece la posibilidad de distribuir edades sobre los agentes de acuerdo con el porcentaje que necesitamos, usando la función ```ages```  podemos asignarle edades a todos los agentes del sistema de acuerdo con un porcentaje que se necesite, por ejemplo: si quisiéramos que el 15% de la población tuviera entre 14 y 25 años lo único que debemos hacer es incluir en la lista rangos ```[14,25,0.15]``` y posteriormente usar ```ages```sobre el sistema.
-#### ages(rangos, A)
-Genera la matriz de edades para A basada en los datos de rangos
-###### Parámetros:
+metrics.statusInTheSystem(False)
+>>> [9, 0, 40]
 ```
-rangos: list         #Lista de rangos de edad: Las primeras dos componentes de cada elemento deben ser los valores extremos del rango y la tercera componente, lo proporción de individuos con esa edad en el espacio
-A:      np.array     #Sistema sobre el cual se definirán las edades
+Observe que los datos cambian entre métricas debido a que en una de ellas se considera un estado "vacío" para las cuentas. Con la función ```numberOfIndividuals``` podremos determinar cual es la cantidad de células con la que se están extrayendo las proporciones.
 ```
-###### Devoluciones:
-```np.array   #Matriz de edades```
-También podemos seleccionar un grupo de edad sobre el sistema, la función ```age_group``` nos permite conocer las coordenadas de los individuos que tengan una edad en un rango deseado, contamos además con la función ```evolution_ages``` la cual representará el paso del tiempo, los parámetros *time_unit* y *year* nos servirán para saber si el los agentes en el sistema "cumplieron años", esto ocurrirá si *time_unit* es un múltiplo de *year*.
-#### age_group(a, b, A)
-Genera las posiciones de los individuos que tienen entre a y b años en A
-###### Parámetros:
-```
-a: int               #Valor inicial del grupo de edad
-b: int               #Valor final del grupo de edad
-A: np.array          #Matriz de edades
-```
-###### Devoluciones:
-```list   #Lista con las coordenadas de los individuos en el grupo de edad```
-#### evolution_ages(br,mr,E,time_unit,year):
-Evolución por año de los agentes
-###### Parámetros:
-```
-br: float            #Tasa de natalidad
-mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-E:  np.array         #Matriz de edades
-time_unit: int       #Unidad de tiempo a analizar (minutos, días, meses, años)
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```np.array   #Matriz con la evolución de edades```
-Una vez controlado el factor de edad de los agentes, podemos implementar las reglas de interacción para los modelos SIS y SIR con natalidad y mortalidad, usando las funciones ```evolution_sis_bm``` y ```evolution_sir_bm``` podemos conocer el comportamiento de alguna enfermedad para un día o mes según se tome *time_unit* con respecto a la unidad de *year*. Por otro lado, las funciones ```evolution_SIS_bm``` y ```evolution_SIR_bm``` nos permitirán aplicar el modelo una cantidad *tf* de veces. Finalmente, las funciones ```SIS_bm_model``` y ```SIR_bm_model``` generarán los datos de la enfermedad, luego de aplicarla sobre un sistema especifico para *tf* iteraciones, mientras que ```graph_sis_bm``` y ```graph_sir_bm``` nos permitirán visualizar el comportamiento de la enfermedad.
-#### evolution_sis_bm(alpha,beta,br,mr,A,E,time_unit,year)
-Regla de evolución del modelo SIS con natalidad y mortalidad
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta: float          #Tasa de infección
-br: float            #Tasa de natalidad
-mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema a evaluar
-E: np.array          #Matriz de edades del sistema A
-time_unit: int       #Unidad de tiempo a analizar (minutos, días, meses, años)
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #En la primera componente encontraremos la evolución del sistema con natalidad y mortalidad mientras que en la segunda las edades con las que cuentan los agentes al realizar la evolución SIS```
-#### evolution_sir_bm(alpha,beta,br,mr,A,E,time_unit,year)
-Regla de evolución del modelo SIR con natalidad y mortalidad
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta: float          #Tasa de infección
-br:   float          #Tasa de natalidad
-mr:   list           #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema a evaluar
-E: np.array          #Matriz de edades del sistema A
-time_unit: int       #Unidad de tiempo a analizar (minutos, días, meses, años)
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #En la primera componente encontraremos la evolución del sistema con natalidad y mortalidad mientras que en la segunda las edades con las que cuentan los agentes al realizar la evolución SIR```
-#### evolution_SIS_bm(alpha,beta,tf,br,mr,A,E,year)
-Aplica el modelo SIS con natalidad y mortalidad tf veces sobre el sistema A
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta: float          #Tasa de infección
-tf: int              #Cantidad de iteraciones basado en la unidad de tiempo
-br: float            #Tasa de natalidad
-mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema a evaluar
-E: np.array          #Matriz de edades del sistema A
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista con las evoluciones del sistema bajo un modelo SIS con natalidad y mortalidad, cada elemento de la lista contiene el sistema junto con su matriz de edades```
-#### evolution_SIR_bm(alpha,beta,tf,br,mr,A,E,year)
-Aplica el modelo SIR con natalidad y mortalidad tf veces sobre el sistema A
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta: float          #Tasa de infección
-tf: int              #Cantidad de iteraciones basado en la unidad de tiempo
-br: float            #Tasa de natalidad
-mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema a evaluar
-E: np.array          #Matriz de edades del sistema A
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista con las evoluciones del sistema bajo un modelo SIR con natalidad y mortalidad, cada elemento de la lista contiene el sistema junto con su matriz de edades```
-#### SIS_bm_model(alpha,beta,tf,br,mr,A,E,year)
-Modelo SIS con natalidad y mortalidad
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta: float          #Tasa de infección
-tf: int              #Cantidad de iteraciones basado en la unidad de tiempo
-br: float            #Tasa de natalidad
-mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema a evaluar
-E: np.array          #Matriz de edades del sistema A
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista que contiene las cantidad de individuos pertenecientes a los estados S, I  y D junto con su iteración, cantidad de individuos para cada estado, lista con las evoluciones del sistema y de sus edades```
-#### SIR_bm_model(alpha,beta,tf,br,mr,A,E,year)
-Modelo SIR con natalidad y mortalidad
-###### Parámetros:
-```
-alpha: float	       #Tasa de recuperación	
-beta: float          #Tasa de infección
-tf: int              #Cantidad de iteraciones basado en la unidad de tiempo
-br: float            #Tasa de natalidad
-mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema a evaluar
-E: np.array          #Matriz de edades del sistema A
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista que contiene las cantidad de individuos pertenecientes a los estados S, R,  I  y D junto con su iteración, cantidad de individuos para cada estado, lista con las evoluciones del sistema y de sus edades```
-##### Ejemplo:
-```
->>> ranges = [[1, 15, 0.2], [16, 40, 0.6], [41, 100, 0.2]]
->>> mr = [[1, 25, 0.25], [26, 51, 0.44], [52, 100, 0.8]]
->>> sys = np.zeros((10,10))
->>> ages_sys = cm.ages(ranges, sys)
->>> ex_5 = cm.SIS_bm_model(0.2, 0.5, 30, 2, mr, sys, ages_sys, 365)[9]
->>> for i in range(30):
-......plt.imshow(cm.color(ex_5[i]),cmap="nipy_spectral", interpolation='nearest')
-......plt.savefig('ex_5'+str(i)+'.jpg')
->>> img_ex_5 = []
->>> for i in range(30):
-......img = cv2.imread('ex_5'+str(i)+'.jpg')
-......height, width, layers = img.shape
-......size = (width,height)
-......img_ex_5.append(img)
-
->>> out = cv2.VideoWriter('ex_5.mp4',cv2.VideoWriter_fourcc(*'DIVX'), 15, size)
- 
->>> for i in range(len(img_ex_5)):
-......out.write(img_ex_5[i])
->>> out.release()
-```
-
-![texto alternativo](Imagenes/ex_5.gif)
-#### graph_sis_bm(alpha,beta,tf,br,mr,A,E,year)
-Gráfica del modelo SIS con natalidad y mortalidad
-###### Parámetros:
+metricsWithoutEmptyCells.numberOfIndividuals()
+>>> 9
+
+metrics.numberOfIndividuals()
+>>> 49
+```
+A continuación describiremos la segunda parte del módulo. la cual corresponde al manejo propio de los datos que se pueden extraer. Para esto debemos tener un conjunto de evoluciones del espacio de células, para lo cual nos apoyaremos del módulo ```epidemiologicalModelsInCA``` y específicamente, del modelo SIS el cuál puede consultar en el [documento principal](https://github.com/Grupo-de-simulacion-con-automatas/Prediccion-del-comportamiento-de-una-enfermedad-simulada-en-AC-con-un-algoritmo-en-RN/blob/master/Documentos/Proyecto_de_grado.pdf) o directamente sobre el [Código](https://github.com/Grupo-de-simulacion-con-automatas/CAsimulations-Modelacion-de-dinamicas-topologicas-en-la-propagacion-de-una-enfermedad-usando-CA/blob/master/Codigo/CAsimulation/casimulation/Models.py#:~:text=class-,SISmodel,-(SImodel)%3A).
+```
+from CAsimulation import epidemiologicalModelsInCA as em
+
+# Parámetros del modelo
+alpha = 0.2
+beta = 0.5
+n_iterations = 10
+neighborhooSystem = em.GenerateNeighborhoodSystem(csc3, "Moore")
+impactRates = [1, 0.5]
+
+SISmodel = em.SIS(alpha, beta, n_iterations, csc3, neighborhooSystem, impactRates)
+evolutions = SISmodel.evolutions
+evolutions
+>>> [<EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d6f7c41c0>,
+     <EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d1360a610>,
+     <EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d1360aa60>,
+     <EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d1360ae20>,
+     <EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d1360aac0>,
+     <EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d1360ac70>,
+     <EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d1360aaf0>,
+     <EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d1360a1f0>,
+     <EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d13534a30>,
+     <EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d13534af0>,
+     <EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d1360a100>,
+     <EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d1360abe0>]
+```
+Una vez obtenidas las evoluciones del espacio de células, la función ```OrderData``` obtener las métricas por iteración de tres maneras distintas: la primera organiza los datos en forma de tuplas o puntos, estos serán usados para graficar dichas métricas; la segunda corresponde a las propias métricas del modelo, con estos datos podremos analizar por ejemplo. el comportamiento del modelo para distintas escalas; y finalmente, la lista con las evoluciones del sistema, estos datos nos permitirán visualizar al espacio en cada iteración.
+```
+dm.OrderData(evolutions, [0, 1])
+>>> [[array([[ 0.,  1.],
+             [ 1.,  1.],
+             [ 2.,  1.],
+             [ 3.,  1.],
+             [ 4.,  1.],
+             ...]),
+      array([[ 0.,  0.],
+             [ 1.,  0.],
+             [ 2.,  0.],
+             [ 3.,  0.],
+             [ 4.,  0.],
+             ...])],
+    [[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+     [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]],
+    [<EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d6f7c41c0>,
+     <EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d1360a610>,
+     <EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d1360aa60>,
+     <EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d1360ae20>,
+     <EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration at 0x15d1360aac0>,
+     ...]]
+```
+Por último, presentamos a la función ```variationsBetweenScales``` con la cual podremos calcular las variaciones para distintas escalas del espacio de células, entendiendo a la escala de un espacio como la cantidad de células que lo conforma.
+```
+cellSpaceEscale1 = em.CellSpace(3,3).initialLocationOfInfected(0.5)
+cellSpaceEscale2 = em.CellSpace(9,9).initialLocationOfInfected(0.5)
+neighborhooSystem1 = em.GenerateNeighborhoodSystem(cellSpaceEscale1, "Moore")
+neighborhooSystem2 = em.GenerateNeighborhoodSystem(cellSpaceEscale2, "Moore")
+n_iterations = 10
+impactRates = [1, 0.5]
+
+evolutionsOfescale1 = em.SIS(alpha, beta, n_iterations, cellSpaceEscale1, neighborhooSystem1,
+                             impactRates).evolutions
+evolutionsOfescale2 = em.SIS(alpha, beta, n_iterations, cellSpaceEscale2, neighborhooSystem2,
+                             impactRates).evolutions
+                              
+escale1 = dm.OrderData(evolutionsOfescale1, [0,1])[1]
+escale2 = dm.OrderData(evolutionsOfescale2, [0,1])[1]
+
+dm.variationsBetweenScales(escale1[1], escale2[1])
+>>> array([[ 0.        ,  0.14814815],
+           [ 1.        ,  0.07407407],
+           [ 2.        ,  0.        ],
+           [ 3.        ,  0.        ],
+           [ 4.        ,  0.        ],
+           [ 5.        ,  0.        ],
+           ...])
+```
+
+## Models<a name="Models"></a>
+En el módulo ```Models``` podrá encontrar las reglas definidas en el [documento principal](https://github.com/Grupo-de-simulacion-con-automatas/Prediccion-del-comportamiento-de-una-enfermedad-simulada-en-AC-con-un-algoritmo-en-RN/blob/master/Documentos/Proyecto_de_grado.pdf). Para importarlo puede usar el siguiente comando:
+```
+from CAsimulation import Models as mo
+```
+Con el módulo  ```SImodel``` podremos aplicar la regla de evolución del estado S al estado I, esto usando la función ```Apply``` del módulo, luego de haber definido los parámetros del modelo como se muestra a continuación:
+```
+cellSpace = em.CellSpace(5,5).initialLocationOfInfected(0.1)
+cellSpace.system
+>>> array([[0., 0., 0., 0., 1.], 
+           [0., 0., 0., 0., 0.], 
+           [0., 0., 0., 0., 0.], 
+           [0., 1., 1., 0., 0.], 
+           [0., 0., 0., 0., 0.]])
+
+alpha = 0.2
+beta = 0.5
+neighborhoodSystems = em.GenerateNeighborhoodSystem(cellSpace, "Moore")
+impactRates = [1, 0.5]
+SImodel = mo.SImodel(alpha, beta, cellSpace, neighborhoodSystems, impactRates)
+SImodelSpace = SImodel.Apply()
+SImodelSpace.system
+>>> array([[0., 0., 0., 0., 1.], 
+           [0., 0., 1., 0., 0.], 
+           [1., 0., 1., 0., 1.], 
+           [1., 1., 1., 0., 0.], 
+           [0., 0., 1., 0., 0.]])
+```
+Para aplicar los modelos SIS y SIR usaremos los mismos parámetros de la regla SI y con esto podremos generar las evoluciones por modelo para un mismo estado inicial del conjunto de células.
+```
+# Modelo SIS
+SISmodel = mo.SISmodel(alpha, beta, cellSpace, neighborhoodSystems, impactRates)
+SISmodel.basicRule(cellSpace).system
+>>> array([[0., 0., 1., 1., 1.], 
+           [0., 0., 0., 0., 1.], 
+           [1., 1., 0., 0., 0.], 
+           [0., 0., 1., 0., 0.], 
+           [0., 1., 1., 1., 0.]])
+
+# Modelo SIR
+SIRmodel = mo.SIRmodel(alpha, beta, cellSpace, neighborhoodSystems, impactRates)
+SIRmodel.basicRule(cellSpace).system
+>>> array([[0., 0., 1., 1., 1.], 
+           [0., 0., 0., 1., 0.], 
+           [0., 1., 0., 0., 0.], 
+           [1., 1., 2., 0., 0.], 
+           [0., 0., 1., 0., 0.]])
+```
+Para los modelos con natalidad y mortalidad; y los modelos con muerte por enfermedad, debemos incluir en nuestros parámetros a la matriz que corresponde a las edades de las células que interactuan en nuestro sistema:
+```
+ages = em.CreateAgeMatrix([[1,100,1]], cellSpace)
+ages
+>>> array([[19., 97., 37., 99., 9.], 
+           [54., 19., 90., 75., 44.], 
+           [23., 92., 54., 58., 7.], 
+           [98., 97., 7., 92., 44.], 
+           [37., 77., 7., 9., 99.]])
+```
+Una vez definida la matriz de edades, debemos establecer la tasa de natalidad y los rangos por muerte natural para el caso de los modelos con natalidad y mortalidad de la siguiente manera:
+```
+model = "sir"  # Se aplicará el modelo SIR con natalidad y mortalidad (si desea aplicar el modelo SIS,
+               # remplace "sir" por "sis")
+birthRate = 0.2
+probabilityByAgeRanges = [[1,50,0.05], [51,100,0.08]]  # Los que tienen entre 1-50 años tienen una 
+                                                       # probabilidad de morir del 5% y los que tienen 
+                                                       # entre 51 y 100, una probabilidad del 8%
+timeUnit = 365  # Ciclos de 365 días
+
+BMSIRmodel = mo.birthAndMortavility(model, alpha, beta, birthRate, [[1,100,0.05]], timeUnit, cellSpace, 
+                                    neighborhoodSystems, impactRates, ages)
+evolution = BMSIRmodel.basicRule(cellSpace, ages, 12)
+
+# Evolución de los estados del sistema
+evolution[0].system
+>>> array([[0., 1., 0., 0., 2.], 
+           [1., 0., 1., 0., 0.], 
+           [1., 1., 0., 0., 0.], 
+           [0., 1., 1., 0., 0.], 
+           [1., 0., 3., 0., 0.]])
+
+# Evolución de la matriz de edades
+evolution[1]
+>>> array([[19., 97., 37., 99., 9.], 
+           [54., 19., 90., 75., 44.], 
+           [23., 92., 54., 58., 7.], 
+           [98., 97., 7., 92., 44.], 
+           [37., 77., 0., 9., 99.]])
+```
+Si lo que desea es aplicar el modelo con muerte por enfermedad, será necesario incluir en sus parámetros las probabilidades de muerte por enfermedad por rango de edad, esto de manera análoga a como se implementaron las probabilidades de muerte para el modelo con natalidad y mortalidad.
+```
+probabilityOfDeathFromDiseaseByAgeRange = [[1,20,0.02], [21,62,0.04], [63,100, 0.08]]
+
+DDSIRmodel = mo.deathByDisease(model, alpha, beta, birthRate, probabilityByAgeRanges, 
+                               probabilityOfDeathFromDiseaseByAgeRange, timeUnit, cellSpace, 
+                               neighborhoodSystems, impactRates, ages)
+evolutionDD = DDSIRmodel.basicRule(cellSpace, ages, 12)
+
+# Evolución de los estados del sistema
+evolutionDD[0].system
+>>> array([[0., 0., 1., 0., 1.], 
+           [0., 0., 0., 0., 0.], 
+           [1., 0., 0., 0., 0.], 
+           [0., 1., 2., 0., 0.], 
+           [3., 0., 0., 0., 0.]])
+           
+# Evolución de la matriz de edades
+evolutionDD[1]
+>>> array([[19., 97., 37., 99., 9.], 
+           [54., 19., 90., 75., 44.], 
+           [23., 92., 54., 58., 7.], 
+           [98., 97., 7., 92., 44.], 
+           [ 0., 77., 7., 9., 99.]])
+```
+El módulo ```Models``` también nos ofrece la posibilidad de visualizar el compartamiento de la enfermedad para una cantidad de iteraciones establecida:
+```
+SIRmodel = mo.applyEpidemiologicalModel("sir", 0.2, 0.5, cellSpace, neighborhoodSystems, [1,0.5])
+SIRmodel.basicModel(10)  # 10 iteraciones
+SIRmodel.plotCurvesModel("Modelo SIR", True)
+```
+![Modelo SIR](Codigo/Imagenes/sirExD.PNG)
+
+Finalmente, si lo que desea es visualizar el comportamiento promedio de la enfermedad, puede usar la clase ```applyEpidemiologicalModel_nIterations``` la cual recibe como parámetros al modelo que desea aplicar, los parámetros básicos de la enfermedad, la cantidad de simulaciones contra las que va a calcular el promedio por iteración y por último, la cantidad de iteraciones. Posteriormente puede usar la función ```plotCurvesModel``` para visualizar la evolución promedio de la enfermedad.
+```
+SISmodel = mo.applyEpidemiologicalModel_nIterations("sis", 0.2, 0.5, cellSpace, neighborhoodSystems, [1,0.5], 10, 0.2)
+SISmodel.basicModel(10)
+SISmodel.plotCurvesModel("Modelo SIS", False)
+```
+![Modelo SIS](Codigo/Imagenes/sisExD.PNG)
+
+## NeighborhoodManager<a name="NeighborhoodManager"></a>
+En este módulo podrá encontrar todo lo relacionado al manejo de los sistemas de vecindades, desde eun mecanismo para identificar las posiciones de las células con un rango de impacto dado hasta funciones que le permiten definir una configuración básica de estos conjuntos. Para implementarla en su entorno use la siguiente línea de código:
+```
+from CAsimulation import NeighborhoodManager as nm
+```
+Inicialmente definimos el espacio de células al cual le definiremos el sistema de vecindades como sigue:
+```
+cellSpace = em.CellSpace(5,5).initialLocationOfInfected(0.5)
+cellSpace.system
+>>> array([[1., 0., 0., 0., 0.], 
+           [0., 0., 1., 1., 0.], 
+           [1., 1., 1., 1., 1.], 
+           [1., 0., 0., 0., 1.], 
+           [0., 0., 0., 1., 1.]])
+```
+Para definir un sistema de vecindades para una de las células será necesario implementar la librería ```numpy```, esto nos permitirá definir practicamente cualquier configuración para este sistema.
+```
+import numpy as np
+
+impactMatrix = np.array([[1,2,0,1,1],[0,0,0,1,2],[4,3,1,1,2],[0,1,0,1,0],[1,2,3,4,5]])
+impactMatrix
+>>> array([[1, 2, 0, 1, 1], 
+           [0, 0, 0, 1, 2], 
+           [4, 3, 1, 1, 2], 
+           [0, 1, 0, 1, 0], 
+           [1, 2, 3, 4, 5]])
+```
+Con la función ```ImpactNeighborClassifier``` de la clase ```NeigborhoodManager``` podremos conocer los estados y las posiciones de las células por grado de impacto en forma de diccionario.
+```
+NeigborhoodManager·=·nm.NeigborhoodManager(cellSpace,·impactMatrix)
+NeigborhoodManager.ImpactNeighborClassifier()
+>>> {0: [[0.0, [0, 2]], [0.0, [1, 0]], [0.0, [1, 1]],
+         [1.0, [1, 2]], [1.0, [3, 0]], [0.0, [3, 2]],
+         [1.0, [3, 4]]],
+     1: [[1.0, [0, 0]], [0.0, [0, 3]], [0.0, [0, 4]],
+         [1.0, [1, 3]], [1.0, [2, 2]], [1.0, [2, 3]],
+         [0.0, [3, 1]], [0.0, [3, 3]], [0.0, [4, 0]]],
+     2: [[0.0, [0, 1]], [0.0, [1, 4]], [1.0, [2, 4]], 
+         [0.0, [4, 1]]],
+     3: [[1.0, [2, 1]], [0.0, [4, 2]]],
+     4: [[1.0, [2, 0]], [1.0, [4, 3]]],
+     5: [[1.0, [4, 4]]]}
+```
+Ahora, si lo que desea es definir un sistema de vecindades "básico", puede usar alguna de las tres funciones: ```Moore```, ```Von_Neumann``` o ```randomNeighborhoods``` como se muestra a continuación:
+```
+cellSpace = em.CellSpace(3,3)
+nm.Moore(cellSpace)
+>>> [[[0, 0], array([[0., 0., 1.], [0., 0., 1.], [1., 1., 1.]])], 
+     [[0, 1], array([[0., 0., 0.], [0., 0., 0.], [1., 1., 1.]])], 
+     [[0, 2], array([[1., 0., 0.], [1., 0., 0.], [1., 1., 1.]])], 
+     [[1, 0], array([[0., 0., 1.], [0., 0., 1.], [0., 0., 1.]])], 
+     [[1, 1], array([[0., 0., 0.], [0., 0., 0.], [0., 0., 0.]])], 
+     [[1, 2], array([[1., 0., 0.], [1., 0., 0.], [1., 0., 0.]])], 
+     [[2, 0], array([[1., 1., 1.], [0., 0., 1.], [0., 0., 1.]])], 
+     [[2, 1], array([[1., 1., 1.], [0., 0., 0.], [0., 0., 0.]])], 
+     [[2, 2], array([[1., 1., 1.], [1., 0., 0.], [1., 0., 0.]])]]
+
+nm.Von_Neumann(cellSpace)
+>>> [[[0, 0], array([[0., 0., 1.], [0., 1., 1.], [1., 1., 1.]])], 
+     [[0, 1], array([[0., 0., 0.], [1., 0., 1.], [1., 1., 1.]])], 
+     [[0, 2], array([[1., 0., 0.], [1., 1., 0.], [1., 1., 1.]])], 
+     [[1, 0], array([[0., 1., 1.], [0., 0., 1.], [0., 1., 1.]])], 
+     [[1, 1], array([[1., 0., 1.], [0., 0., 0.], [1., 0., 1.]])], 
+     [[1, 2], array([[1., 1., 0.], [1., 0., 0.], [1., 1., 0.]])], 
+     [[2, 0], array([[1., 1., 1.], [0., 1., 1.], [0., 0., 1.]])], 
+     [[2, 1], array([[1., 1., 1.], [1., 0., 1.], [0., 0., 0.]])], 
+     [[2, 2], array([[1., 1., 1.], [1., 1., 0.], [1., 0., 0.]])]]
+
+nm.randomNeighborhoods(cellSpace)
+>>> [[[0, 0], array([[1., 1., 1.], [1., 1., 1.], [1., 1., 1.]])], 
+     [[0, 1], array([[1., 0., 1.], [1., 1., 1.], [1., 1., 1.]])], 
+     [[0, 2], array([[1., 1., 0.], [1., 1., 1.], [1., 1., 1.]])], 
+     [[1, 0], array([[1., 1., 1.], [0., 1., 1.], [1., 1., 1.]])], 
+     [[1, 1], array([[1., 1., 1.], [1., 0., 1.], [1., 1., 1.]])], 
+     [[1, 2], array([[1., 1., 1.], [1., 1., 1.], [1., 1., 1.]])], 
+     [[2, 0], array([[1., 1., 1.], [1., 1., 1.], [1., 1., 1.]])], 
+     [[2, 1], array([[1., 1., 1.], [1., 1., 1.], [1., 0., 1.]])], 
+     [[2, 2], array([[1., 1., 1.], [1., 1., 1.], [1., 1., 0.]])]]
+```
+
+## PlotsManager<a name="PlotsManager"></a>
+Como su nombre lo indica, ```PlotsManager``` se encarga del manejo de las gráficas dado un conjunto de datos. Para imprtarla simplemente debemos ejecutar el siguiente script:
+```
+from CAsimulation import PlotsManager as pm
+```
+Inicialmente debemos establecer el conjunto de datos en forma de listas de coordenadas. Para nuestro ejemplo usaremos los datos generados por el modelo SIS, y para visualizar dicha información, usaremos la función ```plotSolutions```.
+```
+cellSpace = em.CellSpace(5,5).initialLocationOfInfected(0.3)
+neighborhoodSystems = em.GenerateNeighborhoodSystem(cellSpace, "Moore")
+SImodel = mo.applyEpidemiologicalModel("sis",0.2, 0.5, cellSpace, neighborhoodSystems, [1,0])
+SImodel.basicModel(10)
+pm.plotSolutions(SImodel.data, ["sus", "inf"], ["green", "red"], "Modelo epidemiológico", True)
+```
+![](Codigo/Imagenes/pmEx.PNG)
+
+## SystemVisualization<a name="SystemVisualization"></a>
+Con este módulo podremos visualizar los diferentes comportamientos dentro de nuestro sistema por iteración. Para implementarlo podemos ejecutar la siguiente línea:
+```
+from EpidemiologicalModels import SystemVisualization as sv
+```
+Al igual que con el módulo ```plotSolutions```, debemos definir inicialmente al conjunto de datos. Nosotros usaremos como caso particular a los datos que se puden obtener al aplicar el modelo SIS como se muestra a continuación:
+```
+# Importamos los módulos necesarios para generar los datos
+from EpidemiologicalModels import epidemiologicalModelsInCA as em
+from EpidemiologicalModels import Models as mo
+
+cellSpace = em.CellSpace(5,5).initialLocationOfInfected(0.3)
+neighborhoodSystems = em.GenerateNeighborhoodSystem(cellSpace, "Moore")
+SImodel = mo.applyEpidemiologicalModel("sis",0.2, 0.5, cellSpace, neighborhoodSystems, [1,0])
+SImodel.basicModel(10)
+SystemVisualization = sv.SystemVisualization(SImodel.evolutions)
+SystemVisualization.evolutionsPlot(2)  # Visualización del espacio en la segunda iteración
+```
+![Evolución de una iteración específica](Codigo/Imagenes/svex1.PNG)
+
+```SystemVisualization``` también nos ofrece la posibilidad de visualizar el mapa de calor que muestra el cambio por estado en el sistema. Como caso particular usaremos el estado S (identificado con 0):
+```
+SystemVisualization.heatmap(0)
+```
+![Mapa de calor](Codigo/Imagenes/svex2.PNG)
+
+## epidemiologicalModelsInCA<a name="epidemiologicalModelsInCA"></a>
+Hemos usado al módulo ```epidemiologicalModelsInCA``` en diferentes secciones de la documentación por lo que seguramente podrá apreciar que algunos de los métodos que expondremos durante esta sección. El objetivo de este módulo es facilitar la implementación de la librería, es por esto que muchos de las funciones que mostraremos son una versión "simplificada" heredada de otros módulos. Para implementar esta librería puede ejecutar la siguiente línea:
+```
+from CAsimulation import epidemiologicalModelsInCA as em
+```
+Con la función ```CellSpace``` podremos definir el espacio de células de manera similar a como se implementó la función ```CellSpaceConfiguration``` expuesta en el módulo con el mismo nombre.
+```
+space = em.CellSpace(10,10)
+space.system
+>>> array([[0., 0., 0., 0., 0.],
+           [0., 0., 0., 0., 0.],
+           [0., 0., 0., 0., 0.],
+           [0., 0., 0., 0., 0.],
+           [0., 0., 0., 0., 0.]])
+
+space = em.CellSpace(3,1,5,5)
+space.system
+>>> array([[ 0., -1., -1., -1., -1.],
+           [ 0., -1., -1., -1., -1.],
+           [ 0., -1., -1., -1., -1.],
+           [-1., -1., -1., -1., -1.],
+           [-1., -1., -1., -1., -1.]])
+
+space = em.CellSpace(3,1,5,5,1,2)
+space.system
+>>> array([[-1., -1., -1., -1., -1.],
+           [-1., -1., 0., -1., -1.],
+           [-1., -1., 0., -1., -1.],
+           [-1., -1., 0., -1., -1.],
+           [-1., -1., -1., -1., -1.]])
+```
+También puede crear la matriz de edades dados un conjunto de rangos de edad y un espacio de células con la función ```createAgeMatrix```.
+```
+ranges = [[0,10,0.2],[11,100,0.8]] # 20% tienen entre 0 y 10 años, y 80% tienen entre 11 y 100.
+space = CellSpace(5,5)
+em.createAgeMatrix(ranges, space)
+>>> array([[ 1., 81., 33., 5., 18.],
+           [90., 19., 18., 36., 50.],
+           [ 5., 67., 4., 18., 74.],
+           [45., 36., 4., 36., 4.],
+           [ 5., 67., 74., 1., 1.]])
+```
+Si lo que desea es generar un sistema de vecindades usual, puede utilizar la función ```GenerateNeighborhoodSystem``` como sigue:
+```
+em.GenerateNeighborhoodSystem(CellSpace(3,3),"Moore")
+>>> [[[0, 0],array([[0., 0., 1.], [0., 0., 1.], [1., 1., 1.]])],
+     [[0, 1],array([[0., 0., 0.], [0., 0., 0.], [1., 1., 1.]])],
+     [[0, 2],array([[1., 0., 0.], [1., 0., 0.], [1., 1., 1.]])],
+     ...]
+```
+Si desea aplicar alguno de los modelos de la librería debe definir inicialmente los parámetros del mismo, a continuación mostramos un apartado con la implementación de cada uno de los modelos:
+```
+# Parámetros generales
+cellSpace = CellSpace(9,9).initialLocationOfInfected(0.1)
+neighborhoodSystem = GenerateNeighborhoodSystem(cellSpace,"moore")
+alpha = 0.2
+beta = 0.5
+n_iterations = 10
+impactRates = [1,0]
+
+# Modelos SIS y SIR
+sis = SIS(alpha, beta, n_iterations, cellSpace, neighborhoodSystem, impactRates)
+sir = SIR(alpha, beta, n_iterations, cellSpace, neighborhoodSystem, impactRates)
+
+# Parámetros para modelos con edades
+birthRate = 0.2
+rangesOfDeadProbability = [[0,20,0.0005], [21,58,0.0008], [59,100,0.001]]
+ageMatrix = CreateAgeMatrix([[0,100,1]], cellSpace)
+timeUnit = 365  # 365 días
+
+# Modelos con natalidad y mortalidad
+sis_bm = SIS_BM(alpha,beta,birthRate,rangesOfDeadProbability,timeUnit,n_iterations,cellSpace,
+                neighborhoodSystem,impactRates,ageMatrix)
+sir_bm = SIR_BM(alpha,beta,birthRate,rangesOfDeadProbability,timeUnit,n_iterations,cellSpace,
+                neighborhoodSystem,impactRates,ageMatrix)
+
+# Parámetros para modelos con muerte por enfermedad
+deadByDiseaseProbabilities = [[0,15,0.005], [16,60,0.009], [61,70,0.01], [71,100,0.06]]
+
+# Modelos con muerte por enfermedad
+sis_dd = SIS_DD(alpha,beta,birthRate,rangesOfDeadProbability,deadByDiseaseProbabilities,timeUnit,
+                n_iterations,cellSpace,neighborhoodSystem,impactRates,ageMatrix)
+sir_dd = SIR_DD(alpha,beta,birthRate,rangesOfDeadProbability,deadByDiseaseProbabilities,timeUnit,
+                n_iterations,cellSpace,neighborhoodSystem,impactRates,ageMatrix)
+```
+También puede aplicar los modelos y generar sus datos promedios para una cantidad de simulaciones definida. En el siguiente fragmento de código podremos apreciar como se pueden implementar este tipo de funciones:
+```
+# Parámetros generales
+alpha = 0.2
+beta = 0.5
+initialInfectedPopulation = 0.1
+n_iterations = 10
+n_simulations = 3
+cellSpace = CellSpace(9, 9).initialLocationOfInfected(0.1)
+neighborhoodSystem = GenerateNeighborhoodSystem(cellSpace, "moore")
+impactRates = [1,0]
+
+# Modelos SIS y SIR 
+medium_sis = medium_SIS(alpha,beta,initialInfectedPopulation,n_iterations,n_simulations,cellSpace,
+                        neighborhoodSystem,impactRates)
+medium_sir = medium_SIR(alpha,beta,initialInfectedPopulation,n_iterations,n_simulations,cellSpace,
+                        neighborhoodSystem,impactRates)
+
+# Parámetros para modelos que consideran las edades del sistema
+birthRate = 0.2
+rangesOfDeadProbability = [[0,20,0.0005], [21,58,0.0008], [59,100,0.001]]
+timeUnit = 365  # 365 días = 1 año
+ageMatrix = CreateAgeMatrix([[0,100,1]], cellSpace)
+
+# Modelos con natalidad y mortalidad
+medium_sis_bm = medium_SIS_BM(alpha,beta,birthRate,rangesOfDeadProbability,timeUnit,
+                              initialInfectedPopulation,n_iterations,n_simulations,cellSpace,
+                              neighborhoodSystem,impactRates,ageMatrix)
+medium_sir_bm = medium_SIR_BM(alpha,beta,birthRate,rangesOfDeadProbability,timeUnit,
+                              initialInfectedPopulation,n_iterations,n_simulations,cellSpace,
+                              neighborhoodSystem,impactRates,ageMatrix)
+
+# Parámetros para modelos con muerte por enfermedad
+deadByDiseaseProbabilities = [[0,15,0.005], [16,60,0.009], [61,70,0.01], [71,100,0.06]]
+
+# Modelos con muerte por enfermedad
+medium_sis_dd = medium_SIS_DD(alpha,beta,birthRate,rangesOfDeadProbability,deadByDiseaseProbabilities,
+                              timeUnit,initialInfectedPopulation,n_iterations,n_simulations,cellSpace,
+                              neighborhoodSystem,impactRates,ageMatrix)
+medium_sir_dd = medium_SIR_DD(alpha,beta,birthRate,rangesOfDeadProbability,deadByDiseaseProbabilities,
+                              timeUnit,initialInfectedPopulation,n_iterations,n_simulations,cellSpace,
+                              neighborhoodSystem,impactRates,ageMatrix)
 ```
-alpha: float         #Tasa de recuperación	
-beta: float          #Tasa de infección
-tf: int              #Cantidad de iteraciones basado en la unidad de tiempo
-br: float            #Tasa de natalidad
-mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema a evaluar
-E: np.array          #Matriz de edades del sistema A
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones: 
-```.plt   #Gráfica del modelo SIS con natalidad y mortalidad```
-#### graph_sir_bm(alpha,beta,tf,br,mr,A,E,year)
-Gráfica del modelo SIR con natalidad y mortalidad
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta: float          #Tasa de infección
-tf: int              #Cantidad de iteraciones basado en la unidad de tiempo
-br: float            #Tasa de natalidad
-mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema a evaluar
-E: np.array          #Matriz de edades del sistema A
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones: 
-```.plt   #Gráfica del modelo SIR con natalidad y mortalidad```
-##### Ejemplo:
-```
->>> cm.graph_sis_bm(0.2, 0.5, 30, 2, mr, sys, ages_sys, 365)
-```
-![texto alternativo](Imagenes/gr_sir_bm.png)
-### Modelos SIS y SIR con muerte por enfermedad
-```CAsimulation``` nos permite también analizar enfermedades que puedan causar la muerte en los individuos que la posean de una manera muy especifica, si se tratase de una enfermedad que afecte mas a un grupo especifico de edad, podremos definir los rangos sobre los cuales la enfermedad afecta gravemente, usando ```dead_by_disease``` podremos aplicar las tasas de mortalidad por enfermedad a estos grupos especificos y mediante las funciones ```evolutioin_sis_dd``` y ```evolution_sir_dd``` podremos aplicar esta característica a cada iteración de la misma manera que se aplicó en los modelos con natalidad y mortalidad. Adicionalmente, las funciones ```evolution_SIS_dd``` y ```evolution_SIR_dd``` nos permiten analizar el comportamiento hasta un tiempo o iteración especifica, con lo cual llegamos finalmente a los modelos con muerte por enfermedad: ```SIS_dd_model``` y ```SIR_dd_model```, la manera en que podremos visualizar de manera concreta el estos comportamientos será usando las funciones ```graph_sis_dd``` y ```graph_sir_dd```.
-#### dead_by_disease(ranges_dead,A,E)
-Aplica probabilidades de muerte por enfermedad a grupos de edad sobre el sistema A 
-###### Parámetros:
-```
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema sobre el cual se esta trabajando
-E: np.array          #Matriz de edades del sistema A
-```
-###### Devoluciones:
-```list   #Lista que contiene la evolución del sistema al aplicar la muerte por enfermedad y la matriz de edades luego de aplicar la regla de muerte por enfermedad```
-
-#### evolution_sis_dd(alpha,beta,br,mr,ranges_dead,A,E,time_unit,year)
-Regla de evolución para el modelo SIS con muerte por enfermedad
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta:  float         #Tasa de infección
-br:    float         #Tasa de natalidad
-mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array      #Sistema a evaluar
-E:     np.array      #Matriz de edades del sistema A
-time_unit:   int     #Unidad de tiempo a analizar (minutos, días, meses, años)
-year:  int           #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista con el sistema al aplicar el modelo SIS con muerte por enfermedad y con la matriz de edades del sistema```
-
-#### evolution_sir_dd(alpha,beta,br,mr,ranges_dead,A,E,time_unit,year)
-Regla de evolución para el modelo SIR con muerte por enfermedad
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta:  float         #Tasa de infección
-br:    float         #Tasa de natalidad
-mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array      #Sistema a evaluar
-E:     np.array      #Matriz de edades del sistema A
-time_unit:   int     #Unidad de tiempo a analizar (minutos, días, meses, años)
-year:  int           #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista con el sistema al aplicar el modelo SIR con muerte por enfermedad y con la matriz de edades del sistema```
-
-#### evolution_SIS_dd(alpha,beta,tf,br,mr,ranges_dead,A,E,year):   
-Aplica el modelo SIS con muerte por enfermedad tf veces sobre el sistema A
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta:  float         #Tasa de infección
-tf:    int           #Cantidad de iteraciones basado en la unidad de tiempo
-br:    float         #Tasa de natalidad
-mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array      #Sistema a evaluar
-E:     np.array      #Matriz de edades del sistema A
-year:  int           #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista con las evoluciones del sistema luego de aplicar el modelo SIS con muerte por enfermedad y las matrices de edad por cada iteración.```
-
-#### evolution_SIR_dd(alpha,beta,tf,br,mr,ranges_dead,A,E,year)
-Aplica el modelo SIR con muerte por enfermedad tf veces sobre el sistema A
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta:  float         #Tasa de infección
-tf:    int           #Cantidad de iteraciones basado en la unidad de tiempo
-br:    float         #Tasa de natalidad
-mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array      #Sistema a evaluar
-E:     np.array      #Matriz de edades del sistema A
-year:  int           #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista con las evoluciones del sistema luego de aplicar el modelo SIR con muerte por enfermedad y las matrices de edad por cada iteración.```
-
-#### SIS_dd_model(alpha,beta,tf,br,mr,ranges_dead,A,E,year)
-Modelo SIS con muerte por enfermedad
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta:  float         #Tasa de infección
-tf:    int           #Cantidad de iteraciones basado en la unidad de tiempo
-br:    float         #Tasa de natalidad
-mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array      #Sistema a evaluar
-E:     np.array      #Matriz de edades del sistema A
-year:  int           #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista que cuenta con las cantidades normalizadas por estados S, I y D de la población con respecto a la iteración, incluye además las cantidades normalizadas de las poblaciones con tales estados y las respectivas evoluciones del sistema junto con cada matriz de edad por iteración.```
-
-#### SIR_dd_model(alpha,beta,tf,br,mr,ranges_dead,A,E,year)
-Modelo SIR con muerte por enfermedad
-###### Parámetros:
-```
-alpha: float		#Tasa de recuperación	
-beta:  float		#Tasa de infección
-tf:    int		#Cantidad de iteraciones basado en la unidad de tiempo
-br:    float		#Tasa de natalidad
-mr:    list	    	#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list	#Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array	#Sistema a evaluar
-E:     np.array	#Matriz de edades del sistema A
-year:  int  		#Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista que cuenta con las cantidades normalizadas por estados S, I, R y D de la población con respecto a la iteración, incluye además las cantidades normalizadas de las poblaciones con tales estados y las respectivas evoluciones del sistema junto con cada matriz de edad por iteración.```
-##### Ejemplo:
-```
->>> ranges_dead = [[0,25,0.002],[26,40,0.05],[41,100,0.0028]]
->>> ranges = [[1, 15, 0.2], [16, 40, 0.6], [41, 100, 0.2]]
->>> sys_6 = np.zeros((10,10))
->>> sys_6 = cm.initial_condition(0.7,sys_6)
->>> ages_sys_6 = cm.ages(ranges,sys_6)
->>> mr = [[1, 25, 0.25], [26, 51, 0.14], [52, 100, 0.08]]
->>> ex_6 = cm.SIS_dd_model(0.2,0.37,20,7,mr,ranges_dead,sys_6,ages_sys_6,365)[6]
->>>for i in range(20):
-......plt.imshow(cm.color(ex_6[i]),cmap="nipy_spectral", interpolation='nearest')
-......plt.savefig('ex_6'+str(i)+'.jpg')
->>> img_ex_6 = []
->>> for i in range(20):
-......img = cv2.imread('ex_6'+str(i)+'.jpg')
-......height, width, layers = img.shape
-......size = (width,height)
-......img_ex_6.append(img)
->>> out = cv2.VideoWriter('ex_6.mp4',cv2.VideoWriter_fourcc(*'DIVX'), 15, size) 
->>> for i in range(len(img_ex_6)):
-......out.write(img_ex_6[i])
->>> out.release()
-```
-![texto alternativo](Imagenes/ex_6.gif)
-#### graph_sis_dd(alpha,beta,tf,br,mr,ranges_dead,A,E,year)
-Gráfica del modelo SIS con muerte por enfermedad
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta:  float         #Tasa de infección
-tf:    int           #Cantidad de iteraciones basado en la unidad de tiempo
-br:    float         #Tasa de natalidad
-mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array      #Sistema a evaluar
-E:     np.array      #Matriz de edades del sistema A
-year:  int           #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```.plt   #Gráfica del modelo SIS con muerte por enfermedad```
-
-#### graph_sir_dd(alpha,beta,tf,br,mr,ranges_dead,A,E,year)
-Gráfica del modelo SIR con muerte por enfermedad
-###### Parámetros:
-```
-alpha: float		#Tasa de recuperación	
-beta:  float		#Tasa de infección
-tf:    int		#Cantidad de iteraciones basado en la unidad de tiempo
-br:    float		#Tasa de natalidad
-mr:    list 		#Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list	#Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array	#Sistema a evaluar
-E:     np.array	#Matriz de edades del sistema A
-year:  int  		#Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```.plt   #Gráfica del modelo SIR con muerte por enfermedad```
-###### Ejemplo:
-```
->>> cm.graph_sis_dd(0.2,0.37,20,7,mr,ranges_dead,sys_6,ages_sys_6,365)
-```
-![texto alternativo](Imagenes/sis_dd.png)
-Si lo que queremos es evaluar diferentes condiciones iniciales y analizar el comportamiento promedio de alguna enfermedad particular, las funciones ```graph_medium_curves_sis_dd``` y ```graph_medium_curves_sir_dd``` nos permitirán graficar los comportamientos promedio para un mismo sistema, bajo diferentes condiciones iniciales, representando los comportamientos obtenidos al usar ```medium_curves_sis_dd``` o ```medium_curves_sir_dd```.
-#### medium_curves_sis_dd(alpha,beta,tf,csim,I0,br,mr,ranges_dead,A,E,year)
-Promedio de csim simulaciones para el modelo SIS con muerte por enfermedad
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta:  float         #Tasa de infección
-tf:    int           #Cantidad de iteraciones basado en la unidad de tiempo
-csim:  int           #Cantidad de simulaciones
-I0:    float         #Porcentaje inicial de infectados en el sistema
-br:    float         #Tasa de natalidad
-mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array      #Sistema a evaluar
-E:     np.array      #Matriz de edades del sistema A
-year:  int           #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista que cuenta con los promedios de las cantidades normalizadas por estados S, I y D de la población con respecto a la iteración, incluye además los promedios de las cantidades normalizadas de las poblaciones con tales estados y las respectivas evoluciones del sistema junto con cada matriz de edad por iteración.```
-
-#### graph_medium_curves_sis_dd(alpha,beta,tf,csim,I0,br,mr,ranges_dead,A,E,year)
-Grafica del promedio de simulaciones para el modelo SIS con muerte por enfermedad
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta:  float         #Tasa de infección
-tf:    int           #Cantidad de iteraciones basado en la unidad de tiempo
-csim:  int           #Cantidad de simulaciones
-I0:    float         #Porcentaje inicial de infectados en el sistema
-br:    float         #Tasa de natalidad
-mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array      #Sistema a evaluar
-E:     np.array      #Matriz de edades del sistema A
-year:  int           #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```.plt   #Gráfica del modelo SIS con muerte por enfermedad promedio para un número csim de simulaciones``` 
-
-#### medium_curves_sir_dd(alpha,beta,tf,csim,I0,br,mr,ranges_dead,A,E,year)
-Promedio de csim simulaciones para el modelo SIR con muerte por enfermedad
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta:  float         #Tasa de infección
-tf:    int           #Cantidad de iteraciones basado en la unidad de tiempo
-csim:  int           #Cantidad de simulaciones
-I0:    float         #Porcentaje inicial de infectados en el sistema
-br:    float         #Tasa de natalidad
-mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array      #Sistema a evaluar
-E:     np.array      #Matriz de edades del sistema A
-year:  int           #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista que cuenta con los promedios de las cantidades normalizadas por estados S, I, R y D de la población con respecto a la iteración, incluye además los promedios de las cantidades normalizadas de las poblaciones con tales estados y las respectivas evoluciones del sistema junto con cada matriz de edad por iteración.```
-
-#### graph_medium_curves_sir_dd(alpha,beta,tf,csim,I0,br,mr,ranges_dead,A,E,year)
-Grafica del promedio de simulaciones para el modelo SIR con muerte por enfermedad
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta:  float         #Tasa de infección
-tf:    int           #Cantidad de iteraciones basado en la unidad de tiempo
-csim:  int           #Cantidad de simulaciones
-I0:    float         #Porcentaje inicial de infectados en el sistema
-br:    float         #Tasa de natalidad
-mr:    list          #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A:     np.array      #Sistema a evaluar
-E:     np.array      #Matriz de edades del sistema A
-year:  int           #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```.plt   #Gráfica del modelo SIR con muerte por enfermedad promedio para un número csim de simulaciones```
-### Modelos SIS y SIR con movimiento de agentes
-Para implementar el movimiento en nuestros análisis, debemos añadir un nuevo tipo de espacio vacío en nuestro sistema, este espacio será identificado con el valor numérico 75. La idea de incluir un nuevo tipo de estado para un píxel, nos sirve para conservar la estructura del sistema.
-
-```CAsimulation``` toma las reglas de movimiento como unas reglas del tipo probabilístico, el usuario puede definir una probabilidad de movimiento para cada estado, esto nos permite visualizar diferentes escenarios de comportamiento de los agentes, la función ```transport``` nos permite modelar estas reglas de movimiento para cada posible estado usando ```state_coor```, la cual actúa como una generalización de funciones similares a  ```vector_S```, finalmente si lo que queremos es visualizar como se desarrollan las reglas de movimiento entre dos sistemas, la función ```superposición``` resulta ser una herramienta indispensable pues nos permite superponer los sistemas con los que estemos trabajando.
-
-#### state_coor(A, state_value)
-Enlista los agentes que tengan un estado identificado con state_value
-###### Parámetros:
-```
-A: np.array          #Sistema sobre el cual se está trabajando
-state_value: int	#Valor con el cual se identifica el estado de interés
-```
-###### Devoluciones:
-```list   #Lista con las coordenadas de los individuos que tengan el estado identificado con state_value```
-
-#### transport(output,arrival,ages,list_prob)
-Todos los agentes tendrán una probabilidad de moverse, de acuerdo con el estado que posea
-###### Parámetros:
-```
-output: np.array     #Sistema de salida: los individuos en output son los que podrán moverse
-arrival: np.array    #Sistema de llegada: Los individuos que se muevan de output caerán en arrival
-ages: np.array       #Edades de los individuos en el sistema
-list_prob: list      #Lista con la probabilidad de movimiento de cada estado
-```
-###### Devoluciones:
-```list  #Lista con los cambios realizados sobre output y arrival luego de aplicar el movimiento de agentes, además incluye la matriz de edades de los agentes luego de realizar el movimiento```
-#### superposicion(A,B)
-Permite visualizar dos sistemas sobre un mismo dominio 
-###### Parámetros:
-```
-A: np.array          #Sistema 1
-B: np.array          #Sistema 2
-```
-###### Devoluciones:
-```np.array   #Arreglo en el cual están descritos los sistemas A y B```
-Es tiempo de hablar de los modelos SIS y SIR, con movimiento. De manera similar a como se definieron las funciones previas para cada uno de los modelos anteriores, se definen ```evolution_sis_wm```, ```evolution_sir_wm```, ```evolution_SIS_wm``` y ```evolution_SIR_wm```, obteniendo al final las funciones que describen los comportamientos SIS y SIR con una población "movil", las cuales se identificarán como ```SIS_wm_model``` y ```SIR_wm_model```. Finalmente se definieron también las funciones que nos permitirán visualizar estos comportamientos de manera analítica, las funciones ```graph_sis_wm``` y ```graph_sir_wm``` actuarán como funciones de análisis gráfico para un número arbitrario de iteraciones.
-#### evolution_sis_wm(alpha,beta,list_prob,br,mr,ranges_dead,A,B,E,time_unit,year)
-Regla de evolución para el modelo SIS con movimiento de agentes
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta: float          #Tasa de infección
-list_prob: list      #Lista con la probabilidad de movimiento de cada estado
-br: float            #Tasa de natalidad
-mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema 1 a evaluar
-B: np.array          #Sistema 2 a evaluar
-E: np.array          #Matriz de edades del sistema A
-time_unit: int       #Unidad de tiempo a analizar (minutos, días, meses, años)
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista con el sistema al aplicar el modelo SIS con movimiento a cada sistema y con la matriz de edades del sistema```
-
-#### evolution_sir_wm(alpha,beta,list_prob,br,mr,ranges_dead,A,B,E,time_unit,year)
-Regla de evolución para el modelo SIR con movimiento de agentes
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta: float          #Tasa de infección
-list_prob: list      #Lista con la probabilidad de movimiento de cada estado
-br: float            #Tasa de natalidad
-mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema 1 a evaluar
-B: np.array          #Sistema 2 a evaluar
-E: np.array          #Matriz de edades del sistema A
-time_unit: int       #Unidad de tiempo a analizar (minutos, días, meses, años)
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista con el sistema al aplicar el modelo SIR con movimiento a cada sistema y con la matriz de edades del sistema``` 
-#### evolution_SIS_wm(alpha,beta,tf,list_prob,br,mr,ranges_dead,A,B,E,year)
-Aplica el modelo SIS con movimiento tf veces sobre los sistemas A y B
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta: float          #Tasa de infección
-tf: int              #Cantidad de iteraciones
-list_prob: list      #Lista con la probabilidad de movimiento de cada estado
-br: float            #Tasa de natalidad
-mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema 1 a evaluar
-B: np.array          #Sistema 2 a evaluar
-E: np.array          #Matriz de edades del sistema A
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista con los sistemas A y B luego de aplicar el modelo SIS con transporte, incluye también la matriz de edades luego de esta transformación```
-
-#### evolution_SIR_wm(alpha,beta,tf,list_prob,br,mr,ranges_dead,A,B,E,year)
-Aplica el modelo SIR con movimiento tf veces sobre los sistemas A y B
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta: float          #Tasa de infección
-tf: int              #Cantidad de iteraciones
-list_prob: list      #Lista con la probabilidad de movimiento de cada estado
-br: float            #Tasa de natalidad
-mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema 1 a evaluar
-B: np.array          #Sistema 2 a evaluar
-E: np.array          #Matriz de edades del sistema A
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista con los sistemas A y B luego de aplicar el modelo SIR con transporte, incluye también la matriz de edades luego de esta transformación```
-#### SIS_wm_model(alpha,beta,tf,list_prob,br,mr,ranges_dead,A,B,E,year)
-Modelo SIS con movimiento
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta: float          #Tasa de infección
-tf: int              #Cantidad de iteraciones
-list_prob: list      #Lista con la probabilidad de movimiento de cada estado
-br: float            #Tasa de natalidad
-mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema 1 a evaluar
-B: np.array          #Sistema 2 a evaluar
-E: np.array          #Matriz de edades del sistema A
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista que contiene el comportamiento de los estados S, I y D con respecto a cada iteración (Se forman en tuplas donde la primera componente es la iteración y la segunda el comportamiento de alguno de los estados), se incluyen también los valores numéricos de crecimiento y por último la evolución del sistema junto con la evolución de u matriz de edades```
-
-#### SIR_wm_model(alpha,beta,tf,list_prob,br,mr,ranges_dead,A,B,E,year)
-Modelo SIR con movimiento
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta: float          #Tasa de infección
-tf: int              #Cantidad de iteraciones
-list_prob: list      #Lista con la probabilidad de movimiento de cada estado
-br: float            #Tasa de natalidad
-mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema 1 a evaluar
-B: np.array          #Sistema 2 a evaluar
-E: np.array          #Matriz de edades del sistema A
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```list   #Lista que contiene el comportamiento de los estados S, I, R y D con respecto a cada iteración (Se forman en tuplas donde la primera componente es la iteración y la segunda el comportamiento de alguno de los estados), se incluyen también los valores numéricos de crecimiento y por último la evolución del sistema junto con la evolución de u matriz de edades```
-#### graph_sis_wm(alpha,beta,tf,list_prob,br,mr,ranges_dead,A,B,E,year)
-Gráfica del modelo SIS con movimiento
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta: float          #Tasa de infección
-tf: int              #Cantidad de iteraciones
-list_prob: list      #Lista con la probabilidad de movimiento de cada estado
-br: float            #Tasa de natalidad
-mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema 1 a evaluar
-B: np.array          #Sistema 2 a evaluar
-E: np.array          #Matriz de edades del sistema A
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-```
-###### Devoluciones:
-```.plt   #Gráfica del modelo SIS con movimiento```
-
-#### graph_sir_wm(alpha,beta,tf,list_prob,br,mr,ranges_dead,A,B,E,year)
-Gráfica del modelo SIR con movimiento
-###### Parámetros:
-```
-alpha: float         #Tasa de recuperación	
-beta: float          #Tasa de infección
-tf: int              #Cantidad de iteraciones
-list_prob: list      #Lista con la probabilidad de movimiento de cada estado
-br: float            #Tasa de natalidad
-mr: list             #Lista con las tasas de mortalidad por rango de edad: en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-ranges_dead: list    #Lista con los rangos de edad y la probabilidad de muerte, en las dos primeras componentes de cada elemento debe ir el rango de edad y en la tercera, la probabilidad de morir en ese grupo
-A: np.array          #Sistema 1 a evaluar
-B: np.array          #Sistema 2 a evaluar
-E: np.array          #Matriz de edades del sistema A
-year: int            #Unidad de tiempo de referencia (por lo general un año)
-``` 
-###### Devoluciones:
-```.plt   #Gráfica del modelo SIR con movimiento```

@@ -2,13 +2,13 @@ import enum
 import random
 import math
 from typing_extensions import Annotated
-import EpidemiologicalModels.NeighborhoodManager as NeighborhoodManager
-import EpidemiologicalModels.CellManagement as CellManagement
+import CAsimulation.NeighborhoodManager as NeighborhoodManager
+import CAsimulation.CellManagement as CellManagement
 import numpy as np
-import EpidemiologicalModels.AgeManagement as AgeManagement
-import EpidemiologicalModels.DataManager as DataManager
-import EpidemiologicalModels.PlotsManager as PlotsManager
-import EpidemiologicalModels.SystemVisualization as SystemVisualization
+import CAsimulation.AgeManagement as AgeManagement
+import CAsimulation.DataManager as DataManager
+import CAsimulation.PlotsManager as PlotsManager
+import CAsimulation.SystemVisualization as SystemVisualization
 
 class State(enum.Enum):
     H = -1  # Huecos
@@ -36,16 +36,16 @@ class SImodel:
         if self.alpha <= 0:
             print("Debe definir una tasa de recuperación alpha > 0.")
             return False
-        elif self.beta <= 0:
+        if self.beta <= 0:
             print("Debe definir una tasa de infección beta > 0.")
             return False
-        elif str(type(self.cellSpace)) != "<class 'EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration'>":
-            print("Asegurese de pasar un sistema con el tipo <class 'EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration'>")
+        if str(type(self.cellSpace)) != "<class 'CAsimulation.CellSpaceConfiguration.CellSpaceConfiguration'>":
+            print("Asegurese de pasar un sistema con el tipo CellSpaceConfiguration.CellSpaceConfiguration")
             return False
-        elif len(self.neighborhoodSystems) == 0:
+        if len(self.neighborhoodSystems) == 0:
             print("Debe definir un sistema de vecindades.")
             return False
-        elif len(self.impactRates) == 0:
+        if len(self.impactRates) == 0:
             print("Debe definir las tasas de impacto.")
             return False
         else:
@@ -173,25 +173,25 @@ class birthAndMortavility:
         if self.model != "sis" and self.model != "sir":
             print("Introduzca un modelo valido. (SIS o SIR)")
             return False
-        elif self.birthRate <= 0:
+        if self.birthRate <= 0:
             print("Defina una tasa de natalidad mayor a cero.")
             return False
-        elif len(self.probabilityOfDyingByAgeGroup) == 0:
+        if len(self.probabilityOfDyingByAgeGroup) == 0:
             print("Establezca las probabilidades de muerte por rango.")
             return False
-        elif self.annualUnit <= 0:
+        if self.annualUnit <= 0:
             print("Defina una unidad anual mayor a cero.")
             return False
-        elif str(type(self.cellSpace)) != "<class 'EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration'>":
-            print("Asegurese de pasar un sistema con el tipo <class 'EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration'>")
+        if str(type(self.cellSpace)) != "<class 'CAsimulation.CellSpaceConfiguration.CellSpaceConfiguration'>":
+            print("Asegurese de pasar un sistema con el tipo CellSpaceConfiguration.CellSpaceConfiguration")
             return False
-        elif len(self.neighborhoodSystems) == 0:
+        if len(self.neighborhoodSystems) == 0:
             print("Defina un sistema de vecindades.")
             return False
-        elif len(self.impactRates) == 0:
+        if len(self.impactRates) == 0:
             print("Defina las tasas de impacto.")
             return False
-        elif self.systemAges.shape[0] == 0:
+        if self.systemAges.shape[0] == 0:
             print("Defina una matriz de edades.")
             return False
         else:
@@ -324,9 +324,9 @@ class applyEpidemiologicalModel:
         if self.__validate():
             self.__evalConditions()
             if modifiedSystem == False:
-                evolutions = DataManager.appliedModel(self.epidemiologicalModel.basicRule, self.cellSpace, n_iterations, self.modelHasAges, self.systemAges)
+                evolutions = DataManager._appliedModel(self.epidemiologicalModel.basicRule, self.cellSpace, n_iterations, self.modelHasAges, self.systemAges)
             else:
-                evolutions = DataManager.appliedModel(self.epidemiologicalModel.basicRule, system, n_iterations, self.modelHasAges, self.systemAges)
+                evolutions = DataManager._appliedModel(self.epidemiologicalModel.basicRule, system, n_iterations, self.modelHasAges, self.systemAges)
             visualization = DataManager.OrderData(evolutions, self.epidemiologicalModel.states)
             self.data = visualization[0]
             self.evolutions = visualization[2]
@@ -409,10 +409,10 @@ class applyEpidemiologicalModel_nIterations:
         if self.__validate():
             self.__evalConditions()
             if self.model == "sis" or self.model == "sir":
-                evolutions = DataManager.appliedMediumData(self.epidemiologicalModel.basicRule, self.cellSpace, self.initialPercentageInfected, 
+                evolutions = DataManager._appliedMediumData(self.epidemiologicalModel.basicRule, self.cellSpace, self.initialPercentageInfected, 
                                                            self.epidemiologicalModel.states, n_iterations, self.nSimulations)
             else:
-                evolutions = DataManager.appliedMediumData(self.epidemiologicalModel.basicRule, self.cellSpace, self.initialPercentageInfected, 
+                evolutions = DataManager._appliedMediumData(self.epidemiologicalModel.basicRule, self.cellSpace, self.initialPercentageInfected, 
                                                            self.epidemiologicalModel.states, n_iterations, self.nSimulations, True, self.systemAges)
             self.data = evolutions[0]
 

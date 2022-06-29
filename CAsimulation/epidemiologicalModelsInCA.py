@@ -1,7 +1,8 @@
-import EpidemiologicalModels.CellSpaceConfiguration as CellSpaceConfiguration
-import EpidemiologicalModels.AgeManagement as AgeManagement
-import EpidemiologicalModels.NeighborhoodManager as NeighborhoodManager
-import EpidemiologicalModels.Models as Models
+import CAsimulation.CellSpaceConfiguration as CellSpaceConfiguration
+import CAsimulation.AgeManagement as AgeManagement
+import CAsimulation.NeighborhoodManager as NeighborhoodManager
+import CAsimulation.Models as Models
+import CAsimulation.CompartmentalModelsInEDOS as CompartmentalModelsInEDOS
 
 def CellSpace(nRows, nColumns, xnRows = -1, xnColumns = -1, unRows = 0, unColumns = 0):
     """
@@ -17,7 +18,7 @@ def CellSpace(nRows, nColumns, xnRows = -1, xnColumns = -1, unRows = 0, unColumn
         EpidemiologicalModels.CellSpaceConfiguration.CellSpaceConfiguration  Sistema de células
 
     Ejemplo 1:
-    space = CellSpace(10,10)
+    space = CellSpace(5,5)
     space.system
     --> array([[0., 0., 0., 0., 0.],
                [0., 0., 0., 0., 0.],
