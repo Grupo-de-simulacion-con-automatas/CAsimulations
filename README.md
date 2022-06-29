@@ -584,7 +584,7 @@ SIRmodel = mo.applyEpidemiologicalModel("sir", 0.2, 0.5, cellSpace, neighborhood
 SIRmodel.basicModel(10)  # 10 iteraciones
 SIRmodel.plotCurvesModel("Modelo SIR", True)
 ```
-![Modelo SIR](Pictures/sirExD.PNG)
+![Modelo SIR](Pictures/sirExD.png)
 
 Finalmente, si lo que desea es visualizar el comportamiento promedio de la enfermedad, puede usar la clase ```applyEpidemiologicalModel_nIterations``` la cual recibe como parámetros al modelo que desea aplicar, los parámetros básicos de la enfermedad, la cantidad de simulaciones contra las que va a calcular el promedio por iteración y por último, la cantidad de iteraciones. Posteriormente puede usar la función ```plotCurvesModel``` para visualizar la evolución promedio de la enfermedad.
 ```
@@ -592,7 +592,7 @@ SISmodel = mo.applyEpidemiologicalModel_nIterations("sis", 0.2, 0.5, cellSpace, 
 SISmodel.basicModel(10)
 SISmodel.plotCurvesModel("Modelo SIS", False)
 ```
-![Modelo SIS](Pictures/sisExD.PNG)
+![Modelo SIS](Pictures/sisExD.png)
 
 ## NeighborhoodManager<a name="NeighborhoodManager"></a>
 En este módulo podrá encontrar todo lo relacionado al manejo de los sistemas de vecindades, desde eun mecanismo para identificar las posiciones de las células con un rango de impacto dado hasta funciones que le permiten definir una configuración básica de estos conjuntos. Para implementarla en su entorno use la siguiente línea de código:
@@ -687,7 +687,7 @@ SImodel = mo.applyEpidemiologicalModel("sis",0.2, 0.5, cellSpace, neighborhoodSy
 SImodel.basicModel(10)
 pm.plotSolutions(SImodel.data, ["sus", "inf"], ["green", "red"], "Modelo epidemiológico", True)
 ```
-![](Pictures/pmEx.PNG)
+![](Pictures/pmEx.png)
 
 ## SystemVisualization<a name="SystemVisualization"></a>
 Con este módulo podremos visualizar los diferentes comportamientos dentro de nuestro sistema por iteración. Para implementarlo podemos ejecutar la siguiente línea:
@@ -707,13 +707,13 @@ SImodel.basicModel(10)
 SystemVisualization = sv.SystemVisualization(SImodel.evolutions)
 SystemVisualization.evolutionsPlot(2)  # Visualización del espacio en la segunda iteración
 ```
-![Evolución de una iteración específica](Pictures/svex1.PNG)
+![Evolución de una iteración específica](Pictures/svex1.png)
 
 ```SystemVisualization``` también nos ofrece la posibilidad de visualizar el mapa de calor que muestra el cambio por estado en el sistema. Como caso particular usaremos el estado S (identificado con 0):
 ```
 SystemVisualization.heatmap(0)
 ```
-![Mapa de calor](Pictures/svex2.PNG)
+![Mapa de calor](Pictures/svex2.png)
 
 ## epidemiologicalModelsInCA<a name="epidemiologicalModelsInCA"></a>
 Hemos usado al módulo ```epidemiologicalModelsInCA``` en diferentes secciones de la documentación por lo que seguramente podrá apreciar que algunos de los métodos que expondremos durante esta sección. El objetivo de este módulo es facilitar la implementación de la librería, es por esto que muchos de las funciones que mostraremos son una versión "simplificada" heredada de otros módulos. Para implementar esta librería puede ejecutar la siguiente línea:
